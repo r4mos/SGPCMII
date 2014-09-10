@@ -32,6 +32,7 @@
 \usepackage[spanish]{babel}
 \usepackage{times}
 
+
 \usepackage[left=30mm, right=20mm, top=20mm, bottom=20mm]{geometry}
 
 \usepackage[%
@@ -107,7 +108,7 @@
 \colorlet{tabheadbg}{gray!25}
 \colorlet{tabrowbg} {gray!12.5}
 
-\newcommand{\tabheadformat}{\parbox[c][.4cm]{0pt}{}}
+\newcommand{\tabheadformat}[1]{\parbox[c][.4cm]{0pt}{#1}}
 \newcommand{\tabhead}[1]{{\textscale{.8}{\textbf{#1}}}}
 \newcommand{\zebrarows}[1]{\rowcolors{#1}{}{tabrowbg}}
 
@@ -116,12 +117,14 @@
 
 \usepackage{caption}
 \captionsetup{belowskip=12pt,aboveskip=6pt}
+\captionsetup[table]{name=Tabla}
 
 %---
 
 \parindent = 0pt
 \setstretch{1.5}
-\renewcommand\contentsname{Índice de contenido}
+\addto\captionsspanish{\renewcommand{\contentsname}{Índice de contenido}}
+%\renewcommand\contentsname{Índice de contenido}
 
 
 %--- document metadata ---

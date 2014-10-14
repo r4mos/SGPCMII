@@ -7,7 +7,7 @@
 \advisorDepartment{DEPARTAMENTO DE TECNOLOGÍAS Y SISTEMAS DE INFORMACIÓN}
 \advisorSecond{}
 \intensification{TECNOLOGÍAS DE LA INFORMACIÓN}
-\docdate{2014}{Septiembre}
+\docdate{2014}{Octubre}
 
 
 \begin{document}
@@ -19,18 +19,20 @@
 
 \section{INTRODUCCIÓN}
 
-El guiado de personas es una actividad que se lleva desarrollando desde hace siglos con la ayuda de las estrellas, mapas y/o brújulas. Afortunadamente para nosotros, hoy en día es más fácil seguir un determinado camino gracias a la tecnología \textit{GPS}\footnote{https://es.wikipedia.org/wiki/Sistema\_de\_posicionamiento\_global}.
+El guiado de personas es una actividad que se lleva desarrollando desde siempre con la ayuda de las estrellas, mapas y/o brújulas. Afortunadamente para nosotros, en la actualidad resulta sencillo seguir un determinado camino gracias a la navegación vía satélite. Aunque existen varias tecnologías utilizadas para dicha navegación, hoy en día el \textit{Sistema de Posicionamiento Global} (\textit{GPS}\footnote{https://es.wikipedia.org/wiki/Sistema\_de\_posicionamiento\_global}) de los Estados Unidos y el \textit{Sistema Orbital Mundial de Navegación por Satélite} (\textit{GLONASS}\footnote{https://es.wikipedia.org/wiki/GLONASS}) de la Federación Rusa son las únicas tecnologías operativas \cite{SPSA}.
 
-Con la popularización de los smartphones es común encontrar personas utilizando \textit{GPS} por medio de aplicaciones como \textit{Google Maps}\footnote{https://play.google.com/store/apps/details?id=com.google.android.apps.maps} o \textit{Sygic}\footnote{https://play.google.com/store/apps/details?id=com.sygic.aura} con el objetivo de desplazarse a algún lugar. Estas aplicaciones son realmente buenas para la navegación con coche pero tienen un problema: es necesario ver la pantalla o oír la las instrucciones para llevarlas a cabo. Para los peatones, ciclistas y motoristas el hecho de mirar a la pantalla o intentar oír el smartphone supone una distracción que puede terminar provocando un accidente y, por tanto, necesitan otro tipo de interacción con el dispositivo.
+Con la popularización de los smartphones se extendió el uso de la navegación vía satélite y es común encontrar personas utilizándola por medio de aplicaciones como \textit{Google Maps}\footnote{https://play.google.com/store/apps/details?id=com.google.android.apps.maps} o \textit{Sygic}\footnote{https://play.google.com/store/apps/details?id=com.sygic.aura}. Estas aplicaciones son realmente buenas para la navegación con coche pero tienen un problema: es necesario ver la pantalla o oír la las instrucciones para llevarlas a cabo. Para los peatones, ciclistas y motoristas el hecho de mirar a la pantalla o intentar oír el smartphone supone una distracción que puede terminar provocando un accidente \cite{Valcarcel12}  y, por tanto, necesitan otro tipo de interacción con el dispositivo.
 
-En este trabajo se desarrollará un sistema de guiado con interacción implícita, es decir, un sistema que guíe sin necesidad de estar pendiente de el. Para ello
+En este trabajo se desarrollará un sistema de guiado en el que el usuario no tendrá que estar pendiente del camino a seguir, sino que será el sistema el que se encargue de avisar al usuario en el momento que tenga que realizar cualquiera de las acciones posibles: girar a la izquierda o girar a la derecha. Esta interacción implícita se llevará a cabo por medio de la vibración y, para hacer más intuitivas las instrucciones del navegador, se utilizarán dos vibradores. De este modo, cuando haya que girar a la izquierda vibrará uno y cuando haya que girar a la derecha vibrará el otro. En la Figura \ref{fig:descipcion_sistema} se esquematiza un giro a la izquierda:
 
-%descripción
-%imagen explicativa
-
-%Además, puesto que el usuario no necesita interactuar con la pantalla podremos tenerla apagada y conseguir un notorio ahorro de batería.
-
-\newpage
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[width=0.52\textwidth]{girar-izquierda.png}
+    \caption{Descripción del sistema. Giro a la izquierda}
+    \label{fig:descipcion_sistema}
+  \end{center}
+  \vspace{-35pt}
+\end{figure}
 
 \section{TECNOLOGÍA ESPECÍFICA / INTENSIFICACIÓN / ITINERARIO CURSADO POR EL ALUMNO}
 
@@ -55,7 +57,7 @@ En la Tabla \ref{tab:tec-especifica} se muestra la tecnología especifica cursad
 Del mismo modo, en la Tabla \ref{tab:competencias} se enumeran las competencias más destacables de la intensificación cursada y la justificación de uso de esa competencia concreta dentro del proyecto.
 
 \rowcolors{2}{tabrowbg}{}
-\begin{spacing}{1.0}
+\begin{spacing}{1.1}
 \begin{longtable}{p{0.45\linewidth}p{0.45\linewidth}}
   \caption{Justificación de las competencias específicas abordadas en el TFG}
   \label{tab:competencias} \\
@@ -63,61 +65,60 @@ Del mismo modo, en la Tabla \ref{tab:competencias} se enumeran las competencias 
   \textbf{Competencia} & \textbf{Justificación} \\
   \hline
   \hline
-    Capacidad para comprender el entorno de una organización y sus necesidades en el ámbito de las tecnologías de la información y las comunicaciones. & \\
+    Capacidad para seleccionar, diseñar, desplegar, integrar, evaluar, construir, gestionar, explotar y mantener las tecnologías de hardware, software y redes, dentro de los parámetros de coste y calidad adecuados. & Se pretende crear un sistema de navegación, haciendo uso del hardware, software y las redes disponibles; con el mínimo coste y la mayor calidad posible.\\
 
-    Capacidad para seleccionar, diseñar, desplegar, integrar, evaluar, construir, gestionar, explotar y mantener las tecnologías de hardware, software y redes, dentro de los parámetros de coste y calidad adecuados. & \\
+    Capacidad para emplear metodologías centradas en el usuario y la organización para el desarrollo, evaluación y gestión de aplicaciones y sistemas basados en tecnologías de la información que aseguren la accesibilidad, ergonomía y usabilidad de los sistemas. & El diseño del sistema se centrará en el usuario para ratificar que se trata de un sistema accesible, usable y que adapta cómodamente al usuario.\\
 
-    Capacidad para emplear metodologías centradas en el usuario y la organización para el desarrollo, evaluación y gestión de aplicaciones y sistemas basados en tecnologías de la información que aseguren la accesibilidad, ergonomía y usabilidad de los sistemas. & \\
+    Capacidad de concebir sistemas, aplicaciones y servicios basados en tecnologías de red, incluyendo Internet, web, comercio electrónico, multimedia, servicios interactivos y computación móvil. & El sistema hará uso de servicios de navegación proporcionados en Internet, la procesará y dará al usuario la información necesaria para seguir su camino.\\
 
-    Capacidad para seleccionar, diseñar, desplegar, integrar y gestionar redes e infraestructuras de comunicaciones en una organización. & \\
-
-    Capacidad para seleccionar, desplegar, integrar y gestionar sistemas de información que satisfagan las necesidades de la organización, con los criterios de coste y calidad identificados. & \\
-
-    Capacidad de concebir sistemas, aplicaciones y servicios basados en tecnologías de red, incluyendo Internet, web, comercio electrónico, multimedia, servicios interactivos y computación móvil. & \\
-
-    Capacidad para comprender, aplicar y gestionar la garantía y seguridad de los sistemas informáticos. & \\
+    Capacidad para comprender, aplicar y gestionar la garantía y seguridad de los sistemas informáticos. & El sistema deberá ser resistente a vulnerabilidades propias de la implementación ya que se seguirán las directrices expuestas en \cite{Moreno13}.\\
 
   \hline
 \end{longtable}
 \end{spacing}
 
-\newpage
-
 \section{OBJETIVOS}
 
-De acuerdo a la Introducción, el alumno deberá especificar cuál o cuáles son las hipótesis
-de trabajo de las que se parten, qué se pretende resolver, y en base a eso formular el
-objetivo principal del TFG.
+Puesto que la iteración con los navegadores vía satélite actuales se basan en el contacto visual o mensajes auditivos, el trabajo consistirá en incorporar un nuevo tipo de interacción implícita: la vibración. Por tanto, el objetivo que se pretende conseguir con el trabajo es el \textbf{desarrollo de un sistema de navegación vía satélite que se comunique con el usuario por medio de la vibración de alguno de sus componentes}.
 
-El objetivo principal deberá desglosarse en sub-objetivos parciales. Los sub-objetivos
-deberán describirse de forma breve y concisa.
+El objetivo del proyecto puede desglosarse en objetivos parciales del siguiente modo:
 
-Como preámbulo a la formulación del objetivo parcial, el alumno deberá discutir sobre las
-limitaciones y condicionantes a tener en cuenta en el desarrollo del TFG (lenguaje de
-desarrollo, equipos, madurez de la tecnología, etc.).
-
-Del mismo modo, será recomendable incluir una lista preliminar de requisitos del sistema a
-construir.
-
-\newpage
+\begin{itemize}
+  \item Desarrollo de la aplicación de navegación
+  \item Búsqueda, selección e integración de de los complementos vibratorios
+\end{itemize}
 
 \section{MÉTODO Y FASES DE TRABAJO}
 
-Para el desarrollo del proyecto, el alumno deberá seguir algún proceso o metodología afín
-al problema que pretende resolver. Para ello, deberá aportar una pequeña descripción del
-proceso o metodología (no más de una página) y \textbf{justificar su adecuación al
-  problema a resolver}.
+La metodología seleccionada para el desarrollo del trabajo ha sido una \textbf{metodología ágil} \cite{Poole09} . Este tipo de metodología nos permite un mayor margen de maniobra gracias a que los requisitos y las soluciones van evolucionando por medio del desarrollo \textbf{iterativo e incremental}.
 
-Del mismo modo, el alumno podrá realizar una breve planificación de la ejecución del
-proyecto según el proceso o metodología seleccionada.
+Para desarrollar el proyecto se ha dividido el trabajo en bloques cuyo resultado será fundamental para realizar los siguientes. Por tanto, se pretende seguir un orden basado en el siguiente:
 
-Como parte de la descripción del método y las fases de trabajo, el alumno podrá incluir
-una descripción preliminar de las tareas, una planificación temporal, diagramas de Gantt o
-recursos similares que pueda considerar necesarios.
+\begin{description}
+  \item[Estudio del estado del arte] \hfill \\
+  Se llevará a cabo un estudio preliminar que muestre los diferentes sistemas de navegación vía satélite actuales. Se mencionanrán sus puntos fuertes y el método de interacción que tienen con el usuario. También se estudiará la posibilidad de incorporar otro medio de iteración en dichos sistemas de navegación.
+  
+  \item[Desarrollo de la aplicación de navegación] \hfill \\
+  En primer lugar, para el desarrollo de la aplicación, se realizará un estudio para seleccionar la \textbf{plataforma} sobre la que se desplegará. Puesto que intentamos que nuestro sistema llegue al mayor número de personas con el mínimo coste deberemos emplear la plataforma que más cuota de mercado tenga en dispositivos móviles. Probablemente \textbf{Android} \cite{Mercado}. 
+  
+  En segundo lugar, tendremos que seleccionar alguna de las \textbf{tecnologías de geoposicionamiento}. Sería interesante usar \textit{Galileo}\footnote{https://es.wikipedia.org/wiki/Sistema\_de\_navegaci\%C3\%B3n\_Galileo} porque proporciona una mayor precisión pero, de momento, no es posible \cite{SPSA} . Por ello se usará la tecnología más extendida en nuestra región y en nuestros dispositivos móviles: \textbf{GPS}.
+  
+  También será necesario disponer de \textbf{mapas y rutas} para guiar al usuario. Para ello se estudiarán las dos alternativas más usadas \textbf{Google Maps}\footnote{https://www.google.es/maps/} y \textbf{Open Street Map}\footnote{http://www.openstreetmap.org/}; y se usará la que más se adapte a nuestras necesidades.
+  
+  Finalmente se procederá al desarrollo de la aplicación llevando a cabo un análisis de requisitos, un diseño y una implementación.
+  
+  \item[Búsqueda, selección e integración de los dispositivos vibratorios] \hfill \\
+  Existe una gran variedad de complementos vibratorios como pulseras, brazaletes, cuantificadores personales o, incluso, deportivas\footnote{http://es.engadget.com/2014/07/24/lechal-zapatillas-inteligentes/}. Debido a esta gran variedad de dispositivos, será necesario buscar los complementos del mercado que se puedan usar con la plataforma elegida en el bloque anterior y seleccionar el que más se adapte a nuestras necesidades. Si se diese el caso de que ningún complemento cumpla los requisitos, desarrollaremos nuestros propios vibradores.
 
-Si hubiera más de una metodología que a juicio del alumno podría ser afín al proyecto,
-éstas deberán mencionarse, y justificar la que considera más adecuada (esto puede
-considerarse parte de la justificación a la adecuación al problema a resolver).
+  Finalmente se llevará a cabo la integración de los dispositivos vibratorios con la aplicación desarrollada en el bloque anterior.
+  
+  \item[Pruebas] \hfill \\
+  Se realizarán pruebas sobre los escenarios inicialmente planteados: peatones, ciclistas y motoristas; y se evaluará la eficacia del desarrollo.
+  
+  \item[Documentación] \hfill \\
+  Se escribirá la documentación relacionada con el proyecto en la que se incluirán todos los diagramas, diseños, manuales, etc; que se generen durante la realización del mismo.
+  
+\end{description}
 
 \newpage
 
@@ -125,43 +126,34 @@ considerarse parte de la justificación a la adecuación al problema a resolver)
 
 \subsection{Medios Hardware}
 
-El alumno deberá describir los medios hardware que prevé serán necesarios para el
-desarrollo del proyecto.
+Para la realización del proyecto sólo se preven necesarios tres dispositivos hardware:
 
+\begin{itemize}
+  \item \textbf{Computador}: Para desarrollar la aplicación y generar la documentación emplearé mi ordenador portátil \textbf{Asus X54H}\footnote{http://www.asus.com/Notebooks\_Ultrabooks/X54H/}. 
+  \item \textbf{Smartphone}: Para probar la aplicación durante el desarrollo y la etapa de pruebas utilizaré mi teléfono móvil \textbf{Nexus 5}\footnote{https://www.google.es/nexus/5/}.
+  \item \textbf{Complementos vibratorios}: Para realizar la interacción implícita se usarán dos o más complementos vibratorios que aún están por determinar.
+\end{itemize}
 
 \subsection{Medios Software}
 
-El alumno deberá describir los medios software (lenguajes, entornos de desarrollo,
-herramientas de gestión y planificación, etc.) que prevé serán necesarios para el
-desarrollo del proyecto
+De igual modo, se preven necesarios cuatro medios software:
+
+\begin{itemize}
+  \item \textbf{Elementary OS Luna}\footnote{http://elementaryos.org/}: Sistema Operativo GNU/Linux del computador de desarrollo.
+  \item \textbf{Eclipse ADT}\footnote{https://developer.android.com/tools/sdk/eclipse-adt.html}: entorno de desarrollo seleccionado para llevar a cabo el proyecto porque incluye la API de Android.
+  \item \textbf{Git} \cite{Hinojosa14} : Sera utilizado como control de versiones por medio de un repositorio de Bitbucket\footnote{https://bitbucket.org/}.
+  \item \textbf{\LaTeX} \cite{Lamport86} : Lenguaje de marcado de documentos que se utilizará para realizar la documentación con el programa LaTeXila\footnote{https://wiki.gnome.org/Apps/LaTeXila}.
+\end{itemize}
 
 \newpage
 
 \section{REFERENCIAS}
 
-En esta sección se incluirán todas las referencias bibliográficas, ordenadas
-alfabéticamente por el primer apellido del primer autor, de las obras de las cuales se
-haya realizado alguna cita en los apartados anteriores. Las referencias deberán contener
-datos básicos como nombre y apellidos de los autores, título de la obra, evento al que
-pertenece, páginas, fecha y lugar de celebración (si se tratara de artículos de congreso),
-ISBN, editorial y ciudad (si se tratara de libro), nombre de revista, páginas, volumen y
-número (si se tratara de revista), etc.
+\renewcommand\refname{}
+\vspace{-1cm}
 
-Se empleará un formato de referencia reconocido en el ámbito académico como
-ACM\footnote{http://www.acm.org/sigs/publications/proceedings-templates}\footnote{http://www.cs.ucy.ac.cy/\~{}chryssis/specs/ACM-refguide.pdf}.
-Otros formatos aconsejables son, por ejemplo, IEEE, AMA, APA y AMA.
-
-A continuación una sección de «Referencias» con ejemplos de referencias con formato ACM para:
-
-\begin{itemize}
-\item Un artículo de revista~\cite{Bow93}.
-\item Un informe técnico~\cite{Ding97}.
-\item Un libro~\cite{Tavel07}.
-\item Un capítulo de libro~\cite{Greiner99}.
-\item Un artículo en las actas de un congreso~\cite{Frohlic00}.
-\item Para una página web~\cite{Steele04} (con autores conocidos).
-\item Para una página web~\cite{Oxygen} (con autores desconocidos).
-\end{itemize}
+\bibliographystyle{ieeetr} 
+\bibliography{referencias}
 
 \end{document}
 

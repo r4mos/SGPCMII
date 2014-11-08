@@ -217,4 +217,6 @@
   \parskip = 5mm
 }
 
+\newcommand{\FIXME}[1]{\noindent\textcolor{red}{\textbf{FIXME:} #1}}
+
 \makeatother

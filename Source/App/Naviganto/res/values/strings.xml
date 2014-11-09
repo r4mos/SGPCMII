@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Naviganto</string>
+    <string name="navigation_drawer_explore">Explorar mapa</string>
+    <string name="navigation_drawer_go">Seleccionar destino</string>
+    <string name="navigation_drawer_settings">Opciones</string>
+    <string name="navigation_drawer_about">Sobre Naviganto</string>
+    <string name="navigation_drawer_open">Abrir menú</string>
+    <string name="navigation_drawer_close">Cerrar menú</string>
+    <string name="waiting_for_gps">Esperando señal de GPS</string>
+    <string name="empy"></string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="hello_world">Hello world!</string>
+
+</resources>

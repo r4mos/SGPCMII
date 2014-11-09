@@ -36,36 +36,39 @@ satélite y es común encontrar personas utilizándola por medio de aplicaciones
 o
 \textit{Sygic}\footnote{https://play.google.com/store/apps/details?id=com.sygic.aura}. Estas
 aplicaciones resultan muy adecuadas para la navegación en trayectos en coche aunque
-implican un requisito importante: es necesario ver la pantalla u oír la las instrucciones
-para llevarlas a cabo. Eso no es un inconveniente en un coche, pero para los peatones,
+implican un requisito importante: es necesario ver la pantalla u oír las instrucciones
+para llevarlas a cabo. Eso no es demasiado inconveniente en un coche, pero para los peatones,
 ciclistas y motoristas el hecho de mirar a la pantalla o intentar oír el smartphone supone
 una distracción que potencialmente puede provocar un accidente~\cite{Valcarcel12} y, por
 tanto, necesitan otro tipo de interacción con el dispositivo.
 
-\FIXME{Tienes que poner alguna cita más sobre el problema de las distracciones,
-  legislación al respecto, estudios, etc.}
+Las distracciones del conductor son una de las principales causas de accidentabilidad en todo el mundo. La \textit{National Highway Traffic Safety Administration} (\textit{NHTSA}\footnote{http://www.nhtsa.gov/}) señaló en 2003 que la distracción de los conductores es la causa de 1,5 millones de accidentes producidos anualmente en todo el planeta \cite{RACC03}. Y, según un estudio de la aseguradora Allianz de 2014 \cite{Allianz14}, el 26\% de los accidentes por distracciones son producidos por mirar el navegador.
 
-\FIXME{También tienes que citar algún trabajo que ataque el mismo problema y comentarlo
-  brevemente}
+En España, el uso de dispositivos como navegadores, cascos y auriculares por parte del conductor está considerado como una infracción grave y acarrea una multa de 200 euros y una pérdida de 3 puntos en el carné de conducir \cite{Serrano14} .
 
-En este trabajo se desarrollará un sistema de guiado en el que el usuario no tendrá
-obtendrá realimentación del sistema sin necesidad de ver la pantalla u escuchar
-instrucciones. El sistema avisará en el momento que tenga que realizar cualquiera de las
-acciones posibles: girar a izquierda o derecha, avanzar o parar. Esta interacción se
-llevará a cabo por medio de la vibración y, para hacer más intuitivas las instrucciones
-del navegador. A parte del vibrador incorporado en el smartphone se utilizará un
-periférico como un smartwatch o pulsera inteligente. De este modo, cuando haya que girar a
-la izquierda vibrará uno y cuando haya que girar a la derecha vibrará el otro. En la
-Figura~\ref{fig:descipcion_sistema} se esquematiza un giro a la izquierda:
+En este trabajo se desarrollará un sistema de guiado en el que el usuario obtendrá realimentación del sistema sin necesidad de ver la pantalla. Para ello, el sistema avisará al usuario en el momento que tenga que realizar cualquiera de las acciones posibles: girar a izquierda, girar a la derecha, continuar recto o dar media vuelta. Esta interacción se llevará a cabo por medio de la vibración. A parte del vibrador incorporado en el smartphone se utilizará un periférico como un smartwatch o pulsera inteligente. De este modo, cuando haya que girar a la izquierda vibrará uno, cuando haya que girar a la derecha vibrará el otro y cuando haya que dar media vuelta vibrarán ambos. En la Figura~\ref{fig:descipcion_sistema} se esquematiza un giro a la izquierda:
 
 \begin{figure}[!h]
   \begin{center}
-    \includegraphics[width=0.52\textwidth]{girar-izquierda.png}
+    \includegraphics[width=0.6\textwidth]{girar-izquierda.png}
     \caption{Descripción del sistema. Giro a la izquierda}
     \label{fig:descipcion_sistema}
   \end{center}
-  \vspace{-35pt}
+  \vspace{-25pt}
 \end{figure}
+
+Para determinar con cuánto tiempo de antelación hay que avisar para que realice una acción se utilizará la velocidad a la que se desplace el usuario. De este modo nos aseguraremos de que tenga suficiente tiempo para reaccionar independientemente de la actividad que esté realizando: andar, ir en bici o moto.
+
+Además se implementarán las opciones disponibles en todos los sistemas de guiado:
+
+\begin{itemize}
+  \item Visualización de la posición actual en el mapa mostrando en forma de circunferencia la precisión del geoposicionamiento proporcionado por los satélites.
+  \item Superposición de la ruta seleccionada sobre el mapa. De este modo se podrá visionar la ruta a seguir antes de realizarse.
+  \item Orientación automática del mapa dependiendo de la orientación del dispositivo. Haciendo uso del sensor de orientación del smartphone se rotará la imagen del mapa.
+  \item Visualización por pantalla y reproducción sonora de las instrucciones a seguir. 
+\end{itemize}
+
+\newpage
 
 \section{TECNOLOGÍA ESPECÍFICA / INTENSIFICACIÓN / ITINERARIO CURSADO POR EL ALUMNO}
 

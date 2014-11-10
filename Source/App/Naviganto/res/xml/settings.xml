@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+ 
+    <PreferenceCategory android:title="@string/settings_alerts" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="settingsAlertsSound"
+            android:summary="@string/settings_alerts_sound_summary"
+            android:title="@string/settings_alerts_sound" />
+        
+        
+    </PreferenceCategory>
+     
+    <PreferenceCategory android:title="@string/settings_display" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="settingsDisplayOrientation"
+            android:summary="@string/settings_display_orientation_summary"
+            android:title="@string/settings_display_orientation" />
+    </PreferenceCategory>
+ 
+</PreferenceScreen>

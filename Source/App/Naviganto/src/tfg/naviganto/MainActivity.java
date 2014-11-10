@@ -27,8 +27,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
@@ -38,13 +39,15 @@ import android.widget.Toast;
 import android.support.v4.widget.DrawerLayout;
 
 public class MainActivity extends ActionBarActivity
-	implements NavigationDrawerFragment.NavigationDrawerCallbacks, 
+		implements NavigationDrawerFragment.NavigationDrawerCallbacks, 
 		LocationListener, SensorEventListener, TextToSpeech.OnInitListener {
 	
 	static final String MAPQUESTAPIKEY = "Fmjtd%7Cluurnu0anl%2C2s%3Do5-9wrw94";
-	static final Locale locale = new Locale("es", "", "");
+	static final Locale LOCALE = new Locale("es");
 	
-    private NavigationDrawerFragment navigationDrawerFragment;
+	private NavigationDrawerFragment navigationDrawerFragment;
+	private View container;
+	private View loading;
     private View navPanel;
     private ImageView navImage;
     private TextView navText;
@@ -62,11 +65,13 @@ public class MainActivity extends ActionBarActivity
     private SensorManager sensorManager;
     private Sensor orientation;
     
+    private String routeType = "fastest"; //{fastest, shortest, bicycle, pedestrian}
     private Boolean navMode = false;
     private Boolean newAction = true;
     private int step = 0;
     private int roadLost = 0;
     private float metersToGoal = Float.MAX_VALUE;
+
     private Road road = null;
     private Polyline roadOverlay = null;
     private FolderOverlay roadMarkers = null;
@@ -76,11 +81,6 @@ public class MainActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        //TOFIX: Hay que hacer las peticiones en otro Thread
-        //NetworkOnMainThreadException: https://code.google.com/p/osmbonuspack/issues/detail?id=9
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-    	StrictMode.setThreadPolicy(policy);
-        
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         navigationDrawerFragment = (NavigationDrawerFragment)
@@ -89,6 +89,9 @@ public class MainActivity extends ActionBarActivity
         navigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+        
+        container = (View)findViewById(R.id.container);
+        loading = (View)findViewById(R.id.loading);
         
         map = (MapView)findViewById(R.id.map);
 		map.setMultiTouchControls(true);
@@ -104,13 +107,11 @@ public class MainActivity extends ActionBarActivity
 		orientation = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 		
         lastLocation = getSharedPreferences("LastLocation",Context.MODE_PRIVATE);
-        settings = getSharedPreferences("settings",Context.MODE_PRIVATE);
-        mapOrientation = settings.getBoolean("mapOrientation", false);
-        alertSounds = settings.getBoolean("alertSounds", false);
+        settings = PreferenceManager.getDefaultSharedPreferences(this);
+        mapOrientation = settings.getBoolean("settingsAlertsSound", false);
+        alertSounds = settings.getBoolean("settingsDisplayOrientation", false);
         
-        if (alertSounds) {
-        	textToSpeech = new TextToSpeech(this, this);
-        }
+        textToSpeech = new TextToSpeech(this, this);
         
         locationOverlay = new LocationOverlay(this);
 		map.getOverlays().add(locationOverlay);
@@ -121,6 +122,8 @@ public class MainActivity extends ActionBarActivity
 		if (location != null) {
 			onLocationChanged(location);
 		}
+		
+		setTitle(R.string.navigation_drawer_explore);
     }
     private void cleanMap() {
     	step=0;
@@ -135,6 +138,8 @@ public class MainActivity extends ActionBarActivity
     		map.getOverlays().remove(roadMarkers);
     		roadMarkers = null;
     	}
+    	navPanel.setVisibility(View.GONE);
+    	map.invalidate();
     }
     private void centerMapLastLocation() {
     	map.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -175,33 +180,16 @@ public class MainActivity extends ActionBarActivity
     		editor.commit();
     	}
     }
-    private Boolean gotoGeoPoint(GeoPoint endPoint) {
-		RoadManager roadManager = new MapQuestRoadManager(MAPQUESTAPIKEY);
-		roadManager.addRequestOption("units=k");
-		//roadManager.addRequestOption("routeType=fastest");
-		//roadManager.addRequestOption("routeType=shortest");
-		//roadManager.addRequestOption("routeType=bicycle");
-		//roadManager.addRequestOption("routeType=pedestrian");
-		//Y otras opciones http://open.mapquestapi.com/guidance/
-		
+    @SuppressWarnings("unchecked")
+	private void gotoGeoPoint(GeoPoint endPoint) {
 		ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 		waypoints.add(getLastLocation());
 		waypoints.add(endPoint);
 		
-		road = roadManager.getRoad(waypoints);
-		if (road == null) {
-			Toast.makeText(getBaseContext(),
-					"Error cargando la ruta. Sin conexión a internet",
-					Toast.LENGTH_SHORT).show();
-			return false;
-		}else if (road.mStatus != Road.STATUS_OK) {
-			Toast.makeText(getBaseContext(),
-					"Error cargando la ruta. Estado="+road.mStatus,
-					Toast.LENGTH_SHORT).show();
-			return false;
-		}
-						
-		roadOverlay = RoadManager.buildRoadOverlay(road, getBaseContext());
+		new GetRoad().execute(waypoints);
+    }
+    private void gotoGeoPointPosThread() {
+    	roadOverlay = RoadManager.buildRoadOverlay(road, getBaseContext());
 		roadOverlay.setWidth(10);
 		map.getOverlays().add(roadOverlay);
 		
@@ -212,12 +200,12 @@ public class MainActivity extends ActionBarActivity
 						
 		map.invalidate();
 		
+		navPanel.setVisibility(View.VISIBLE);
+		
 		if (road.mNodes.get(step).mManeuverType < 3) {
 			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_continue));
 			step=1;
-		}	
-		
-		return true;
+		}
     }
     private void addMarkerToRoadMarkers(GeoPoint point) {
     	Drawable nodeIcon = getResources().getDrawable(R.drawable.marker_node);
@@ -229,7 +217,8 @@ public class MainActivity extends ActionBarActivity
     private int getAction(int n) {
     	//http://open.mapquestapi.com/guidance/#maneuvertypes
     	//left=10 right=01 both=11 none=00
-    	//roundabout=2X --> x=exit number 
+    	//roundabout=2X --> x=exit number
+    	//done=30
     	switch (n) {
 		case 3: case 4: case 5: case 9: case 13: case 15: case 17: case 20:
 			return 10;
@@ -273,7 +262,7 @@ public class MainActivity extends ActionBarActivity
 				}
 			}
 			break;
-		case 1:
+		case 01:
 			//Inicio vibracion
 			navText.setText("Gire a la derecha");
 			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_turn_right));
@@ -328,6 +317,42 @@ public class MainActivity extends ActionBarActivity
 		if (!text.equals("") && textToSpeech != null) {
 			textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
 		}
+	}
+	
+	/* NetworkOnMainThreadException */
+	private class GetRoad extends AsyncTask<ArrayList<GeoPoint>, Float, Boolean>{
+		@Override
+		protected void onPreExecute() {
+			container.setVisibility(View.GONE);
+			loading.setVisibility(View.VISIBLE);
+		}
+		@Override
+		protected Boolean doInBackground(ArrayList<GeoPoint>... params) {
+			RoadManager roadManager = new MapQuestRoadManager(MAPQUESTAPIKEY);
+			roadManager.addRequestOption("units=k");
+			roadManager.addRequestOption("routeType=" + routeType);
+
+			road = roadManager.getRoad(params[0]);
+			
+			if (road == null) {
+				Toast.makeText(getBaseContext(),
+						"Error cargando la ruta. Sin conexión a internet",
+						Toast.LENGTH_SHORT).show();
+				return false;
+			} else if (road.mStatus != Road.STATUS_OK) {
+				Toast.makeText(getBaseContext(),
+						"Error cargando la ruta. Estado="+road.mStatus,
+						Toast.LENGTH_SHORT).show();
+				return false;
+			}
+			
+			return true;
+		}
+		protected void onPostExecute(Boolean result) {
+			if (result) gotoGeoPointPosThread();
+			container.setVisibility(View.VISIBLE);
+			loading.setVisibility(View.GONE);
+        }
 	}
     
 	/* Override from LocationListener */
@@ -444,7 +469,7 @@ public class MainActivity extends ActionBarActivity
 	@Override
 	public void onInit(int status) {
 		if (status == TextToSpeech.SUCCESS) {
-			int result = textToSpeech.setLanguage(locale);
+			int result = textToSpeech.setLanguage(LOCALE);
 			if (result == TextToSpeech.LANG_MISSING_DATA
 					|| result == TextToSpeech.LANG_NOT_SUPPORTED) {
 				Toast.makeText(getBaseContext(),
@@ -514,37 +539,52 @@ public class MainActivity extends ActionBarActivity
     		finish();
     	}
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+ 
+        switch (requestCode) {
+        case 1:
+        	mapOrientation = settings.getBoolean("settingsDisplayOrientation", false);
+        	if (!mapOrientation) map.setMapOrientation(0.0f);
+            alertSounds = settings.getBoolean("settingsAlertsSound", false);
+            break;
+        }
+ 
+    }
     
     /* Override from ActionBarActivity */
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+    	Intent intent;
+    	
     	switch (position) {
     	//Explore
 		case 0:
+			setTitle(R.string.navigation_drawer_explore);
+			navMode = false;
 			cleanMap();
 			centerMapLastLocation();
-	    	navMode = false;
-	    	navPanel.setVisibility(View.GONE);
 			break;
 			
 		//Go
 		case 1:
+			setTitle("Navegación");
+			navMode = true;
 			cleanMap();
 			centerMapLastLocation();
-			navMode = true;
-			navPanel.setVisibility(View.VISIBLE);
 			gotoGeoPoint(new GeoPoint(39.40642, -3.11702477));
 			break;
 			
 		//Settings
 		case 2:
-			//Intent i = new Intent(getBaseContext(), SettingsActivity.class);
-			//startActivity(i);
+			intent = new Intent(getBaseContext(), SettingsActivity.class);
+			startActivityForResult(intent, 1);
 			break;
 			
 		//About
 		case 3:
-			Intent intent = new Intent(Intent.ACTION_VIEW);
+			intent = new Intent(Intent.ACTION_VIEW);
 			intent.setData(Uri.parse("https://bitbucket.org/cr4mos/tfg-sgpcmii"));
 			startActivity(intent);
 			break;

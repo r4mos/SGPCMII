@@ -9,7 +9,8 @@
     <RelativeLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:visibility="visible" >
         
         <org.osmdroid.views.MapView
             android:id="@+id/map"
@@ -65,6 +66,24 @@
         
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible" >
+        
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:minHeight="100dip"
+            android:minWidth="100dip" />
+        
+    </RelativeLayout>
+    
     <fragment
         android:id="@+id/navigation_drawer"
         android:name="tfg.naviganto.NavigationDrawerFragment"
@@ -72,5 +91,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         tools:layout="@layout/fragment_navigation_drawer" />
+
+
 
 </android.support.v4.widget.DrawerLayout>

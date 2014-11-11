@@ -58,7 +58,7 @@
                 android:gravity="center"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:text="@string/waiting_for_gps"
+                android:text="@string/alert_waiting_for_gps"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#e6e6e6" />
             

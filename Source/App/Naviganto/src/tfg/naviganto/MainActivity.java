@@ -43,7 +43,6 @@ public class MainActivity extends ActionBarActivity
 		LocationListener, SensorEventListener, TextToSpeech.OnInitListener {
 	
 	static final String MAPQUESTAPIKEY = "Fmjtd%7Cluurnu0anl%2C2s%3Do5-9wrw94";
-	static final Locale LOCALE = new Locale("es");
 	
 	private NavigationDrawerFragment navigationDrawerFragment;
 	private View container;
@@ -65,7 +64,6 @@ public class MainActivity extends ActionBarActivity
     private SensorManager sensorManager;
     private Sensor orientation;
     
-    private String routeType = "fastest"; //{fastest, shortest, bicycle, pedestrian}
     private Boolean navMode = false;
     private Boolean newAction = true;
     private int step = 0;
@@ -73,6 +71,7 @@ public class MainActivity extends ActionBarActivity
     private float metersToGoal = Float.MAX_VALUE;
 
     private Road road = null;
+    private ArrayList<String> routeExtra;
     private Polyline roadOverlay = null;
     private FolderOverlay roadMarkers = null;
 
@@ -216,96 +215,118 @@ public class MainActivity extends ActionBarActivity
     }
     private int getAction(int n) {
     	//http://open.mapquestapi.com/guidance/#maneuvertypes
-    	//left=10 right=01 both=11 none=00
-    	//roundabout=2X --> x=exit number
-    	//done=30
     	switch (n) {
 		case 3: case 4: case 5: case 9: case 13: case 15: case 17: case 20:
-			return 10;
+			return R.integer.LEFT;
 		case 6: case 7: case 8: case 10: case 14: case 16: case 18: case 21:
-			return 01;	
+			return R.integer.RIGHT;	
 		case 12:
-			return 11;
+			return R.integer.UTURN;
 		case 27:
-			return 21;
+			return R.integer.ROUNDABOUT1;
 		case 28:
-			return 22;
+			return R.integer.ROUNDABOUT2;
 		case 29:
-			return 23;
+			return R.integer.ROUNDABOUT3;
 		case 30:
-			return 24;
+			return R.integer.ROUNDABOUT4;
 		case 31:
-			return 25;
+			return R.integer.ROUNDABOUT5;
 		case 32:
-			return 26;
+			return R.integer.ROUNDABOUT6;
 		case 33:
-			return 27;
+			return R.integer.ROUNDABOUT7;
 		case 34:
-			return 28;
+			return R.integer.ROUNDABOUT8;
 		case 24:  case 25: case 26:
-			return 30;
+			return R.integer.DESTINATION;
 		default:
-	    	return 00;
+	    	return R.integer.STRAIGHT;
 		}
     }
     private void startAction(int action, float distance) {    	
     	switch (action) {
-		case 0:
+		case R.integer.STRAIGHT:
 			//Fin de la vibración
-			navText.setText("Siga recto");
+			navText.setText(R.string.action_straight_text);
 			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_continue));
 			if (alertSounds) {
 				if (distance > 100) {
-					convertTextToSpeech("Siga recto " + String.format("%.0f", distance) + " metros");
+					convertTextToSpeech(R.string.action_straight_sound_pre
+							+ String.format("%.0f", distance) 
+							+ " " + R.string.distance_meters
+							+ R.string.action_straight_sound_pos);
 				} else if (distance > 1000) {
-					convertTextToSpeech("Siga recto " + String.format("%.0f", distance/1000) + " kilometros");
+					convertTextToSpeech(R.string.action_straight_sound_pre
+							+ String.format("%.0f", distance/1000) 
+							+ " " + R.string.distance_kilometers
+							+ R.string.action_straight_sound_pos);
 				}
 			}
 			break;
-		case 01:
+		case R.integer.RIGHT:
 			//Inicio vibracion
-			navText.setText("Gire a la derecha");
+			navText.setText(R.string.action_right_text);
 			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_turn_right));
 			if (alertSounds) {
-				convertTextToSpeech("A " + String.format("%.0f", distance) + " metros, gire a la derecha");
+				convertTextToSpeech(R.string.action_right_sound_pre 
+						+ String.format("%.0f", distance) 
+						+ R.string.action_right_sound_pos);
 			}
 			break;
-		case 10:
+		case R.integer.LEFT:
 			//Inicio vibracion
-			navText.setText("Gire a la izquierda");
+			navText.setText(R.string.action_left_text);
 			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_turn_left));
 			if (alertSounds) {
-				convertTextToSpeech("A " + String.format("%.0f", distance) + " metros, gire a la izquierda");
+				convertTextToSpeech(R.string.action_left_sound_pre
+						+ String.format("%.0f", distance) 
+						+ R.string.action_left_sound_pos);
 			}
 			break;
-		case 11:
+		case R.integer.UTURN:
 			//Inicio vibracion
-			navText.setText("Dé media vuelta");
+			navText.setText(R.string.action_uturn_text);
 			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_u_turn));
 			if (alertSounds) {
-				convertTextToSpeech("Dé media vuelta");
+				convertTextToSpeech(getString(R.string.action_uturn_sound));
 			}
 			break;
-		case 21: case 22: case 23: case 24: case 25: case 26: case 27: case 28:
+		case R.integer.ROUNDABOUT1:
+		case R.integer.ROUNDABOUT2:
+		case R.integer.ROUNDABOUT3:
+		case R.integer.ROUNDABOUT4:
+		case R.integer.ROUNDABOUT5:
+		case R.integer.ROUNDABOUT6:
+		case R.integer.ROUNDABOUT7:
+		case R.integer.ROUNDABOUT8:
 			//Inicio vibracion
-			int exit = action-20;
-			navText.setText("En la rotonda coja la " + exit + " salida");
+			int exit = action-20; //roundabout=2X --> x=exit number
+			navText.setText(R.string.action_roundabout_text + exit);
 			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_roundabout));
+			if (alertSounds) {
+				convertTextToSpeech(R.string.action_roundabout_sound_pre 
+						+ String.format("%.0f", distance) 
+						+ R.string.action_roundabout_sound_pos
+						+ exit);
+			}
 			break;
-		case 30:
+		case R.integer.DESTINATION:
 			//Inicio vibracion
-			navText.setText("Ha llegado a su destino");
+			navText.setText(R.string.action_destination_text);
 			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_arrived));
 			if (alertSounds) {
-				convertTextToSpeech("En " + String.format("%.0f", distance) + " metros, llegará a su destino");
+				convertTextToSpeech(R.string.action_destination_sound_pre 
+						+ String.format("%.0f", distance) 
+						+ R.string.action_destination_sound_pos);
 			}
 			break;
-		case -1:
+		case R.integer.WRONG:
 			//Inicio vibracion
-			navText.setText("Recalculando el recorrido");
+			navText.setText(R.string.action_wrong_text);
 			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_u_turn));
 			if (alertSounds) {
-				convertTextToSpeech("Recalculando el recorrido");
+				convertTextToSpeech(getString(R.string.action_wrong_sound));
 			}
     		break;
 		}
@@ -330,18 +351,23 @@ public class MainActivity extends ActionBarActivity
 		protected Boolean doInBackground(ArrayList<GeoPoint>... params) {
 			RoadManager roadManager = new MapQuestRoadManager(MAPQUESTAPIKEY);
 			roadManager.addRequestOption("units=k");
-			roadManager.addRequestOption("routeType=" + routeType);
+			
+			if (routeExtra != null && !routeExtra.isEmpty()) {
+				for (int i=0; i<routeExtra.size(); i++) {
+					roadManager.addRequestOption(routeExtra.get(i));
+				}
+			}
 
 			road = roadManager.getRoad(params[0]);
 			
 			if (road == null) {
 				Toast.makeText(getBaseContext(),
-						"Error cargando la ruta. Sin conexión a internet",
+						R.string.alert_route_internet,
 						Toast.LENGTH_SHORT).show();
 				return false;
 			} else if (road.mStatus != Road.STATUS_OK) {
 				Toast.makeText(getBaseContext(),
-						"Error cargando la ruta. Estado="+road.mStatus,
+						R.string.alert_route_status+road.mStatus,
 						Toast.LENGTH_SHORT).show();
 				return false;
 			}
@@ -418,7 +444,7 @@ public class MainActivity extends ActionBarActivity
 			} else {
 				if (newAction) {
 					newAction = false;
-					startAction(0, distance);
+					startAction(R.integer.STRAIGHT, distance);
 				}
 			}
 			
@@ -434,7 +460,7 @@ public class MainActivity extends ActionBarActivity
 			if (roadLost < 3) {
 				roadLost++;
 			} else {
-				startAction(-1, 0);
+				startAction(R.integer.WRONG, 0);
 				GeoPoint endPoint = road.mNodes.get(road.mNodes.size()-1).mLocation;
 				cleanMap();
 				gotoGeoPoint(endPoint);
@@ -469,11 +495,11 @@ public class MainActivity extends ActionBarActivity
 	@Override
 	public void onInit(int status) {
 		if (status == TextToSpeech.SUCCESS) {
-			int result = textToSpeech.setLanguage(LOCALE);
+			int result = textToSpeech.setLanguage(new Locale(getString(R.string.locale)));
 			if (result == TextToSpeech.LANG_MISSING_DATA
 					|| result == TextToSpeech.LANG_NOT_SUPPORTED) {
 				Toast.makeText(getBaseContext(),
-						"Lenguaje no soportado",
+						R.string.alert_lang_not_supported,
 						Toast.LENGTH_SHORT).show();
 			} else {
 				convertTextToSpeech("");
@@ -526,14 +552,14 @@ public class MainActivity extends ActionBarActivity
     	//Exit dialog
     	if (navMode) {
     		AlertDialog.Builder d = new AlertDialog.Builder(this);  
-            d.setMessage("¿Salir sin acabar la navegación?");            
+            d.setMessage(R.string.alert_exit_on_nav);            
             d.setCancelable(false);  
-            d.setPositiveButton("Si", new DialogInterface.OnClickListener() {  
+            d.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {  
                 public void onClick(DialogInterface d, int id) {  
                 	finish();
                 }  
             });  
-            d.setNegativeButton("No", null);            
+            d.setNegativeButton(R.string.no, null);            
             d.show();
     	} else {
     		finish();
@@ -559,30 +585,33 @@ public class MainActivity extends ActionBarActivity
     	Intent intent;
     	
     	switch (position) {
-    	//Explore
+    	
 		case 0:
 			setTitle(R.string.navigation_drawer_explore);
 			navMode = false;
 			cleanMap();
-			centerMapLastLocation();
-			break;
+			centerMapLastLocation();;
+			break; 
 			
-		//Go
 		case 1:
-			setTitle("Navegación");
+			//Actividad de seleccionar destino
+			routeExtra = new ArrayList<String>();
+			//http://open.mapquestapi.com/guidance/#advancedoptions
+			//{fastest, shortest, bicycle, pedestrian}
+			routeExtra.add("routeType=fastest");
+			//
+			setTitle(R.string.navigation_drawer_going);
 			navMode = true;
 			cleanMap();
 			centerMapLastLocation();
 			gotoGeoPoint(new GeoPoint(39.40642, -3.11702477));
 			break;
 			
-		//Settings
 		case 2:
 			intent = new Intent(getBaseContext(), SettingsActivity.class);
 			startActivityForResult(intent, 1);
 			break;
 			
-		//About
 		case 3:
 			intent = new Intent(Intent.ACTION_VIEW);
 			intent.setData(Uri.parse("https://bitbucket.org/cr4mos/tfg-sgpcmii"));

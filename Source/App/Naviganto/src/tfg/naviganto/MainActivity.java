@@ -143,12 +143,12 @@ public class MainActivity
     	navPanel.setVisibility(View.GONE);
     	map.invalidate();
     }
-    private void centerMapLastLocation() {
+    private void centerMap(final GeoPoint loc) {
     	map.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 		    @Override
 		    public void onGlobalLayout() {
 		    	map.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-		    	map.getController().setCenter(getLastLocation());
+		    	map.getController().setCenter(loc);
 		    }
 		});
     }
@@ -534,7 +534,7 @@ public class MainActivity
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
       super.onConfigurationChanged(newConfig);
-      centerMapLastLocation();
+      centerMap(getLastLocation());
     }
     @Override
     public void onPause() {
@@ -565,7 +565,7 @@ public class MainActivity
 			Toast.makeText(getBaseContext(), R.string.alert_no_internet,Toast.LENGTH_SHORT).show();
 		}
         
-        centerMapLastLocation();
+        centerMap(getLastLocation());
     }
     @Override
     protected void onDestroy() {
@@ -603,7 +603,7 @@ public class MainActivity
         		setTitle(R.string.navigation_drawer_going);
     			navMode = true;
     			cleanMap();
-    			centerMapLastLocation();
+    			centerMap(getLastLocation());
 
     			transport = data.getStringExtra("transport");	
     			gotoGeoPoint( new GeoPoint( data.getDoubleExtra("lat", 39.40642),
@@ -611,7 +611,7 @@ public class MainActivity
             }
             if (resultCode == RESULT_CANCELED) {
             	Toast.makeText(getBaseContext(),R.string.alert_no_destination,Toast.LENGTH_SHORT).show();
-    			centerMapLastLocation();
+    			centerMap(getLastLocation());
             }
         case SETTINGS:
         	mapOrientation = settings.getBoolean("settingsDisplayOrientation", false);
@@ -634,7 +634,7 @@ public class MainActivity
 			setTitle(R.string.navigation_drawer_explore);
 			navMode = false;
 			cleanMap();
-			centerMapLastLocation();
+			centerMap(getLastLocation());
 			break; 
 			
 		case GO:

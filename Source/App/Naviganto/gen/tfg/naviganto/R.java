@@ -1175,20 +1175,6 @@ containing a value of this type.
         public static final int withText=0x7f06000c;
     }
     public static final class integer {
-        public static final int DESTINATION=0x7f0a000e;
-        public static final int LEFT=0x7f0a0003;
-        public static final int RIGHT=0x7f0a0004;
-        public static final int ROUNDABOUT1=0x7f0a0006;
-        public static final int ROUNDABOUT2=0x7f0a0007;
-        public static final int ROUNDABOUT3=0x7f0a0008;
-        public static final int ROUNDABOUT4=0x7f0a0009;
-        public static final int ROUNDABOUT5=0x7f0a000a;
-        public static final int ROUNDABOUT6=0x7f0a000b;
-        public static final int ROUNDABOUT7=0x7f0a000c;
-        public static final int ROUNDABOUT8=0x7f0a000d;
-        public static final int STRAIGHT=0x7f0a0002;
-        public static final int UTURN=0x7f0a0005;
-        public static final int WRONG=0x7f0a0001;
         /**  The maximum number of action buttons that should be permitted within
          an action bar/action mode. This will be used to determine how many
          showAsAction="ifRoom" items can fit. "always" items can override this. 
@@ -1239,9 +1225,10 @@ containing a value of this type.
         public static final int abc_search_view=0x7f030016;
         public static final int abc_simple_decor=0x7f030017;
         public static final int activity_main=0x7f030018;
-        public static final int bonuspack_bubble=0x7f030019;
-        public static final int fragment_navigation_drawer=0x7f03001a;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001b;
+        public static final int activity_select_end=0x7f030019;
+        public static final int bonuspack_bubble=0x7f03001a;
+        public static final int fragment_navigation_drawer=0x7f03001b;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001c;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -1303,15 +1290,16 @@ containing a value of this type.
         public static final int action_uturn_text=0x7f0b0027;
         public static final int action_wrong_sound=0x7f0b002d;
         public static final int action_wrong_text=0x7f0b002c;
-        public static final int alert_exit_on_nav=0x7f0b0035;
-        public static final int alert_lang_not_supported=0x7f0b0033;
-        public static final int alert_route_internet=0x7f0b0031;
-        public static final int alert_route_status=0x7f0b0032;
-        public static final int alert_waiting_for_gps=0x7f0b0034;
+        public static final int alert_exit_on_nav=0x7f0b0036;
+        public static final int alert_lang_not_supported=0x7f0b0034;
+        public static final int alert_no_destination=0x7f0b0031;
+        public static final int alert_route_internet=0x7f0b0032;
+        public static final int alert_route_status=0x7f0b0033;
+        public static final int alert_waiting_for_gps=0x7f0b0035;
         public static final int app_name=0x7f0b000d;
         public static final int distance_kilometers=0x7f0b001d;
         public static final int distance_meters=0x7f0b001c;
-        public static final int empy=0x7f0b0038;
+        public static final int empy=0x7f0b0039;
         public static final int locale=0x7f0b000e;
         public static final int navigation_drawer_about=0x7f0b0013;
         public static final int navigation_drawer_close=0x7f0b0015;
@@ -1320,14 +1308,14 @@ containing a value of this type.
         public static final int navigation_drawer_going=0x7f0b0011;
         public static final int navigation_drawer_open=0x7f0b0014;
         public static final int navigation_drawer_settings=0x7f0b0012;
-        public static final int no=0x7f0b0037;
+        public static final int no=0x7f0b0038;
         public static final int settings_alerts=0x7f0b0016;
         public static final int settings_alerts_sound=0x7f0b0017;
         public static final int settings_alerts_sound_summary=0x7f0b0018;
         public static final int settings_display=0x7f0b0019;
         public static final int settings_display_orientation=0x7f0b001a;
         public static final int settings_display_orientation_summary=0x7f0b001b;
-        public static final int yes=0x7f0b0036;
+        public static final int yes=0x7f0b0037;
     }
     public static final class style {
         /** 

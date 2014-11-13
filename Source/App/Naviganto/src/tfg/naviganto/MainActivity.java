@@ -38,11 +38,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.widget.DrawerLayout;
 
-public class MainActivity extends ActionBarActivity
-		implements NavigationDrawerFragment.NavigationDrawerCallbacks, 
-		LocationListener, SensorEventListener, TextToSpeech.OnInitListener {
-	
-	static final String MAPQUESTAPIKEY = "Fmjtd%7Cluurnu0anl%2C2s%3Do5-9wrw94";
+public class MainActivity 
+		extends ActionBarActivity
+		implements Const, NavigationDrawerFragment.NavigationDrawerCallbacks, 
+			LocationListener, SensorEventListener, TextToSpeech.OnInitListener {
 	
 	private NavigationDrawerFragment navigationDrawerFragment;
 	private View container;
@@ -71,7 +70,7 @@ public class MainActivity extends ActionBarActivity
     private float metersToGoal = Float.MAX_VALUE;
 
     private Road road = null;
-    private ArrayList<String> routeExtra;
+    private String transport;
     private Polyline roadOverlay = null;
     private FolderOverlay roadMarkers = null;
 
@@ -124,6 +123,8 @@ public class MainActivity extends ActionBarActivity
 		
 		setTitle(R.string.navigation_drawer_explore);
     }
+    
+    
     private void cleanMap() {
     	step=0;
 		metersToGoal = Float.MAX_VALUE;
@@ -158,6 +159,8 @@ public class MainActivity extends ActionBarActivity
     		return locationOverlay.getLocation();
     	}
     }
+    
+    
     private float getDistance(GeoPoint p1, GeoPoint p2) {
         double lat1 = ((double)p1.getLatitudeE6()) / 1e6;
         double lng1 = ((double)p1.getLongitudeE6()) / 1e6;
@@ -170,6 +173,8 @@ public class MainActivity extends ActionBarActivity
     private float kmhToMs(int k){
     	return (float)(k/3.6);
     }
+    
+    
     private void setPreferences(){
     	//Last location
     	if (locationOverlay.getLocation() != null) {
@@ -179,6 +184,8 @@ public class MainActivity extends ActionBarActivity
     		editor.commit();
     	}
     }
+    
+    
     @SuppressWarnings("unchecked")
 	private void gotoGeoPoint(GeoPoint endPoint) {
 		ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
@@ -187,6 +194,43 @@ public class MainActivity extends ActionBarActivity
 		
 		new GetRoad().execute(waypoints);
     }
+    private class GetRoad extends AsyncTask<ArrayList<GeoPoint>, Float, Boolean>{
+		@Override
+		protected void onPreExecute() {
+			container.setVisibility(View.GONE);
+			loading.setVisibility(View.VISIBLE);
+		}
+		@Override
+		protected Boolean doInBackground(ArrayList<GeoPoint>... params) {
+			RoadManager roadManager = new MapQuestRoadManager(MAPQUESTAPIKEY);
+			roadManager.addRequestOption("units=k");
+			
+			if (transport != null && transport != "") {
+				roadManager.addRequestOption("routeType=" + transport);
+			}
+
+			road = roadManager.getRoad(params[0]);
+			
+			if (road == null) {
+				Toast.makeText(getBaseContext(),
+						R.string.alert_route_internet,
+						Toast.LENGTH_SHORT).show();
+				return false;
+			} else if (road.mStatus != Road.STATUS_OK) {
+				Toast.makeText(getBaseContext(),
+						R.string.alert_route_status+road.mStatus,
+						Toast.LENGTH_SHORT).show();
+				return false;
+			}
+			
+			return true;
+		}
+		protected void onPostExecute(Boolean result) {
+			if (result) gotoGeoPointPosThread();
+			container.setVisibility(View.VISIBLE);
+			loading.setVisibility(View.GONE);
+        }
+	}
     private void gotoGeoPointPosThread() {
     	roadOverlay = RoadManager.buildRoadOverlay(road, getBaseContext());
 		roadOverlay.setWidth(10);
@@ -213,40 +257,42 @@ public class MainActivity extends ActionBarActivity
     	marker.setIcon(nodeIcon);
 		roadMarkers.add(marker);
     }
+    
+    
     private int getAction(int n) {
     	//http://open.mapquestapi.com/guidance/#maneuvertypes
     	switch (n) {
 		case 3: case 4: case 5: case 9: case 13: case 15: case 17: case 20:
-			return R.integer.LEFT;
+			return LEFT;
 		case 6: case 7: case 8: case 10: case 14: case 16: case 18: case 21:
-			return R.integer.RIGHT;	
+			return RIGHT;	
 		case 12:
-			return R.integer.UTURN;
+			return UTURN;
 		case 27:
-			return R.integer.ROUNDABOUT1;
+			return ROUNDABOUT1;
 		case 28:
-			return R.integer.ROUNDABOUT2;
+			return ROUNDABOUT2;
 		case 29:
-			return R.integer.ROUNDABOUT3;
+			return ROUNDABOUT3;
 		case 30:
-			return R.integer.ROUNDABOUT4;
+			return ROUNDABOUT4;
 		case 31:
-			return R.integer.ROUNDABOUT5;
+			return ROUNDABOUT5;
 		case 32:
-			return R.integer.ROUNDABOUT6;
+			return ROUNDABOUT6;
 		case 33:
-			return R.integer.ROUNDABOUT7;
+			return ROUNDABOUT7;
 		case 34:
-			return R.integer.ROUNDABOUT8;
+			return ROUNDABOUT8;
 		case 24:  case 25: case 26:
-			return R.integer.DESTINATION;
+			return DESTINATION;
 		default:
-	    	return R.integer.STRAIGHT;
+	    	return STRAIGHT;
 		}
     }
     private void startAction(int action, float distance) {    	
     	switch (action) {
-		case R.integer.STRAIGHT:
+		case STRAIGHT:
 			//Fin de la vibración
 			navText.setText(R.string.action_straight_text);
 			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_continue));
@@ -264,7 +310,7 @@ public class MainActivity extends ActionBarActivity
 				}
 			}
 			break;
-		case R.integer.RIGHT:
+		case RIGHT:
 			//Inicio vibracion
 			navText.setText(R.string.action_right_text);
 			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_turn_right));
@@ -274,7 +320,7 @@ public class MainActivity extends ActionBarActivity
 						+ R.string.action_right_sound_pos);
 			}
 			break;
-		case R.integer.LEFT:
+		case LEFT:
 			//Inicio vibracion
 			navText.setText(R.string.action_left_text);
 			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_turn_left));
@@ -284,7 +330,7 @@ public class MainActivity extends ActionBarActivity
 						+ R.string.action_left_sound_pos);
 			}
 			break;
-		case R.integer.UTURN:
+		case UTURN:
 			//Inicio vibracion
 			navText.setText(R.string.action_uturn_text);
 			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_u_turn));
@@ -292,14 +338,14 @@ public class MainActivity extends ActionBarActivity
 				convertTextToSpeech(getString(R.string.action_uturn_sound));
 			}
 			break;
-		case R.integer.ROUNDABOUT1:
-		case R.integer.ROUNDABOUT2:
-		case R.integer.ROUNDABOUT3:
-		case R.integer.ROUNDABOUT4:
-		case R.integer.ROUNDABOUT5:
-		case R.integer.ROUNDABOUT6:
-		case R.integer.ROUNDABOUT7:
-		case R.integer.ROUNDABOUT8:
+		case ROUNDABOUT1:
+		case ROUNDABOUT2:
+		case ROUNDABOUT3:
+		case ROUNDABOUT4:
+		case ROUNDABOUT5:
+		case ROUNDABOUT6:
+		case ROUNDABOUT7:
+		case ROUNDABOUT8:
 			//Inicio vibracion
 			int exit = action-20; //roundabout=2X --> x=exit number
 			navText.setText(R.string.action_roundabout_text + exit);
@@ -311,7 +357,7 @@ public class MainActivity extends ActionBarActivity
 						+ exit);
 			}
 			break;
-		case R.integer.DESTINATION:
+		case DESTINATION:
 			//Inicio vibracion
 			navText.setText(R.string.action_destination_text);
 			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_arrived));
@@ -321,7 +367,7 @@ public class MainActivity extends ActionBarActivity
 						+ R.string.action_destination_sound_pos);
 			}
 			break;
-		case R.integer.WRONG:
+		case WRONG:
 			//Inicio vibracion
 			navText.setText(R.string.action_wrong_text);
 			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_u_turn));
@@ -334,53 +380,15 @@ public class MainActivity extends ActionBarActivity
     private void stopAction() {
     	//Fin de la vibración
     }
+    
+    
 	private void convertTextToSpeech(String text) {
 		if (!text.equals("") && textToSpeech != null) {
 			textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
 		}
 	}
-	
-	/* NetworkOnMainThreadException */
-	private class GetRoad extends AsyncTask<ArrayList<GeoPoint>, Float, Boolean>{
-		@Override
-		protected void onPreExecute() {
-			container.setVisibility(View.GONE);
-			loading.setVisibility(View.VISIBLE);
-		}
-		@Override
-		protected Boolean doInBackground(ArrayList<GeoPoint>... params) {
-			RoadManager roadManager = new MapQuestRoadManager(MAPQUESTAPIKEY);
-			roadManager.addRequestOption("units=k");
-			
-			if (routeExtra != null && !routeExtra.isEmpty()) {
-				for (int i=0; i<routeExtra.size(); i++) {
-					roadManager.addRequestOption(routeExtra.get(i));
-				}
-			}
-
-			road = roadManager.getRoad(params[0]);
-			
-			if (road == null) {
-				Toast.makeText(getBaseContext(),
-						R.string.alert_route_internet,
-						Toast.LENGTH_SHORT).show();
-				return false;
-			} else if (road.mStatus != Road.STATUS_OK) {
-				Toast.makeText(getBaseContext(),
-						R.string.alert_route_status+road.mStatus,
-						Toast.LENGTH_SHORT).show();
-				return false;
-			}
-			
-			return true;
-		}
-		protected void onPostExecute(Boolean result) {
-			if (result) gotoGeoPointPosThread();
-			container.setVisibility(View.VISIBLE);
-			loading.setVisibility(View.GONE);
-        }
-	}
     
+	
 	/* Override from LocationListener */
     @Override
     public void onLocationChanged(Location loc) {
@@ -444,7 +452,7 @@ public class MainActivity extends ActionBarActivity
 			} else {
 				if (newAction) {
 					newAction = false;
-					startAction(R.integer.STRAIGHT, distance);
+					startAction(STRAIGHT, distance);
 				}
 			}
 			
@@ -460,7 +468,7 @@ public class MainActivity extends ActionBarActivity
 			if (roadLost < 3) {
 				roadLost++;
 			} else {
-				startAction(R.integer.WRONG, 0);
+				startAction(WRONG, 0);
 				GeoPoint endPoint = road.mNodes.get(road.mNodes.size()-1).mLocation;
 				cleanMap();
 				gotoGeoPoint(endPoint);
@@ -474,22 +482,20 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {}  
 
+    
     /* Override from SensorEventListener */
     static float azimuthOrientation = 0.0f;
     @Override
     public void onSensorChanged(SensorEvent event) {
-    	if (navMode) {
-    		float azimuth = event.values[0];
-			if (Math.abs(azimuth-azimuthOrientation)>2.0f){
-				azimuthOrientation = azimuth;
-			}
-    		map.setMapOrientation(-azimuth);
-		} else {
-			map.setMapOrientation(0.0f);
+    	float azimuth = event.values[0];
+		if (Math.abs(azimuth-azimuthOrientation)>2.0f){
+			azimuthOrientation = azimuth;
 		}
+    	map.setMapOrientation(-azimuth);
     }
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+    
     
     /* Override from TextToSpeech */
 	@Override
@@ -507,6 +513,7 @@ public class MainActivity extends ActionBarActivity
 		} 
 	}
     
+	
     /* Override from Activity */
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -570,7 +577,22 @@ public class MainActivity extends ActionBarActivity
         super.onActivityResult(requestCode, resultCode, data);
  
         switch (requestCode) {
-        case 1:
+        case GO:
+        	if(resultCode == RESULT_OK){
+        		setTitle(R.string.navigation_drawer_going);
+    			navMode = true;
+    			cleanMap();
+    			centerMapLastLocation();
+
+    			transport = data.getStringExtra("transport");	
+    			gotoGeoPoint( new GeoPoint( data.getDoubleExtra("lat", 39.40642),
+    										data.getDoubleExtra("lon", -3.11702477) ) );
+            }
+            if (resultCode == RESULT_CANCELED) {
+            	Toast.makeText(getBaseContext(),R.string.alert_no_destination,Toast.LENGTH_SHORT).show();
+    			centerMapLastLocation();
+            }
+        case SETTINGS:
         	mapOrientation = settings.getBoolean("settingsDisplayOrientation", false);
         	if (!mapOrientation) map.setMapOrientation(0.0f);
             alertSounds = settings.getBoolean("settingsAlertsSound", false);
@@ -579,40 +601,32 @@ public class MainActivity extends ActionBarActivity
  
     }
     
+    
     /* Override from ActionBarActivity */
     @Override
     public void onNavigationDrawerItemSelected(int position) {
     	Intent intent;
     	
     	switch (position) {
-    	
-		case 0:
+
+		case EXPLORE:
 			setTitle(R.string.navigation_drawer_explore);
 			navMode = false;
 			cleanMap();
-			centerMapLastLocation();;
+			centerMapLastLocation();
 			break; 
 			
-		case 1:
-			//Actividad de seleccionar destino
-			routeExtra = new ArrayList<String>();
-			//http://open.mapquestapi.com/guidance/#advancedoptions
-			//{fastest, shortest, bicycle, pedestrian}
-			routeExtra.add("routeType=fastest");
-			//
-			setTitle(R.string.navigation_drawer_going);
-			navMode = true;
-			cleanMap();
-			centerMapLastLocation();
-			gotoGeoPoint(new GeoPoint(39.40642, -3.11702477));
+		case GO:
+			intent = new Intent(getBaseContext(), SelectEndActivity.class);
+			startActivityForResult(intent, GO);
 			break;
 			
-		case 2:
+		case SETTINGS:
 			intent = new Intent(getBaseContext(), SettingsActivity.class);
-			startActivityForResult(intent, 1);
+			startActivityForResult(intent, SETTINGS);
 			break;
 			
-		case 3:
+		case ABOUT:
 			intent = new Intent(Intent.ACTION_VIEW);
 			intent.setData(Uri.parse("https://bitbucket.org/cr4mos/tfg-sgpcmii"));
 			startActivity(intent);

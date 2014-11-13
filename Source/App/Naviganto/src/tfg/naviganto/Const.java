@@ -1,0 +1,34 @@
+package tfg.naviganto;
+
+public interface Const {
+	//API keys
+	static final String MAPQUESTAPIKEY = "Fmjtd%7Cluurnu0anl%2C2s%3Do5-9wrw94";
+	
+	//Actions
+	static final int WRONG = -1;
+	static final int STRAIGHT = 0;
+	static final int LEFT = 10;
+	static final int RIGHT = 1;
+	static final int UTURN = 11;
+	static final int ROUNDABOUT1 = 21;
+	static final int ROUNDABOUT2 = 22;
+	static final int ROUNDABOUT3 = 23;
+	static final int ROUNDABOUT4 = 24;
+	static final int ROUNDABOUT5 = 25;
+	static final int ROUNDABOUT6 = 26;
+	static final int ROUNDABOUT7 = 27;
+	static final int ROUNDABOUT8 = 28;
+	static final int DESTINATION = 30;
+	
+	//Menu
+	static final int EXPLORE = 0;
+	static final int GO = 1;
+	static final int SETTINGS = 2;
+	static final int ABOUT = 3;
+	
+	//Transport
+	static final String FASTEST = "fastest";
+	static final String SHORTEST = "shortest";
+	static final String BICYCLE = "bicycle";
+	static final String PEDESTRIAN = "pedestrian";
+}

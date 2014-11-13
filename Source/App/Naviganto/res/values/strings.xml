@@ -3,7 +3,6 @@
 
     <string name="app_name">Naviganto</string>
     <string name="locale">es</string>
-    
     <string name="navigation_drawer_explore">Explorar mapa</string>
     <string name="navigation_drawer_go">Seleccionar destino</string>
     <string name="navigation_drawer_going">Navegación</string>
@@ -11,49 +10,39 @@
     <string name="navigation_drawer_about">Sobre Naviganto</string>
     <string name="navigation_drawer_open">Abrir menú</string>
     <string name="navigation_drawer_close">Cerrar menú</string>
-    
     <string name="settings_alerts">Avisos</string>
     <string name="settings_alerts_sound">Avisos sonoros</string>
     <string name="settings_alerts_sound_summary">Activa o desactiva los avisos sonoros</string>
     <string name="settings_display">Visualización</string>
     <string name="settings_display_orientation">Rotar mapa</string>
-    <string name="settings_display_orientation_summary">Activa o desactiva la rotación automática del mapa mientras se navega. Gasta más batería</string>
-    
+    <string name="settings_display_orientation_summary">Activa o desactiva la rotación automática del mapa. Gasta más batería</string>
     <string name="distance_meters">metros</string>
     <string name="distance_kilometers">kilómetros</string>
-    
     <string name="action_straight_text">Siga recto</string>
     <string name="action_straight_sound_pre">Siga recto </string>
     <string name="action_straight_sound_pos"></string>
-    
     <string name="action_right_text">Gire a la derecha</string>
     <string name="action_right_sound_pre">A </string>
     <string name="action_right_sound_pos"> metros, gire a la derecha</string>
-    
     <string name="action_left_text">Gire a la izquierda</string>
     <string name="action_left_sound_pre">A </string>
     <string name="action_left_sound_pos"> metros, gire a la izquierda</string>
-    
     <string name="action_uturn_text">Dé media vuelta</string>
     <string name="action_uturn_sound">Dé media vuelta</string>
-    
     <string name="action_roundabout_text">En la rotonda coja la salida número </string>
     <string name="action_roundabout_sound_pre">A </string>
     <string name="action_roundabout_sound_pos"> metros, en la rotonda coja la salida número </string>
-    
     <string name="action_wrong_text">Recalculando el recorrido</string>
     <string name="action_wrong_sound">Recalculando el recorrido</string>
-    
     <string name="action_destination_text">Ha llegado a su destino</string>
     <string name="action_destination_sound_pre">A </string>
-    <string name="action_destination_sound_pos"> metros, llegará a su destino</string>    
-    
+    <string name="action_destination_sound_pos"> metros, llegará a su destino</string>
+    <string name="alert_no_destination">No ha seleccionado ningún destino</string>
     <string name="alert_route_internet">Error cargando la ruta. Sin conexión a internet</string>
     <string name="alert_route_status">Error cargando la ruta. Estado=</string>
     <string name="alert_lang_not_supported">Lenguaje no soportado</string>
     <string name="alert_waiting_for_gps">Esperando señal de GPS</string>
     <string name="alert_exit_on_nav">¿Salir sin acabar la navegación?</string>
-    
     <string name="yes">Si</string>
     <string name="no">No</string>
     <string name="empy"></string>

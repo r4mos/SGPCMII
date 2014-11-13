@@ -26,6 +26,8 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -174,6 +176,16 @@ public class MainActivity
     	return (float)(k/3.6);
     }
     
+    private boolean isOnline() {
+    	ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+    	NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+    	if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+    		return true;
+    	}
+
+    	return false;
+    }
     
     private void setPreferences(){
     	//Last location
@@ -192,7 +204,11 @@ public class MainActivity
 		waypoints.add(getLastLocation());
 		waypoints.add(endPoint);
 		
-		new GetRoad().execute(waypoints);
+		if (isOnline()) {
+			new GetRoad().execute(waypoints);
+		} else {
+			Toast.makeText(getBaseContext(), R.string.alert_no_internet,Toast.LENGTH_SHORT).show();
+		}
     }
     private class GetRoad extends AsyncTask<ArrayList<GeoPoint>, Float, Boolean>{
 		@Override
@@ -208,7 +224,7 @@ public class MainActivity
 			if (transport != null && transport != "") {
 				roadManager.addRequestOption("routeType=" + transport);
 			}
-
+			
 			road = roadManager.getRoad(params[0]);
 			
 			if (road == null) {
@@ -536,7 +552,7 @@ public class MainActivity
 			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
 			locationOverlay.setEnabled(true);
 		} else {
-			Toast.makeText(getBaseContext(), "GPS deshabilitado", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getBaseContext(), R.string.alert_no_gps, Toast.LENGTH_SHORT).show();
 			locationOverlay.setEnabled(false);
 			
 		}
@@ -544,6 +560,11 @@ public class MainActivity
         if (mapOrientation) {
         	sensorManager.registerListener(this, orientation, SensorManager.SENSOR_DELAY_NORMAL);
         }
+        
+        if (!isOnline()) {
+			Toast.makeText(getBaseContext(), R.string.alert_no_internet,Toast.LENGTH_SHORT).show();
+		}
+        
         centerMapLastLocation();
     }
     @Override

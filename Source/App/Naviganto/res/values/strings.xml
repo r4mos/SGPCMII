@@ -37,6 +37,8 @@
     <string name="action_destination_text">Ha llegado a su destino</string>
     <string name="action_destination_sound_pre">A </string>
     <string name="action_destination_sound_pos"> metros, llegará a su destino</string>
+    <string name="alert_no_gps">GPS deshabilitado</string>
+    <string name="alert_no_internet">No tiene conexión a Internet</string>
     <string name="alert_no_destination">No ha seleccionado ningún destino</string>
     <string name="alert_route_internet">Error cargando la ruta. Sin conexión a internet</string>
     <string name="alert_route_status">Error cargando la ruta. Estado=</string>

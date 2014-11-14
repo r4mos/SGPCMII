@@ -10,6 +10,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -33,7 +35,7 @@ public class SelectEndActivity extends Activity implements Const {
 	private ListView searches;
 	private ProgressBar progressBar;
 	
-	List<Address> foundAdresses;
+	private List<Address> foundAdresses;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,7 @@ public class SelectEndActivity extends Activity implements Const {
 		});
 	}
 	
+	
 	private String getSelectedTransport() {
 		int select = transport.getSelectedItemPosition();
 		switch (select) {
@@ -87,6 +90,7 @@ public class SelectEndActivity extends Activity implements Const {
 		}
 		return "";
 	}
+	
 	
 	private class GetAddresses extends AsyncTask<Void, Float, Boolean> {
 		@Override
@@ -151,7 +155,6 @@ public class SelectEndActivity extends Activity implements Const {
 			searches.setAdapter(adapter);
 		}
 	}
-	
 	private static boolean isNumber(String string) {
 	    if (string == null || string == "") {
 	        return false;
@@ -164,10 +167,35 @@ public class SelectEndActivity extends Activity implements Const {
 	    return true;
 	}
 	
+	
+	private boolean isOnline() {
+    	ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+    	NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+    	if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+    		return true;
+    	}
+
+    	return false;
+    }
+	
+	
 	@Override
     public void onBackPressed() {
 		Intent returnIntent = new Intent();
 		setResult(RESULT_CANCELED, returnIntent);
 		finish();
+    }
+	
+    @Override
+    public void onResume() {
+        super.onResume();
+        
+        if (isOnline()) {
+        	search_button.setEnabled(true);
+        } else {
+			Toast.makeText(getBaseContext(), R.string.alert_no_internet,Toast.LENGTH_SHORT).show();
+			search_button.setEnabled(false);
+		}
     }
 }

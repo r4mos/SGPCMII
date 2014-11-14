@@ -215,6 +215,7 @@ public class MainActivity
 		protected void onPreExecute() {
 			container.setVisibility(View.GONE);
 			loading.setVisibility(View.VISIBLE);
+			navigationDrawerFragment.setMenuVisibility(false);
 		}
 		@Override
 		protected Boolean doInBackground(ArrayList<GeoPoint>... params) {
@@ -245,6 +246,7 @@ public class MainActivity
 			if (result) gotoGeoPointPosThread();
 			container.setVisibility(View.VISIBLE);
 			loading.setVisibility(View.GONE);
+			navigationDrawerFragment.setMenuVisibility(true);
         }
 	}
     private void gotoGeoPointPosThread() {

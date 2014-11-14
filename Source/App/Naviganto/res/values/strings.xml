@@ -45,6 +45,11 @@
     <string name="alert_lang_not_supported">Lenguaje no soportado</string>
     <string name="alert_waiting_for_gps">Esperando señal de GPS</string>
     <string name="alert_exit_on_nav">¿Salir sin acabar la navegación?</string>
+    <string name="transport_fastest">Moto o coche, camino más rápido</string>
+    <string name="transport_shortest">Moto o coche, camino más corto</string>
+    <string name="transport_bicycle">Bicicleta</string>
+    <string name="transport_pedestrian">Peatón</string>
+    <string name="button_search">Buscar</string>  
     <string name="yes">Si</string>
     <string name="no">No</string>
     <string name="empy"></string>

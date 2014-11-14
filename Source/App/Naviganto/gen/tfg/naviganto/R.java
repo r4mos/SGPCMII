@@ -1097,6 +1097,7 @@ containing a value of this type.
         public static final int marker_node=0x7f020062;
     }
     public static final class id {
+        public static final int LinearLayout1=0x7f060047;
         public static final int action_bar=0x7f06001c;
         public static final int action_bar_activity_content=0x7f060015;
         public static final int action_bar_container=0x7f06001b;
@@ -1111,11 +1112,11 @@ containing a value of this type.
         public static final int activity_chooser_view_content=0x7f060025;
         public static final int always=0x7f06000b;
         public static final int beginning=0x7f060011;
-        public static final int bubble_description=0x7f06004a;
-        public static final int bubble_image=0x7f060047;
-        public static final int bubble_moreinfo=0x7f060049;
-        public static final int bubble_subdescription=0x7f06004b;
-        public static final int bubble_title=0x7f060048;
+        public static final int bubble_description=0x7f06004f;
+        public static final int bubble_image=0x7f06004c;
+        public static final int bubble_moreinfo=0x7f06004e;
+        public static final int bubble_subdescription=0x7f060050;
+        public static final int bubble_title=0x7f06004d;
         public static final int checkbox=0x7f06002d;
         public static final int collapseActionView=0x7f06000d;
         public static final int container=0x7f06003d;
@@ -1135,6 +1136,7 @@ containing a value of this type.
         public static final int image=0x7f060027;
         public static final int listMode=0x7f060001;
         public static final int list_item=0x7f060029;
+        public static final int list_results=0x7f06004a;
         public static final int loading=0x7f060044;
         public static final int map=0x7f06003e;
         public static final int middle=0x7f060012;
@@ -1147,6 +1149,7 @@ containing a value of this type.
         public static final int never=0x7f060009;
         public static final int none=0x7f060010;
         public static final int normal=0x7f060000;
+        public static final int progressBar=0x7f06004b;
         public static final int progressBar1=0x7f060045;
         public static final int progress_circular=0x7f060018;
         public static final int progress_horizontal=0x7f060019;
@@ -1156,6 +1159,7 @@ containing a value of this type.
         public static final int search_button=0x7f060033;
         public static final int search_close_btn=0x7f060038;
         public static final int search_edit_frame=0x7f060034;
+        public static final int search_form=0x7f060049;
         public static final int search_go_btn=0x7f06003a;
         public static final int search_mag_icon=0x7f060035;
         public static final int search_plate=0x7f060036;
@@ -1165,11 +1169,13 @@ containing a value of this type.
         public static final int showCustom=0x7f060007;
         public static final int showHome=0x7f060004;
         public static final int showTitle=0x7f060006;
+        public static final int spinner_format=0x7f060051;
         public static final int split_action_bar=0x7f06001e;
         public static final int submit_area=0x7f060039;
         public static final int tabMode=0x7f060002;
         public static final int title=0x7f06002b;
         public static final int top_action_bar=0x7f060020;
+        public static final int transport=0x7f060048;
         public static final int up=0x7f060021;
         public static final int useLogo=0x7f060003;
         public static final int withText=0x7f06000c;
@@ -1228,7 +1234,8 @@ containing a value of this type.
         public static final int activity_select_end=0x7f030019;
         public static final int bonuspack_bubble=0x7f03001a;
         public static final int fragment_navigation_drawer=0x7f03001b;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001c;
+        public static final int simple_item=0x7f03001c;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001d;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -1299,9 +1306,10 @@ containing a value of this type.
         public static final int alert_route_status=0x7f0b0035;
         public static final int alert_waiting_for_gps=0x7f0b0037;
         public static final int app_name=0x7f0b000d;
+        public static final int button_search=0x7f0b003d;
         public static final int distance_kilometers=0x7f0b001d;
         public static final int distance_meters=0x7f0b001c;
-        public static final int empy=0x7f0b003b;
+        public static final int empy=0x7f0b0040;
         public static final int locale=0x7f0b000e;
         public static final int navigation_drawer_about=0x7f0b0013;
         public static final int navigation_drawer_close=0x7f0b0015;
@@ -1310,14 +1318,18 @@ containing a value of this type.
         public static final int navigation_drawer_going=0x7f0b0011;
         public static final int navigation_drawer_open=0x7f0b0014;
         public static final int navigation_drawer_settings=0x7f0b0012;
-        public static final int no=0x7f0b003a;
+        public static final int no=0x7f0b003f;
         public static final int settings_alerts=0x7f0b0016;
         public static final int settings_alerts_sound=0x7f0b0017;
         public static final int settings_alerts_sound_summary=0x7f0b0018;
         public static final int settings_display=0x7f0b0019;
         public static final int settings_display_orientation=0x7f0b001a;
         public static final int settings_display_orientation_summary=0x7f0b001b;
-        public static final int yes=0x7f0b0039;
+        public static final int transport_bicycle=0x7f0b003b;
+        public static final int transport_fastest=0x7f0b0039;
+        public static final int transport_pedestrian=0x7f0b003c;
+        public static final int transport_shortest=0x7f0b003a;
+        public static final int yes=0x7f0b003e;
     }
     public static final class style {
         /** 

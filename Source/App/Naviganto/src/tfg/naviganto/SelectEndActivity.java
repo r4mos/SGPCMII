@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.osmdroid.bonuspack.location.GeocoderNominatim;
 import android.app.Activity;
 import android.content.Context;
@@ -49,7 +48,7 @@ public class SelectEndActivity extends Activity implements Const {
 		String []opciones={ getString(R.string.transport_fastest),
 							getString(R.string.transport_shortest),
 							getString(R.string.transport_bicycle),
-							getString(R.string.transport_pedestrian)};
+							getString(R.string.transport_pedestrian) };
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.simple_item, R.id.spinner_format, opciones);
 		transport.setAdapter(adapter);
 
@@ -125,7 +124,7 @@ public class SelectEndActivity extends Activity implements Const {
 	}
 	private void getAddressesPost() {
 		if (foundAdresses.size() == 0) {
-			Toast.makeText(this, "No se encuentra nada", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.alert_search_empy, Toast.LENGTH_SHORT).show();
 		} else {
 			List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 			for (int i=0; i<foundAdresses.size(); i++) {

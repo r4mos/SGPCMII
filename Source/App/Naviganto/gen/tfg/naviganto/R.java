@@ -1297,19 +1297,20 @@ containing a value of this type.
         public static final int action_uturn_text=0x7f0b0027;
         public static final int action_wrong_sound=0x7f0b002d;
         public static final int action_wrong_text=0x7f0b002c;
-        public static final int alert_exit_on_nav=0x7f0b0038;
-        public static final int alert_lang_not_supported=0x7f0b0036;
-        public static final int alert_no_destination=0x7f0b0033;
-        public static final int alert_no_gps=0x7f0b0031;
-        public static final int alert_no_internet=0x7f0b0032;
-        public static final int alert_route_internet=0x7f0b0034;
-        public static final int alert_route_status=0x7f0b0035;
-        public static final int alert_waiting_for_gps=0x7f0b0037;
+        public static final int alert_exit_on_nav=0x7f0b0039;
+        public static final int alert_lang_not_supported=0x7f0b0037;
+        public static final int alert_no_destination=0x7f0b0034;
+        public static final int alert_no_gps=0x7f0b0032;
+        public static final int alert_no_internet=0x7f0b0033;
+        public static final int alert_route_internet=0x7f0b0035;
+        public static final int alert_route_status=0x7f0b0036;
+        public static final int alert_search_empy=0x7f0b0031;
+        public static final int alert_waiting_for_gps=0x7f0b0038;
         public static final int app_name=0x7f0b000d;
-        public static final int button_search=0x7f0b003d;
+        public static final int button_search=0x7f0b003e;
         public static final int distance_kilometers=0x7f0b001d;
         public static final int distance_meters=0x7f0b001c;
-        public static final int empy=0x7f0b0040;
+        public static final int empy=0x7f0b0041;
         public static final int locale=0x7f0b000e;
         public static final int navigation_drawer_about=0x7f0b0013;
         public static final int navigation_drawer_close=0x7f0b0015;
@@ -1318,18 +1319,18 @@ containing a value of this type.
         public static final int navigation_drawer_going=0x7f0b0011;
         public static final int navigation_drawer_open=0x7f0b0014;
         public static final int navigation_drawer_settings=0x7f0b0012;
-        public static final int no=0x7f0b003f;
+        public static final int no=0x7f0b0040;
         public static final int settings_alerts=0x7f0b0016;
         public static final int settings_alerts_sound=0x7f0b0017;
         public static final int settings_alerts_sound_summary=0x7f0b0018;
         public static final int settings_display=0x7f0b0019;
         public static final int settings_display_orientation=0x7f0b001a;
         public static final int settings_display_orientation_summary=0x7f0b001b;
-        public static final int transport_bicycle=0x7f0b003b;
-        public static final int transport_fastest=0x7f0b0039;
-        public static final int transport_pedestrian=0x7f0b003c;
-        public static final int transport_shortest=0x7f0b003a;
-        public static final int yes=0x7f0b003e;
+        public static final int transport_bicycle=0x7f0b003c;
+        public static final int transport_fastest=0x7f0b003a;
+        public static final int transport_pedestrian=0x7f0b003d;
+        public static final int transport_shortest=0x7f0b003b;
+        public static final int yes=0x7f0b003f;
     }
     public static final class style {
         /** 

@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -47,11 +46,11 @@ public class SelectEndActivity extends Activity implements Const {
 		progressBar = (ProgressBar)findViewById(R.id.progressBar);
 		
 		transport = (Spinner)findViewById(R.id.transport);
-		String []opciones={ getString(R.string.transport_fastest),
-							getString(R.string.transport_shortest),
-							getString(R.string.transport_bicycle),
-							getString(R.string.transport_pedestrian) };
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.simple_item, R.id.spinner_format, opciones);
+		List<Map<String, String>> data = getTransportList();
+		SimpleAdapter adapter = new SimpleAdapter(this, data,
+                android.R.layout.simple_list_item_1,
+                new String[] { "title" },
+                new int[] { android.R.id.text1 } );
 		transport.setAdapter(adapter);
 
 		search_button = (Button)findViewById(R.id.search_button);
@@ -75,7 +74,19 @@ public class SelectEndActivity extends Activity implements Const {
 		});
 	}
 	
-	
+	private List<Map<String, String>> getTransportList() {
+		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+		data.add(getItemByStringId(R.string.transport_fastest));
+		data.add(getItemByStringId(R.string.transport_shortest));
+		data.add(getItemByStringId(R.string.transport_bicycle));
+		data.add(getItemByStringId(R.string.transport_pedestrian));
+		return data;
+	}
+	private Map<String, String> getItemByStringId(int transport) {
+		Map<String, String> item = new HashMap<String, String>(2);
+		item.put("title", getString(transport));
+		return item;
+	}
 	private String getSelectedTransport() {
 		int select = transport.getSelectedItemPosition();
 		switch (select) {

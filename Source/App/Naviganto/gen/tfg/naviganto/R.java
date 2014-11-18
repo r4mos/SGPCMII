@@ -1169,7 +1169,6 @@ containing a value of this type.
         public static final int showCustom=0x7f060007;
         public static final int showHome=0x7f060004;
         public static final int showTitle=0x7f060006;
-        public static final int spinner_format=0x7f060051;
         public static final int split_action_bar=0x7f06001e;
         public static final int submit_area=0x7f060039;
         public static final int tabMode=0x7f060002;
@@ -1234,8 +1233,7 @@ containing a value of this type.
         public static final int activity_select_end=0x7f030019;
         public static final int bonuspack_bubble=0x7f03001a;
         public static final int fragment_navigation_drawer=0x7f03001b;
-        public static final int simple_item=0x7f03001c;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001d;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001c;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 

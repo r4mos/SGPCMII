@@ -226,7 +226,7 @@ public class BluetoothChatService {
         // Send a failure message back to the Activity
         Message msg = mHandler.obtainMessage(MESSAGE_TOAST);
         Bundle bundle = new Bundle();
-        bundle.putString(TOAST, "Conexión perdida");
+        bundle.putString(TOAST, "Conexión bluetooth perdida");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
     }

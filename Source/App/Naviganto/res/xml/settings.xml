@@ -8,7 +8,21 @@
             android:summary="@string/settings_alerts_sound_summary"
             android:title="@string/settings_alerts_sound" />
         
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="settingsAlertsVigrate"
+            android:summary="@string/settings_alerts_vibrate_summary"
+            android:title="@string/settings_alerts_vibrate"  />
         
+        <ListPreference
+            android:key="settingsAlertsVigrateLeft"
+            android:title="@string/settings_alerts_vibrate_left"
+            android:summary="@string/settings_this_device" />
+        
+        <ListPreference
+            android:key="settingsAlertsVigrateRight"
+            android:title="@string/settings_alerts_vibrate_right"
+            android:summary="@string/settings_this_device" />
     </PreferenceCategory>
      
     <PreferenceCategory android:title="@string/settings_display" >

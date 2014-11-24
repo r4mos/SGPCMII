@@ -12,7 +12,10 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.ActionBarActivity;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,6 +34,8 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -45,36 +50,43 @@ public class MainActivity
 		implements Const, NavigationDrawerFragment.NavigationDrawerCallbacks, 
 			LocationListener, SensorEventListener, TextToSpeech.OnInitListener {
 	
-	private NavigationDrawerFragment navigationDrawerFragment;
-	private View container;
-	private View loading;
-    private View navPanel;
-    private ImageView navImage;
-    private TextView navText;
-    private TextView navKm;
-    private MapView map;
+	private NavigationDrawerFragment mNavigationDrawerFragment;
+	private View mContainer;
+	private View mLoading;
+    private View mNavPanel;
+    private ImageView mNavImage;
+    private TextView mNavText;
+    private TextView mNavKm;
+    private MapView mMap;
     
-    private TextToSpeech textToSpeech;
-    private SharedPreferences lastLocation;
-    private SharedPreferences settings;
-    private Boolean mapOrientation;
-    private Boolean alertSounds;
+    private TextToSpeech mTextToSpeech;
+    private SharedPreferences mLastLocation;
+    private SharedPreferences mSettings;
+    private Boolean mMapOrientation;
+    private Boolean mAlertSounds;
+    private int mAlertVibrate = NONE;
     
-    protected LocationManager locationManager;  
-    protected LocationOverlay locationOverlay;
-    private SensorManager sensorManager;
-    private Sensor orientation;
+    protected LocationManager mLocationManager;  
+    protected LocationOverlay mLocationOverlay;
+    private SensorManager mSensorManager;
+    private Sensor mOrientation;
     
-    private Boolean navMode = false;
-    private Boolean newAction = true;
-    private int step = 0;
-    private int roadLost = 0;
-    private float metersToGoal = Float.MAX_VALUE;
+    private Boolean mNavMode = false;
+    private Boolean mNewAction = true;
+    private int mStep = 0;
+    private int mRoadLost = 0;
+    private float mMetersToGoal = Float.MAX_VALUE;
 
-    private Road road = null;
-    private String transport;
-    private Polyline roadOverlay = null;
-    private FolderOverlay roadMarkers = null;
+    private Road mRoad = null;
+    private String mTransport;
+    private Polyline mRoadOverlay = null;
+    private FolderOverlay mRoadMarkers = null;
+    
+    private BluetoothAdapter mBluetoothAdapter = null;
+    private BluetoothChatService mChatServiceLeft = null;
+    private BluetoothChatService mChatServiceRight = null;
+    private StringBuffer mOutStringBufferLeft;
+    private StringBuffer mOutStringBufferRight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,82 +95,87 @@ public class MainActivity
         
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        navigationDrawerFragment = (NavigationDrawerFragment)
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 
-        navigationDrawerFragment.setUp(
+        mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
         
-        container = (View)findViewById(R.id.container);
-        loading = (View)findViewById(R.id.loading);
+        mContainer = (View)findViewById(R.id.container);
+        mLoading = (View)findViewById(R.id.loading);
         
-        map = (MapView)findViewById(R.id.map);
-		map.setMultiTouchControls(true);
-		map.getController().setZoom(18);
+        mMap = (MapView)findViewById(R.id.map);
+		mMap.setMultiTouchControls(true);
+		mMap.getController().setZoom(18);
         
-		navPanel = (View)findViewById(R.id.navPanel);
-		navPanel.setVisibility(View.GONE);
-		navImage = (ImageView) findViewById(R.id.navPanelImage);
-		navText = (TextView) findViewById(R.id.navPanelText);
-		navKm = (TextView) findViewById(R.id.navPanelKm);
+		mNavPanel = (View)findViewById(R.id.navPanel);
+		mNavPanel.setVisibility(View.GONE);
+		mNavImage = (ImageView) findViewById(R.id.navPanelImage);
+		mNavText = (TextView) findViewById(R.id.navPanelText);
+		mNavKm = (TextView) findViewById(R.id.navPanelKm);
 		
-		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-		orientation = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 		
-        lastLocation = getSharedPreferences("LastLocation",Context.MODE_PRIVATE);
-        settings = PreferenceManager.getDefaultSharedPreferences(this);
-        mapOrientation = settings.getBoolean("settingsAlertsSound", false);
-        alertSounds = settings.getBoolean("settingsDisplayOrientation", false);
+        mLastLocation = getSharedPreferences("LastLocation",Context.MODE_PRIVATE);
+        mSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        mMapOrientation = mSettings.getBoolean("settingsDisplayOrientation", false);
+        mAlertSounds = mSettings.getBoolean("settingsAlertsSound", false);
         
-        textToSpeech = new TextToSpeech(this, this);
+        mTextToSpeech = new TextToSpeech(this, this);
         
-        locationOverlay = new LocationOverlay(this);
-		map.getOverlays().add(locationOverlay);
+        mLocationOverlay = new LocationOverlay(this);
+		mMap.getOverlays().add(mLocationOverlay);
         
-        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		if (location != null) {
 			onLocationChanged(location);
 		}
+		
+		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(this, R.string.alert_no_bluetooth, Toast.LENGTH_LONG).show();
+        }
 		
 		setTitle(R.string.navigation_drawer_explore);
     }
     
     
     private void cleanMap() {
-    	step=0;
-		metersToGoal = Float.MAX_VALUE;
-    	roadLost = 0;
-    	road = null;
-    	if (roadOverlay != null) {
-    		map.getOverlays().remove(roadOverlay);
-    		roadOverlay = null;
+    	mStep=0;
+		mMetersToGoal = Float.MAX_VALUE;
+    	mRoadLost = 0;
+    	mRoad = null;
+    	if (mRoadOverlay != null) {
+    		mMap.getOverlays().remove(mRoadOverlay);
+    		mRoadOverlay = null;
     	}
-    	if (roadMarkers != null) {
-    		map.getOverlays().remove(roadMarkers);
-    		roadMarkers = null;
+    	if (mRoadMarkers != null) {
+    		mMap.getOverlays().remove(mRoadMarkers);
+    		mRoadMarkers = null;
     	}
-    	navPanel.setVisibility(View.GONE);
-    	map.invalidate();
+    	mNavPanel.setVisibility(View.GONE);
+    	mMap.invalidate();
     }
     private void centerMap(final GeoPoint loc) {
-    	map.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+    	mMap.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 		    @Override
 		    public void onGlobalLayout() {
-		    	map.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-		    	map.getController().setCenter(loc);
+		    	mMap.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+		    	mMap.getController().setCenter(loc);
 		    }
 		});
     }
     private GeoPoint getLastLocation() {
-    	if (!locationOverlay.isEnabled() || locationOverlay.getLocation() == null) {
-    		Double lat = Double.parseDouble(lastLocation.getString("latitude",  "39.40540171"));
-        	Double lon = Double.parseDouble(lastLocation.getString("longitude", "-3.12204771"));
+    	if (!mLocationOverlay.isEnabled() || mLocationOverlay.getLocation() == null) {
+    		Double lat = Double.parseDouble(mLastLocation.getString("latitude",  "39.40540171"));
+        	Double lon = Double.parseDouble(mLastLocation.getString("longitude", "-3.12204771"));
         	return new GeoPoint(lat, lon);
     	} else {
-    		return locationOverlay.getLocation();
+    		return mLocationOverlay.getLocation();
     	}
     }
     
@@ -189,10 +206,10 @@ public class MainActivity
     
     private void setPreferences(){
     	//Last location
-    	if (locationOverlay.getLocation() != null) {
-    		SharedPreferences.Editor editor = lastLocation.edit();
-    		editor.putString("latitude",  String.valueOf(locationOverlay.getLocation().getLatitude()) );
-    		editor.putString("longitude", String.valueOf(locationOverlay.getLocation().getLongitude()) );
+    	if (mLocationOverlay.getLocation() != null) {
+    		SharedPreferences.Editor editor = mLastLocation.edit();
+    		editor.putString("latitude",  String.valueOf(mLocationOverlay.getLocation().getLatitude()) );
+    		editor.putString("longitude", String.valueOf(mLocationOverlay.getLocation().getLongitude()) );
     		editor.commit();
     	}
     }
@@ -213,29 +230,29 @@ public class MainActivity
     private class GetRoad extends AsyncTask<ArrayList<GeoPoint>, Float, Boolean>{
 		@Override
 		protected void onPreExecute() {
-			container.setVisibility(View.GONE);
-			loading.setVisibility(View.VISIBLE);
-			navigationDrawerFragment.setMenuVisibility(false);
+			mContainer.setVisibility(View.GONE);
+			mLoading.setVisibility(View.VISIBLE);
+			mNavigationDrawerFragment.setMenuVisibility(false);
 		}
 		@Override
 		protected Boolean doInBackground(ArrayList<GeoPoint>... params) {
 			RoadManager roadManager = new MapQuestRoadManager(MAPQUESTAPIKEY);
 			roadManager.addRequestOption("units=k");
 			
-			if (transport != null && transport != "") {
-				roadManager.addRequestOption("routeType=" + transport);
+			if (mTransport != null && mTransport != "") {
+				roadManager.addRequestOption("routeType=" + mTransport);
 			}
 			
-			road = roadManager.getRoad(params[0]);
+			mRoad = roadManager.getRoad(params[0]);
 			
-			if (road == null) {
+			if (mRoad == null) {
 				Toast.makeText(getBaseContext(),
 						R.string.alert_route_internet,
 						Toast.LENGTH_SHORT).show();
 				return false;
-			} else if (road.mStatus != Road.STATUS_OK) {
+			} else if (mRoad.mStatus != Road.STATUS_OK) {
 				Toast.makeText(getBaseContext(),
-						R.string.alert_route_status+road.mStatus,
+						R.string.alert_route_status+mRoad.mStatus,
 						Toast.LENGTH_SHORT).show();
 				return false;
 			}
@@ -244,36 +261,36 @@ public class MainActivity
 		}
 		protected void onPostExecute(Boolean result) {
 			if (result) gotoGeoPointPosThread();
-			container.setVisibility(View.VISIBLE);
-			loading.setVisibility(View.GONE);
-			navigationDrawerFragment.setMenuVisibility(true);
+			mContainer.setVisibility(View.VISIBLE);
+			mLoading.setVisibility(View.GONE);
+			mNavigationDrawerFragment.setMenuVisibility(true);
         }
 	}
     private void gotoGeoPointPosThread() {
-    	roadOverlay = RoadManager.buildRoadOverlay(road, getBaseContext());
-		roadOverlay.setWidth(10);
-		map.getOverlays().add(roadOverlay);
+    	mRoadOverlay = RoadManager.buildRoadOverlay(mRoad, getBaseContext());
+		mRoadOverlay.setWidth(10);
+		mMap.getOverlays().add(mRoadOverlay);
 		
-		roadMarkers = new FolderOverlay(this);
-		addMarkerToRoadMarkers(road.mNodes.get(0).mLocation);
-		addMarkerToRoadMarkers(road.mNodes.get(road.mNodes.size()-1).mLocation);	
-		map.getOverlays().add(roadMarkers);
+		mRoadMarkers = new FolderOverlay(this);
+		addMarkerToRoadMarkers(mRoad.mNodes.get(0).mLocation);
+		addMarkerToRoadMarkers(mRoad.mNodes.get(mRoad.mNodes.size()-1).mLocation);	
+		mMap.getOverlays().add(mRoadMarkers);
 						
-		map.invalidate();
+		mMap.invalidate();
 		
-		navPanel.setVisibility(View.VISIBLE);
+		mNavPanel.setVisibility(View.VISIBLE);
 		
-		if (road.mNodes.get(step).mManeuverType < 3) {
-			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_continue));
-			step=1;
+		if (mRoad.mNodes.get(mStep).mManeuverType < 3) {
+			mNavImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_continue));
+			mStep=1;
 		}
     }
     private void addMarkerToRoadMarkers(GeoPoint point) {
     	Drawable nodeIcon = getResources().getDrawable(R.drawable.marker_node);
-    	Marker marker = new Marker(map);
+    	Marker marker = new Marker(mMap);
     	marker.setPosition(point);
     	marker.setIcon(nodeIcon);
-		roadMarkers.add(marker);
+		mRoadMarkers.add(marker);
     }
     
     
@@ -310,11 +327,12 @@ public class MainActivity
     }
     private void startAction(int action, float distance) {    	
     	switch (action) {
+    	
 		case STRAIGHT:
-			//Fin de la vibración
-			navText.setText(R.string.action_straight_text);
-			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_continue));
-			if (alertSounds) {
+			mNavText.setText(R.string.action_straight_text);
+			mNavImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_continue));
+			
+			if (mAlertSounds) {
 				if (distance > 100) {
 					convertTextToSpeech(R.string.action_straight_sound_pre
 							+ String.format("%.0f", distance) 
@@ -327,35 +345,59 @@ public class MainActivity
 							+ R.string.action_straight_sound_pos);
 				}
 			}
+			
+			if (mAlertVibrate > NONE) {
+				//TODO: Fin de la vibración
+			}
+			
 			break;
+			
 		case RIGHT:
-			//Inicio vibracion
-			navText.setText(R.string.action_right_text);
-			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_turn_right));
-			if (alertSounds) {
+			mNavText.setText(R.string.action_right_text);
+			mNavImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_turn_right));
+			
+			if (mAlertSounds) {
 				convertTextToSpeech(R.string.action_right_sound_pre 
 						+ String.format("%.0f", distance) 
 						+ R.string.action_right_sound_pos);
 			}
+			
+			if (mAlertVibrate > NONE) {
+				//TODO: Inicio vibracion
+			}
+			
 			break;
+			
 		case LEFT:
-			//Inicio vibracion
-			navText.setText(R.string.action_left_text);
-			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_turn_left));
-			if (alertSounds) {
+			mNavText.setText(R.string.action_left_text);
+			mNavImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_turn_left));
+			
+			if (mAlertSounds) {
 				convertTextToSpeech(R.string.action_left_sound_pre
 						+ String.format("%.0f", distance) 
 						+ R.string.action_left_sound_pos);
 			}
+			
+			if (mAlertVibrate > NONE) {
+				//TODO: Inicio vibracion
+			}
+			
 			break;
+			
 		case UTURN:
-			//Inicio vibracion
-			navText.setText(R.string.action_uturn_text);
-			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_u_turn));
-			if (alertSounds) {
+			mNavText.setText(R.string.action_uturn_text);
+			mNavImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_u_turn));
+			
+			if (mAlertSounds) {
 				convertTextToSpeech(getString(R.string.action_uturn_sound));
 			}
+			
+			if (mAlertVibrate > NONE) {
+				//TODO: Inicio vibracion
+			}
+			
 			break;
+			
 		case ROUNDABOUT1:
 		case ROUNDABOUT2:
 		case ROUNDABOUT3:
@@ -364,48 +406,146 @@ public class MainActivity
 		case ROUNDABOUT6:
 		case ROUNDABOUT7:
 		case ROUNDABOUT8:
-			//Inicio vibracion
 			int exit = action-20; //roundabout=2X --> x=exit number
-			navText.setText(R.string.action_roundabout_text + exit);
-			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_roundabout));
-			if (alertSounds) {
+			mNavText.setText(R.string.action_roundabout_text + exit);
+			mNavImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_roundabout));
+			
+			if (mAlertSounds) {
 				convertTextToSpeech(R.string.action_roundabout_sound_pre 
 						+ String.format("%.0f", distance) 
 						+ R.string.action_roundabout_sound_pos
 						+ exit);
 			}
+			
+			if (mAlertVibrate > NONE) {
+				//TODO: Inicio vibracion
+			}
+			
 			break;
+			
 		case DESTINATION:
-			//Inicio vibracion
-			navText.setText(R.string.action_destination_text);
-			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_arrived));
-			if (alertSounds) {
+			mNavText.setText(R.string.action_destination_text);
+			mNavImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_arrived));
+			
+			if (mAlertSounds) {
 				convertTextToSpeech(R.string.action_destination_sound_pre 
 						+ String.format("%.0f", distance) 
 						+ R.string.action_destination_sound_pos);
 			}
+			
+			if (mAlertVibrate > NONE) {
+				//TODO: Inicio vibracion
+			}
+			
 			break;
+			
 		case WRONG:
-			//Inicio vibracion
-			navText.setText(R.string.action_wrong_text);
-			navImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_u_turn));
-			if (alertSounds) {
+			mNavText.setText(R.string.action_wrong_text);
+			mNavImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_u_turn));
+			
+			if (mAlertSounds) {
 				convertTextToSpeech(getString(R.string.action_wrong_sound));
 			}
-    		break;
+			
+			if (mAlertVibrate > NONE) {
+				//TODO: Inicio vibracion
+			}
+			
+			break;
 		}
     }
     private void stopAction() {
-    	//Fin de la vibración
+    	//TODO: Fin de la vibración
     }
     
-    
+    /* Speech Text */
 	private void convertTextToSpeech(String text) {
-		if (!text.equals("") && textToSpeech != null) {
-			textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+		if (!text.equals("") && mTextToSpeech != null) {
+			mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
 		}
 	}
-    
+	
+	/* Bluetooth */
+	@SuppressLint("HandlerLeak")
+	private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == BluetoothChatService.MESSAGE_STATE_CHANGE) {
+            	switch (msg.arg1) {
+            	case BluetoothChatService.STATE_CONNECTED:
+            		mContainer.setVisibility(View.VISIBLE);
+            		mLoading.setVisibility(View.GONE);
+            		break;
+				case BluetoothChatService.STATE_DISCONNECTING:
+					Toast.makeText(getApplicationContext(), R.string.alert_device_disconnected, Toast.LENGTH_SHORT).show();
+					break;
+				case BluetoothChatService.STATE_CONNECTION_FAILED:
+					disconectBluetoothDevices();
+					showMap();
+					Toast.makeText(getApplicationContext(), R.string.alert_no_device_connection, Toast.LENGTH_SHORT).show();
+					break;
+				}
+            }
+        }
+    };
+    private void sendMessage(String message, int who) {
+    	if (who == LEFT) {
+    		if (mChatServiceLeft == null || mChatServiceLeft.getState() != BluetoothChatService.STATE_CONNECTED) {
+                return;
+            }
+
+            if (message.length() > 0) {
+                byte[] send = message.getBytes();
+                mChatServiceLeft.write(send);
+                mOutStringBufferLeft.setLength(0);
+            }
+    	} else if (who == RIGHT) {
+    		if (mChatServiceRight == null || mChatServiceRight.getState() != BluetoothChatService.STATE_CONNECTED) {
+                return;
+            }
+
+            if (message.length() > 0) {
+                byte[] send = message.getBytes();
+                mChatServiceRight.write(send);
+                mOutStringBufferRight.setLength(0);
+            }
+    	} else if (who == BOTH) {
+    		if (mChatServiceLeft == null || mChatServiceRight == null
+    				|| mChatServiceLeft.getState() != BluetoothChatService.STATE_CONNECTED
+    				|| mChatServiceRight.getState() != BluetoothChatService.STATE_CONNECTED) {
+                return;
+            }
+
+            if (message.length() > 0) {
+                byte[] send = message.getBytes();
+                mChatServiceLeft.write(send);
+                mChatServiceRight.write(send);
+                mOutStringBufferLeft.setLength(0);
+                mOutStringBufferRight.setLength(0);
+            }
+    	}
+    }
+    private void disconectBluetoothDevices(){
+    	if (mChatServiceLeft != null) {
+    		mChatServiceLeft.stop();
+    		mAlertVibrate = NONE;
+    		mChatServiceLeft.start();
+    	}
+    	if (mChatServiceRight != null) {
+    		mChatServiceRight.stop();
+    		mAlertVibrate = NONE;
+    		mChatServiceRight.start();
+    	}
+    }
+    private void showMap () {
+    	mContainer.setVisibility(View.VISIBLE);
+		mLoading.setVisibility(View.GONE);
+    }
+    private void showBluetoothConnectingDialog () {
+    	mContainer.setVisibility(View.GONE);
+		mLoading.setVisibility(View.VISIBLE);
+		Toast.makeText(getApplicationContext(), R.string.alert_connecting,Toast.LENGTH_SHORT).show();
+    }
 	
 	/* Override from LocationListener */
     @Override
@@ -418,76 +558,76 @@ public class MainActivity
       	int metersToFirstWarning;
       	
       	if (speed > kmhToMs(100)) {
-      		map.getController().setZoom(15);
+      		mMap.getController().setZoom(15);
       		metersToFirstWarning = 1000;
       	} else if (speed > kmhToMs(80)) {
-      		map.getController().setZoom(16);
+      		mMap.getController().setZoom(16);
       		metersToFirstWarning = 500;
       	} else if (speed > kmhToMs(50)) {
-      		map.getController().setZoom(17);
+      		mMap.getController().setZoom(17);
       		metersToFirstWarning = 100;
       	} else {
-      		map.getController().setZoom(18);
+      		mMap.getController().setZoom(18);
       		metersToFirstWarning = 30;
       	}
       	
       	//Update locationOverlay & map
-       	if (!locationOverlay.isEnabled()) {
-			locationOverlay.setEnabled(true);
-			map.getController().animateTo(myLocation);
+       	if (!mLocationOverlay.isEnabled()) {
+			mLocationOverlay.setEnabled(true);
+			mMap.getController().animateTo(myLocation);
 		}
-		locationOverlay.setLocation(myLocation);
-		locationOverlay.setAccuracy((int)loc.getAccuracy());
+		mLocationOverlay.setLocation(myLocation);
+		mLocationOverlay.setAccuracy((int)loc.getAccuracy());
        	
-		if (navMode) {
-			map.getController().animateTo(myLocation);
+		if (mNavMode) {
+			mMap.getController().animateTo(myLocation);
 		} else {
-			map.invalidate();
+			mMap.invalidate();
 		}
 				
 		//Navigation control
-		if (road != null) {
-			float distance = getDistance(myLocation, road.mNodes.get(step).mLocation);
+		if (mRoad != null) {
+			float distance = getDistance(myLocation, mRoad.mNodes.get(mStep).mLocation);
 			
 			if (distance < metersToFirstWarning) {
-				if (distance < metersToGoal) {
-					if (newAction || metersToGoal == Float.MAX_VALUE) {
-						newAction = false;
-						startAction(getAction(road.mNodes.get(step).mManeuverType), distance);
+				if (distance < mMetersToGoal) {
+					if (mNewAction || mMetersToGoal == Float.MAX_VALUE) {
+						mNewAction = false;
+						startAction(getAction(mRoad.mNodes.get(mStep).mManeuverType), distance);
 					}
-					metersToGoal = distance;
+					mMetersToGoal = distance;
 				} else {
-					newAction = true;
+					mNewAction = true;
 					stopAction();
-					metersToGoal = Float.MAX_VALUE;
+					mMetersToGoal = Float.MAX_VALUE;
 					
-					if (step == road.mNodes.size()-1) {
+					if (mStep == mRoad.mNodes.size()-1) {
 						cleanMap();
 					} else {
-						step++;
+						mStep++;
 					}
 				}
 			} else {
-				if (newAction) {
-					newAction = false;
+				if (mNewAction) {
+					mNewAction = false;
 					startAction(STRAIGHT, distance);
 				}
 			}
 			
 			if (distance > 1000) {
-				navKm.setText(String.format("%.1f", distance/1000) + "km");
+				mNavKm.setText(String.format("%.1f", distance/1000) + "km");
 			} else {
-				navKm.setText(String.format("%.0f", distance) + "m");
+				mNavKm.setText(String.format("%.0f", distance) + "m");
 			}
 		}
 		
 		//Road lost control
-		if (roadOverlay != null && !roadOverlay.isCloseTo(myLocation, 24, map)) {
-			if (roadLost < 3) {
-				roadLost++;
+		if (mRoadOverlay != null && !mRoadOverlay.isCloseTo(myLocation, 24, mMap)) {
+			if (mRoadLost < 3) {
+				mRoadLost++;
 			} else {
 				startAction(WRONG, 0);
-				GeoPoint endPoint = road.mNodes.get(road.mNodes.size()-1).mLocation;
+				GeoPoint endPoint = mRoad.mNodes.get(mRoad.mNodes.size()-1).mLocation;
 				cleanMap();
 				gotoGeoPoint(endPoint);
 			}
@@ -509,7 +649,7 @@ public class MainActivity
 		if (Math.abs(azimuth-azimuthOrientation)>2.0f){
 			azimuthOrientation = azimuth;
 		}
-    	map.setMapOrientation(-azimuth);
+    	mMap.setMapOrientation(-azimuth);
     }
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}
@@ -519,7 +659,7 @@ public class MainActivity
 	@Override
 	public void onInit(int status) {
 		if (status == TextToSpeech.SUCCESS) {
-			int result = textToSpeech.setLanguage(new Locale(getString(R.string.locale)));
+			int result = mTextToSpeech.setLanguage(new Locale(getString(R.string.locale)));
 			if (result == TextToSpeech.LANG_MISSING_DATA
 					|| result == TextToSpeech.LANG_NOT_SUPPORTED) {
 				Toast.makeText(getBaseContext(),
@@ -542,45 +682,70 @@ public class MainActivity
     public void onPause() {
         super.onPause();
         //Stop Updates
-        locationManager.removeUpdates(this);
-        sensorManager.unregisterListener(this);
+        mLocationManager.removeUpdates(this);
+        mSensorManager.unregisterListener(this);
         setPreferences();
     }
     @Override
     public void onResume() {
         super.onResume();
         //Start Location Updates
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
-			locationOverlay.setEnabled(true);
+        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
+			mLocationOverlay.setEnabled(true);
 		} else {
 			Toast.makeText(getBaseContext(), R.string.alert_no_gps, Toast.LENGTH_SHORT).show();
-			locationOverlay.setEnabled(false);
+			mLocationOverlay.setEnabled(false);
 			
 		}
         //Start Orientation Updates
-        if (mapOrientation) {
-        	sensorManager.registerListener(this, orientation, SensorManager.SENSOR_DELAY_NORMAL);
+        if (mMapOrientation) {
+        	mSensorManager.registerListener(this, mOrientation, SensorManager.SENSOR_DELAY_NORMAL);
         }
         
         if (!isOnline()) {
 			Toast.makeText(getBaseContext(), R.string.alert_no_internet,Toast.LENGTH_SHORT).show();
 		}
-        
+        //Bluetooth
+        if (!mBluetoothAdapter.isEnabled()) {
+        	Toast.makeText(getBaseContext(), R.string.alert_disabled_bluetooth,Toast.LENGTH_SHORT).show();
+        } else {
+            if (mChatServiceLeft == null) {
+                mChatServiceLeft = new BluetoothChatService(this, mHandler);
+                mOutStringBufferLeft = new StringBuffer("");
+            }
+            if (mChatServiceRight == null) {
+                mChatServiceRight = new BluetoothChatService(this, mHandler);
+                mOutStringBufferRight = new StringBuffer("");
+            }
+            
+            if (mChatServiceLeft.getState() == BluetoothChatService.STATE_NONE) {
+            	mChatServiceLeft.start();
+            }
+            if (mChatServiceRight.getState() == BluetoothChatService.STATE_NONE) {
+            	mChatServiceRight.start();
+            }
+        }
         centerMap(getLastLocation());
     }
     @Override
     protected void onDestroy() {
     	super.onDestroy();
     	setPreferences();
-    	if (textToSpeech != null) {
-    		textToSpeech.shutdown();
+    	if (mTextToSpeech != null) {
+    		mTextToSpeech.shutdown();
     	}
+    	if (mChatServiceLeft != null) {
+        	mChatServiceLeft.stop();
+        }
+    	if (mChatServiceRight != null) {
+        	mChatServiceRight.stop();
+        }
     }
     @Override
     public void onBackPressed() {
     	//Exit dialog
-    	if (navMode) {
+    	if (mNavMode) {
     		AlertDialog.Builder d = new AlertDialog.Builder(this);  
             d.setMessage(R.string.alert_exit_on_nav);            
             d.setCancelable(false);  
@@ -603,11 +768,11 @@ public class MainActivity
         case GO:
         	if(resultCode == RESULT_OK){
         		setTitle(R.string.navigation_drawer_going);
-    			navMode = true;
+    			mNavMode = true;
     			cleanMap();
     			centerMap(getLastLocation());
 
-    			transport = data.getStringExtra("transport");	
+    			mTransport = data.getStringExtra("transport");	
     			gotoGeoPoint( new GeoPoint( data.getDoubleExtra("lat", 39.40642),
     										data.getDoubleExtra("lon", -3.11702477) ) );
             }
@@ -615,13 +780,42 @@ public class MainActivity
             	Toast.makeText(getBaseContext(),R.string.alert_no_destination,Toast.LENGTH_SHORT).show();
     			centerMap(getLastLocation());
             }
+            break;
+            
         case SETTINGS:
-        	mapOrientation = settings.getBoolean("settingsDisplayOrientation", false);
-        	if (!mapOrientation) map.setMapOrientation(0.0f);
-            alertSounds = settings.getBoolean("settingsAlertsSound", false);
+        	mMapOrientation = mSettings.getBoolean("settingsDisplayOrientation", false);
+        	if (!mMapOrientation) mMap.setMapOrientation(0.0f);
+        	
+            mAlertSounds = mSettings.getBoolean("settingsAlertsSound", false);
+            
+            disconectBluetoothDevices();
+            if (mSettings.getBoolean("settingsAlertsVigrate", false)) {
+            	String left = mSettings.getString("settingsAlertsVigrateLeft", "");
+            	String right = mSettings.getString("settingsAlertsVigrateRight", "");
+            	
+            	if (left.equals(right)) {
+            		Toast.makeText(getApplicationContext(), R.string.alert_misconfiguration, Toast.LENGTH_SHORT).show();
+            	} else if (left.equals("") && !right.equals("")) {
+            		mAlertVibrate = LTHIS_RBLUETOOTH;
+            		BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(right);
+                	mChatServiceRight.connect(device);
+                	showBluetoothConnectingDialog();
+            	} else if (!left.equals("") && right.equals("")) {
+            		mAlertVibrate = LBLUETOOTH_RTHIS;
+            		BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(left);
+                	mChatServiceLeft.connect(device);
+                	showBluetoothConnectingDialog();
+            	} else if  (!left.equals("") && !right.equals("")) {
+            		mAlertVibrate = LBLUETOOTH_RBLUETOOTH;
+            		BluetoothDevice deviceRight = mBluetoothAdapter.getRemoteDevice(right);
+            		BluetoothDevice deviceLeft = mBluetoothAdapter.getRemoteDevice(left);
+            		mChatServiceRight.connect(deviceRight);
+            		mChatServiceLeft.connect(deviceLeft);
+            		showBluetoothConnectingDialog();
+            	}
+            }
             break;
         }
- 
     }
     
     
@@ -634,8 +828,9 @@ public class MainActivity
 
 		case EXPLORE:
 			setTitle(R.string.navigation_drawer_explore);
-			navMode = false;
+			mNavMode = false;
 			cleanMap();
+			showMap();
 			centerMap(getLastLocation());
 			break; 
 			

@@ -36,6 +36,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -65,6 +66,8 @@ public class MainActivity
     private Boolean mMapOrientation;
     private Boolean mAlertSounds;
     private int mAlertVibrate = NONE;
+    private Boolean mIsInVibration = false;
+    private Vibrator mVibrator;
     
     protected LocationManager mLocationManager;  
     protected LocationOverlay mLocationOverlay;
@@ -139,6 +142,8 @@ public class MainActivity
         if (mBluetoothAdapter == null) {
             Toast.makeText(this, R.string.alert_no_bluetooth, Toast.LENGTH_LONG).show();
         }
+        
+        mVibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
 		
 		setTitle(R.string.navigation_drawer_explore);
     }
@@ -332,23 +337,19 @@ public class MainActivity
 			mNavText.setText(R.string.action_straight_text);
 			mNavImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_continue));
 			
-			if (mAlertSounds) {
-				if (distance > 100) {
-					convertTextToSpeech(R.string.action_straight_sound_pre
-							+ String.format("%.0f", distance) 
-							+ " " + R.string.distance_meters
-							+ R.string.action_straight_sound_pos);
-				} else if (distance > 1000) {
-					convertTextToSpeech(R.string.action_straight_sound_pre
-							+ String.format("%.0f", distance/1000) 
-							+ " " + R.string.distance_kilometers
-							+ R.string.action_straight_sound_pos);
-				}
+			if (distance > 100) {
+				convertTextToSpeech(R.string.action_straight_sound_pre
+						+ String.format("%.0f", distance) 
+						+ " " + R.string.distance_meters
+						+ R.string.action_straight_sound_pos);
+			} else if (distance > 1000) {
+				convertTextToSpeech(R.string.action_straight_sound_pre
+						+ String.format("%.0f", distance/1000) 
+						+ " " + R.string.distance_kilometers
+						+ R.string.action_straight_sound_pos);
 			}
 			
-			if (mAlertVibrate > NONE) {
-				//TODO: Fin de la vibración
-			}
+			startVibrate(action);
 			
 			break;
 			
@@ -356,15 +357,11 @@ public class MainActivity
 			mNavText.setText(R.string.action_right_text);
 			mNavImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_turn_right));
 			
-			if (mAlertSounds) {
-				convertTextToSpeech(R.string.action_right_sound_pre 
-						+ String.format("%.0f", distance) 
-						+ R.string.action_right_sound_pos);
-			}
+			convertTextToSpeech(R.string.action_right_sound_pre 
+					+ String.format("%.0f", distance) 
+					+ R.string.action_right_sound_pos);
 			
-			if (mAlertVibrate > NONE) {
-				//TODO: Inicio vibracion
-			}
+			startVibrate(action);
 			
 			break;
 			
@@ -372,15 +369,11 @@ public class MainActivity
 			mNavText.setText(R.string.action_left_text);
 			mNavImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_turn_left));
 			
-			if (mAlertSounds) {
-				convertTextToSpeech(R.string.action_left_sound_pre
-						+ String.format("%.0f", distance) 
-						+ R.string.action_left_sound_pos);
-			}
+			convertTextToSpeech(R.string.action_left_sound_pre
+					+ String.format("%.0f", distance) 
+					+ R.string.action_left_sound_pos);
 			
-			if (mAlertVibrate > NONE) {
-				//TODO: Inicio vibracion
-			}
+			startVibrate(action);
 			
 			break;
 			
@@ -388,13 +381,9 @@ public class MainActivity
 			mNavText.setText(R.string.action_uturn_text);
 			mNavImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_u_turn));
 			
-			if (mAlertSounds) {
-				convertTextToSpeech(getString(R.string.action_uturn_sound));
-			}
-			
-			if (mAlertVibrate > NONE) {
-				//TODO: Inicio vibracion
-			}
+			convertTextToSpeech(getString(R.string.action_uturn_sound));
+
+			startVibrate(action);
 			
 			break;
 			
@@ -409,17 +398,13 @@ public class MainActivity
 			int exit = action-20; //roundabout=2X --> x=exit number
 			mNavText.setText(R.string.action_roundabout_text + exit);
 			mNavImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_roundabout));
+
+			convertTextToSpeech(R.string.action_roundabout_sound_pre 
+					+ String.format("%.0f", distance) 
+					+ R.string.action_roundabout_sound_pos
+					+ exit);
 			
-			if (mAlertSounds) {
-				convertTextToSpeech(R.string.action_roundabout_sound_pre 
-						+ String.format("%.0f", distance) 
-						+ R.string.action_roundabout_sound_pos
-						+ exit);
-			}
-			
-			if (mAlertVibrate > NONE) {
-				//TODO: Inicio vibracion
-			}
+			startVibrate(action);
 			
 			break;
 			
@@ -427,15 +412,11 @@ public class MainActivity
 			mNavText.setText(R.string.action_destination_text);
 			mNavImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_arrived));
 			
-			if (mAlertSounds) {
-				convertTextToSpeech(R.string.action_destination_sound_pre 
-						+ String.format("%.0f", distance) 
-						+ R.string.action_destination_sound_pos);
-			}
+			convertTextToSpeech(R.string.action_destination_sound_pre 
+					+ String.format("%.0f", distance) 
+					+ R.string.action_destination_sound_pos);
 			
-			if (mAlertVibrate > NONE) {
-				//TODO: Inicio vibracion
-			}
+			startVibrate(action);
 			
 			break;
 			
@@ -443,24 +424,150 @@ public class MainActivity
 			mNavText.setText(R.string.action_wrong_text);
 			mNavImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_u_turn));
 			
-			if (mAlertSounds) {
-				convertTextToSpeech(getString(R.string.action_wrong_sound));
-			}
-			
-			if (mAlertVibrate > NONE) {
-				//TODO: Inicio vibracion
-			}
+			convertTextToSpeech(getString(R.string.action_wrong_sound));
+
+			startVibrate(action);
 			
 			break;
 		}
     }
     private void stopAction() {
-    	//TODO: Fin de la vibración
+    	//TODO: Mirar a ver si se pueden parar los sonidos
+    	stopVibrate();
+    }
+    
+    private void startVibrate(int action) {
+    	switch (mAlertVibrate) {
+		case LTHIS_RBLUETOOTH:
+			if (isLeftAction(action))
+				startLocalVibration(action);
+			if (isRightAction(action))
+				sendMessage(START + action, RIGHT);
+			break;
+			
+		case LBLUETOOTH_RTHIS:
+			if (isLeftAction(action)) 
+				sendMessage(START + action, LEFT);
+			if (isRightAction(action))
+				startLocalVibration(action);	
+			break;
+			
+		case LBLUETOOTH_RBLUETOOTH:
+			if (isLeftAction(action)) 
+				sendMessage(START + action, LEFT);
+			if (isRightAction(action))
+				sendMessage(START + action, RIGHT);
+			break;
+			
+		default:
+			break;
+		}
+    }
+    private Boolean isLeftAction(int action) {
+    	if (action != RIGHT)
+    		return true;
+    	return false;
+    }
+    private Boolean isRightAction(int action) {
+    	if (action != LEFT)
+    		return true;
+    	return false;
+    }
+    private void startLocalVibration(int action) {
+    	if (!mIsInVibration) {
+    		mIsInVibration = true;
+    		
+    		switch (action) {
+			case STRAIGHT:
+				stopLocalVibration();
+				break;
+				
+			case LEFT:
+			case RIGHT:
+				long[] turn = {0, 900, 1000};
+				mVibrator.vibrate(turn, 0);
+				break;
+				
+			case WRONG:
+			case UTURN:
+				long[] worng = {0, 100};
+				mVibrator.vibrate(worng, 0);
+				break;
+			
+			case DESTINATION:
+				long[] destination = {0, 500, 200, 700, 200, 900, 200, 500, 200, 700, 200, 900, 200, 500, 200, 700, 200, 900, 200};
+				mVibrator.vibrate(destination, -1);
+				break;
+
+			//TODO: Simplificar esto
+			case ROUNDABOUT1:
+				long[] r1 = {0, 500, 1000};
+				mVibrator.vibrate(r1, 0);
+				break;
+			case ROUNDABOUT2:
+				long[] r2 = {0, 500, 200, 500, 1000};
+				mVibrator.vibrate(r2, 0);
+				break;
+			case ROUNDABOUT3:
+				long[] r3 = {0, 500, 200, 500, 200, 500, 1000};
+				mVibrator.vibrate(r3, 0);
+				break;
+			case ROUNDABOUT4:
+				long[] r4 = {0, 500, 200, 500, 200, 500, 200, 500, 1000};
+				mVibrator.vibrate(r4, 0);
+				break;
+			case ROUNDABOUT5:
+				long[] r5 = {0, 500, 200, 500, 200, 500, 200, 500, 200, 500, 1000};
+				mVibrator.vibrate(r5, 0);
+				break;
+			case ROUNDABOUT6:
+				long[] r6 = {0, 500, 200, 500, 200, 500, 200, 500, 200, 500, 200, 500, 1000};
+				mVibrator.vibrate(r6, 0);
+				break;
+			case ROUNDABOUT7:
+				long[] r7 = {0, 500, 200, 500, 200, 500, 200, 500, 200, 500, 200, 500, 200, 500, 1000};
+				mVibrator.vibrate(r7, 0);
+				break;
+			case ROUNDABOUT8:
+				long[] r8 = {0, 500, 200, 500, 200, 500, 200, 500, 200, 500, 200, 500, 200, 500, 200, 500, 1000};
+				mVibrator.vibrate(r8, 0);
+				break;
+			}
+    	} else {
+    		stopLocalVibration();
+    		startLocalVibration(action);
+    	}
+    }
+    private void stopLocalVibration() {
+    	if (mIsInVibration) {
+    		mVibrator.cancel();
+    		mIsInVibration = false;
+    	}
+    }
+    private void stopVibrate() {
+    	stopLocalVibration();
+    	switch (mAlertVibrate) {
+		case LTHIS_RBLUETOOTH:
+			sendMessage(STOP, RIGHT);
+			break;
+			
+		case LBLUETOOTH_RTHIS:
+			sendMessage(STOP, LEFT);
+			break;
+			
+		case LBLUETOOTH_RBLUETOOTH:
+			sendMessage(STOP, RIGHT);
+			sendMessage(STOP, LEFT);
+			break;
+			
+		default:
+			break;
+		}
     }
     
     /* Speech Text */
 	private void convertTextToSpeech(String text) {
-		if (!text.equals("") && mTextToSpeech != null) {
+		if (mAlertSounds && !text.equals("") && mTextToSpeech != null) {
 			mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
 		}
 	}
@@ -507,20 +614,6 @@ public class MainActivity
             if (message.length() > 0) {
                 byte[] send = message.getBytes();
                 mChatServiceRight.write(send);
-                mOutStringBufferRight.setLength(0);
-            }
-    	} else if (who == BOTH) {
-    		if (mChatServiceLeft == null || mChatServiceRight == null
-    				|| mChatServiceLeft.getState() != BluetoothChatService.STATE_CONNECTED
-    				|| mChatServiceRight.getState() != BluetoothChatService.STATE_CONNECTED) {
-                return;
-            }
-
-            if (message.length() > 0) {
-                byte[] send = message.getBytes();
-                mChatServiceLeft.write(send);
-                mChatServiceRight.write(send);
-                mOutStringBufferLeft.setLength(0);
                 mOutStringBufferRight.setLength(0);
             }
     	}
@@ -829,6 +922,7 @@ public class MainActivity
 		case EXPLORE:
 			setTitle(R.string.navigation_drawer_explore);
 			mNavMode = false;
+			stopVibrate();
 			cleanMap();
 			showMap();
 			centerMap(getLastLocation());

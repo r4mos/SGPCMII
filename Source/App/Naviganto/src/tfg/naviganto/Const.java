@@ -10,7 +10,6 @@ public interface Const {
 	static final int LEFT = 10;
 	static final int RIGHT = 1;
 	static final int UTURN = 11;
-	static final int BOTH = 11;
 	static final int ROUNDABOUT1 = 21;
 	static final int ROUNDABOUT2 = 22;
 	static final int ROUNDABOUT3 = 23;
@@ -38,4 +37,8 @@ public interface Const {
 	static final int LTHIS_RBLUETOOTH = 1;
 	static final int LBLUETOOTH_RTHIS = 2;
 	static final int LBLUETOOTH_RBLUETOOTH = 3;
+	
+	//Bluetooth messages
+	static final String START = "1";
+	static final String STOP = "0";
 }

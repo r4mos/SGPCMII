@@ -6,5 +6,6 @@
     <string name="alert_disabled_bluetooth">Bluetooth deshabilitado</string>
     <string name="alert_waiting_instructions">Esperando instrucciones</string>
     <string name="alert_waiting_connexion">Esperando conexión</string>
+    <string name="alert_connected_to">Conectado a </string>
     
 </resources>

@@ -20,4 +20,5 @@ public interface Const {
 	//Bluetooth messages
 	static final String START = "1";
 	static final String STOP = "0";
+	static final char SPLIT = '|';
 }

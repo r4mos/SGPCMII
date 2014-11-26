@@ -1229,6 +1229,7 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000b;
+        public static final int alert_connected_to=0x7f0a0012;
         public static final int alert_disabled_bluetooth=0x7f0a000f;
         public static final int alert_no_bluetooth=0x7f0a000e;
         public static final int alert_waiting_connexion=0x7f0a0011;

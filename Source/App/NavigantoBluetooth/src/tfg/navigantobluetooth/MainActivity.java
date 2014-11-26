@@ -99,7 +99,7 @@ public class MainActivity extends Activity implements Const {
                 String readMessage = "";
                 
                 for (int i=0; i<readMessages.length(); i++) {
-                	if (readMessages.charAt(i) == '|') {
+                	if (readMessages.charAt(i) == SPLIT) {
                 		startAction(readMessage);
                 		readMessage = "";
                 	} else {
@@ -111,8 +111,7 @@ public class MainActivity extends Activity implements Const {
             case BluetoothChatService.MESSAGE_DEVICE_NAME:
                 mConnectedDeviceName = msg.getData().getString(BluetoothChatService.DEVICE_NAME);
                 Toast.makeText(getApplicationContext(),
-                		"Conectado a " + mConnectedDeviceName,
-            			Toast.LENGTH_SHORT).show();
+                		R.string.alert_connected_to + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                 background.setBackgroundColor(Color.argb(255, 76, 255, 76)); //Green
             	progressBar.setVisibility(View.VISIBLE);
             	text.setText(getString(R.string.alert_waiting_instructions));
@@ -143,10 +142,6 @@ public class MainActivity extends Activity implements Const {
     		mIsInVibration = true;
     		
     		switch (action) {
-			case STRAIGHT:
-				stopLocalVibration();
-				break;
-				
 			case LEFT:
 			case RIGHT:
 				long[] turn = {0, 900, 1000};
@@ -154,50 +149,45 @@ public class MainActivity extends Activity implements Const {
 				break;
 				
 			case WRONG:
+				mVibrator.vibrate(5000);
+				break;
+				
 			case UTURN:
-				long[] worng = {0, 100};
-				mVibrator.vibrate(worng, 0);
+				long[] uturn = {0, 100};
+				mVibrator.vibrate(uturn, 0);
 				break;
 			
 			case DESTINATION:
-				long[] destination = {0, 500, 200, 700, 200, 900, 200, 500, 200, 700, 200, 900, 200, 500, 200, 700, 200, 900, 200};
+				long[] destination = new long[19];
+				for (int i=0; i<3; i++) {
+					destination[i*6+1] = 500;
+					destination[i*6+2] = 200;
+					destination[i*6+3] = 700;
+					destination[i*6+4] = 200;
+					destination[i*6+5] = 900;
+					destination[i*6+6] = 200;
+				}
 				mVibrator.vibrate(destination, -1);
 				break;
-			
-			//TODO: Simplificar esto
+
 			case ROUNDABOUT1:
-				long[] r1 = {0, 500, 1000};
-				mVibrator.vibrate(r1, 0);
-				break;
 			case ROUNDABOUT2:
-				long[] r2 = {0, 500, 200, 500, 1000};
-				mVibrator.vibrate(r2, 0);
-				break;
 			case ROUNDABOUT3:
-				long[] r3 = {0, 500, 200, 500, 200, 500, 1000};
-				mVibrator.vibrate(r3, 0);
-				break;
 			case ROUNDABOUT4:
-				long[] r4 = {0, 500, 200, 500, 200, 500, 200, 500, 1000};
-				mVibrator.vibrate(r4, 0);
-				break;
 			case ROUNDABOUT5:
-				long[] r5 = {0, 500, 200, 500, 200, 500, 200, 500, 200, 500, 1000};
-				mVibrator.vibrate(r5, 0);
-				break;
 			case ROUNDABOUT6:
-				long[] r6 = {0, 500, 200, 500, 200, 500, 200, 500, 200, 500, 200, 500, 1000};
-				mVibrator.vibrate(r6, 0);
-				break;
 			case ROUNDABOUT7:
-				long[] r7 = {0, 500, 200, 500, 200, 500, 200, 500, 200, 500, 200, 500, 200, 500, 1000};
-				mVibrator.vibrate(r7, 0);
-				break;
 			case ROUNDABOUT8:
-				long[] r8 = {0, 500, 200, 500, 200, 500, 200, 500, 200, 500, 200, 500, 200, 500, 200, 500, 1000};
-				mVibrator.vibrate(r8, 0);
+				int exit = action-20; //roundabout=2X --> x=exit number
+				long[] roundabout = new long[exit*2+1];
+				for (int i=0; i<exit; i++) {
+					if (i != 0) roundabout[i*2] = 200;
+					roundabout[i*2+1] = 500;
+				}
+				roundabout[exit*2] = 1000;
+				mVibrator.vibrate(roundabout, 0);
 				break;
-			}
+    		}
     	} else {
     		stopLocalVibration();
     		startLocalVibration(action);

@@ -437,26 +437,33 @@ public class MainActivity
     }
     
     private void startVibrate(int action) {
+    	stopVibrate();
     	switch (mAlertVibrate) {
 		case LTHIS_RBLUETOOTH:
-			if (isLeftAction(action))
+			if (isLeftAction(action)) {
 				startLocalVibration(action);
-			if (isRightAction(action))
+			}
+			if (isRightAction(action)) {
 				sendMessage(START + action, RIGHT);
+			}
 			break;
 			
 		case LBLUETOOTH_RTHIS:
-			if (isLeftAction(action)) 
+			if (isLeftAction(action)) {
 				sendMessage(START + action, LEFT);
-			if (isRightAction(action))
-				startLocalVibration(action);	
+			}
+			if (isRightAction(action)) {
+				startLocalVibration(action);
+			}	
 			break;
 			
 		case LBLUETOOTH_RBLUETOOTH:
-			if (isLeftAction(action)) 
+			if (isLeftAction(action)) {
 				sendMessage(START + action, LEFT);
-			if (isRightAction(action))
+			}
+			if (isRightAction(action)) {
 				sendMessage(START + action, RIGHT);
+			}
 			break;
 			
 		default:
@@ -585,6 +592,7 @@ public class MainActivity
             		break;
 				case BluetoothChatService.STATE_DISCONNECTING:
 					Toast.makeText(getApplicationContext(), R.string.alert_device_disconnected, Toast.LENGTH_SHORT).show();
+					disconectBluetoothDevices();
 					break;
 				case BluetoothChatService.STATE_CONNECTION_FAILED:
 					disconectBluetoothDevices();
@@ -597,26 +605,22 @@ public class MainActivity
     };
     private void sendMessage(String message, int who) {
     	if (who == LEFT) {
-    		if (mChatServiceLeft == null || mChatServiceLeft.getState() != BluetoothChatService.STATE_CONNECTED) {
-                return;
-            }
-
-            if (message.length() > 0) {
-                byte[] send = message.getBytes();
-                mChatServiceLeft.write(send);
-                mOutStringBufferLeft.setLength(0);
-            }
-    	} else if (who == RIGHT) {
-    		if (mChatServiceRight == null || mChatServiceRight.getState() != BluetoothChatService.STATE_CONNECTED) {
-                return;
-            }
-
-            if (message.length() > 0) {
-                byte[] send = message.getBytes();
-                mChatServiceRight.write(send);
-                mOutStringBufferRight.setLength(0);
-            }
+    		sendMessage(message, mChatServiceLeft, mOutStringBufferLeft);
+    	}else if (who == RIGHT) {
+    		sendMessage(message, mChatServiceRight, mOutStringBufferRight);
     	}
+    }
+    private void sendMessage(String message, BluetoothChatService d, StringBuffer b) {
+    	if (d == null || d.getState() != BluetoothChatService.STATE_CONNECTED) {
+            return;
+        }
+    	
+    	message = message + "|";
+        if (message.length() > 0) {
+            byte[] send = message.getBytes();
+            d.write(send);
+            b.setLength(0);
+        }
     }
     private void disconectBluetoothDevices(){
     	if (mChatServiceLeft != null) {
@@ -834,6 +838,9 @@ public class MainActivity
     	if (mChatServiceRight != null) {
         	mChatServiceRight.stop();
         }
+    	if (mVibrator != null) {
+    		mVibrator.cancel();
+    	}
     }
     @Override
     public void onBackPressed() {

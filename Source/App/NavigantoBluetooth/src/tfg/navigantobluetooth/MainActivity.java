@@ -67,6 +67,9 @@ public class MainActivity extends Activity implements Const {
         if (mChatService != null) {
         	mChatService.stop();
         } 
+        if (mVibrator != null) {
+        	mVibrator.cancel();
+        }
     }
     
     @SuppressLint("HandlerLeak")
@@ -76,11 +79,6 @@ public class MainActivity extends Activity implements Const {
             switch (msg.what) {
             case BluetoothChatService.MESSAGE_STATE_CHANGE:
                 switch (msg.arg1) {
-                case BluetoothChatService.STATE_CONNECTED:
-                	background.setBackgroundColor(Color.argb(255, 76, 255, 76)); //Green
-                	progressBar.setVisibility(View.VISIBLE);
-                	text.setText(getString(R.string.alert_waiting_instructions));
-                    break;
                 case BluetoothChatService.STATE_CONNECTING:
                 case BluetoothChatService.STATE_LISTEN:
                 case BluetoothChatService.STATE_NONE:
@@ -90,26 +88,34 @@ public class MainActivity extends Activity implements Const {
                     break;
                 case  BluetoothChatService.STATE_DISCONNECTING:
                 	mChatService.stop();
+                	mVibrator.cancel();
                 	mChatService.start();
                 	break;
                 }
                 break;
             case BluetoothChatService.MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;
-                String readMessage = new String(readBuf, 0, msg.arg1);
+                String readMessages = new String(readBuf, 0, msg.arg1);
+                String readMessage = "";
                 
-                if (readMessage.equals(STOP)) {
-                	stopLocalVibration();
-                } else if (readMessage.substring(0,1).equals(START)) {
-                	int action = Integer.parseInt(readMessage.substring(1));
-                	startLocalVibration(action);
+                for (int i=0; i<readMessages.length(); i++) {
+                	if (readMessages.charAt(i) == '|') {
+                		startAction(readMessage);
+                		readMessage = "";
+                	} else {
+                		readMessage = readMessage + readMessages.charAt(i);
+                	}
                 }
+                
                 break;
             case BluetoothChatService.MESSAGE_DEVICE_NAME:
                 mConnectedDeviceName = msg.getData().getString(BluetoothChatService.DEVICE_NAME);
                 Toast.makeText(getApplicationContext(),
                 		"Conectado a " + mConnectedDeviceName,
             			Toast.LENGTH_SHORT).show();
+                background.setBackgroundColor(Color.argb(255, 76, 255, 76)); //Green
+            	progressBar.setVisibility(View.VISIBLE);
+            	text.setText(getString(R.string.alert_waiting_instructions));
                 break;
             case BluetoothChatService.MESSAGE_TOAST:
             	Toast.makeText(getApplicationContext(),
@@ -119,6 +125,18 @@ public class MainActivity extends Activity implements Const {
             }
         }
     };
+    
+    private void startAction (String readMessage) {
+    	if (readMessage.equals(STOP)) {
+        	stopLocalVibration();
+        } else if (readMessage.length() > 1) {
+        	stopLocalVibration();
+        	int action = Integer.parseInt(readMessage.substring(1));
+        	startLocalVibration(action);
+        } else {
+        	mChatService.stop();
+        }
+    }
     
     private void startLocalVibration(int action) {
     	if (!mIsInVibration) {

@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import org.osmdroid.bonuspack.location.GeocoderNominatim;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
+import android.location.Geocoder;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -116,7 +117,7 @@ public class SelectEndActivity extends Activity implements Const {
 		}
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			GeocoderNominatim geocoder = new GeocoderNominatim(getApplicationContext());
+			Geocoder geocoder = new Geocoder(getApplicationContext(), new Locale(getString(R.string.locale)));
 			String text = search_text.getText().toString();
 			
 			if (text.equals("")) {
@@ -143,18 +144,22 @@ public class SelectEndActivity extends Activity implements Const {
 		} else {
 			List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 			for (int i=0; i<foundAdresses.size(); i++) {
-				String[] info = foundAdresses.get(i).getExtras().getString("display_name").split(", ");
-				
-				String subtitle = "";
-				for (int j=1; j<info.length; j++) {
-					if (!isNumber(info[j])) {
-						if (j!=1) subtitle = subtitle + ", ";
-						subtitle = subtitle + info[j];
-					}
-				}
+				String title = String.format(
+						"%s",
+						foundAdresses.get(i).getMaxAddressLineIndex() > 0 ?
+                        		foundAdresses.get(i).getAddressLine(0) : ""
+				);
+				String subtitle = String.format(
+                        "%s%s%s",
+                        foundAdresses.get(i).getAddressLine(1) != null ?
+                        		foundAdresses.get(i).getAddressLine(1) : "",
+                        foundAdresses.get(i).getAddressLine(2) != null ?
+                        		", " + foundAdresses.get(i).getAddressLine(2) : "",
+                        foundAdresses.get(i).getAddressLine(3) != null ?
+                        		", " + foundAdresses.get(i).getAddressLine(3) : "");
 				
 				Map<String, String> item = new HashMap<String, String>(2);
-				item.put("title", info[0]);
+				item.put("title", title);
 				item.put("subtitle", subtitle);
 			    data.add(item);
 			}
@@ -165,20 +170,7 @@ public class SelectEndActivity extends Activity implements Const {
                     new int[] { android.R.id.text1, android.R.id.text2 } );
 			searches.setAdapter(adapter);
 		}
-	}
-	private static boolean isNumber(String string) {
-	    if (string == null || string == "") {
-	        return false;
-	    }
-	    for (int i = 0; i < string.length(); i++) {
-	        if (!Character.isDigit(string.charAt(i))) {
-	            return false;
-	        }
-	    }
-	    return true;
-	}
-	
-	
+	}	
 	private boolean isOnline() {
     	ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
     	NetworkInfo netInfo = cm.getActiveNetworkInfo();

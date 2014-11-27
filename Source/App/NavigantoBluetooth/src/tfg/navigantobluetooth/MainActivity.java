@@ -110,8 +110,8 @@ public class MainActivity extends Activity implements Const {
                 break;
             case BluetoothChatService.MESSAGE_DEVICE_NAME:
                 mConnectedDeviceName = msg.getData().getString(BluetoothChatService.DEVICE_NAME);
-                Toast.makeText(getApplicationContext(),
-                		R.string.alert_connected_to + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.alert_connected_to) 
+                		+ mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                 background.setBackgroundColor(Color.argb(255, 76, 255, 76)); //Green
             	progressBar.setVisibility(View.VISIBLE);
             	text.setText(getString(R.string.alert_waiting_instructions));

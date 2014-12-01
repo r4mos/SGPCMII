@@ -42,11 +42,26 @@ ciclistas y motoristas el hecho de mirar a la pantalla o intentar oír el smartp
 una distracción que potencialmente puede provocar un accidente~\cite{Valcarcel12} y, por
 tanto, necesitan otro tipo de interacción con el dispositivo.
 
-Las distracciones del conductor son una de las principales causas de accidentabilidad en todo el mundo. La \textit{National Highway Traffic Safety Administration} (\textit{NHTSA}\footnote{http://www.nhtsa.gov/}) señaló en 2003 que la distracción de los conductores es la causa de 1,5 millones de accidentes producidos anualmente en todo el planeta \cite{RACC03}. Y, según un estudio de la aseguradora Allianz de 2014 \cite{Allianz14}, el 26\% de los accidentes por distracciones son producidos por mirar el navegador.
+Las distracciones del conductor son una de las principales causas de accidentabilidad en todo el
+mundo. La \textit{National Highway Traffic Safety Administration}
+(\textit{NHTSA}\footnote{http://www.nhtsa.gov/}) señaló en 2003 que la distracción de los
+conductores es la causa de 1,5 millones de accidentes producidos anualmente en todo el planeta
+\cite{RACC03}. Y, según un estudio de la aseguradora Allianz de 2014 \cite{Allianz14}, el 26\% de
+los accidentes por distracciones son producidos por mirar el navegador.
 
-En España, el uso de dispositivos como navegadores, cascos y auriculares por parte del conductor está considerado como una infracción grave y acarrea una multa de 200 euros y una pérdida de 3 puntos en el carné de conducir \cite{Serrano14} .
+En España, el uso de dispositivos como navegadores, cascos y auriculares por parte del conductor
+está considerado como una infracción grave y acarrea una multa de 200 euros y una pérdida de 3
+puntos en el carné de conducir \cite{Serrano14} .
 
-En este trabajo se desarrollará un sistema de guiado en el que el usuario obtendrá realimentación del sistema sin necesidad de ver la pantalla. Para ello, el sistema avisará al usuario en el momento que tenga que realizar cualquiera de las acciones posibles: girar a izquierda, girar a la derecha, continuar recto o dar media vuelta. Esta interacción se llevará a cabo por medio de la vibración al igual que en los proyectos \cite{Boemo12} y \cite{Merino13}, o en las zapatillas \textit{Lechal} \cite{Lechal} . A parte del vibrador incorporado en el smartphone se utilizará un periférico como un smartwatch o pulsera inteligente. De este modo, cuando haya que girar a la izquierda vibrará uno, cuando haya que girar a la derecha vibrará el otro y cuando haya que dar media vuelta vibrarán ambos. En la Figura~\ref{fig:descipcion_sistema} se esquematiza un giro a la izquierda:
+En este trabajo se desarrollará un sistema de guiado en el que el usuario obtendrá realimentación
+del sistema sin necesidad de ver la pantalla. Para ello, el sistema avisará al usuario en el momento
+que tenga que realizar cualquiera de las acciones posibles: girar a izquierda, girar a la derecha,
+continuar recto o dar media vuelta. Esta interacción se llevará a cabo por medio de la vibración al
+igual que en los proyectos \cite{Boemo12} y \cite{Merino13}, o en las zapatillas \textit{Lechal}
+\cite{Lechal} . A parte del vibrador incorporado en el smartphone se utilizará un periférico como un
+smartwatch o pulsera inteligente. De este modo, cuando haya que girar a la izquierda vibrará uno,
+cuando haya que girar a la derecha vibrará el otro y cuando haya que dar media vuelta vibrarán
+ambos. En la Figura~\ref{fig:descipcion_sistema} se esquematiza un giro a la izquierda:
 
 \begin{figure}[!h]
   \begin{center}
@@ -57,14 +72,20 @@ En este trabajo se desarrollará un sistema de guiado en el que el usuario obten
   \vspace{-25pt}
 \end{figure}
 
-Para determinar con cuánto tiempo de antelación hay que avisar para que realice una acción se utilizará la velocidad a la que se desplace el usuario. De este modo nos aseguraremos de que tenga suficiente tiempo para reaccionar independientemente de la actividad que esté realizando: andar, ir en bici o moto.
+Para determinar con cuánto tiempo de antelación hay que avisar para que realice una acción se
+utilizará la velocidad a la que se desplace el usuario. De este modo nos aseguraremos de que tenga
+suficiente tiempo para reaccionar independientemente de la actividad que esté realizando: andar, ir
+en bici o moto.
 
 Además se implementarán las opciones disponibles en todos los sistemas de guiado:
 
 \begin{itemize}
-  \item Visualización de la posición actual en el mapa mostrando en forma de circunferencia la precisión del geoposicionamiento proporcionado por los satélites.
-  \item Superposición de la ruta seleccionada sobre el mapa. De este modo se podrá visionar la ruta a seguir antes de realizarse.
-  \item Orientación automática del mapa dependiendo de la orientación del dispositivo. Haciendo uso del sensor de orientación del smartphone se rotará la imagen del mapa.
+  \item Visualización de la posición actual en el mapa mostrando en forma de circunferencia la
+    precisión del geoposicionamiento proporcionado por los satélites.
+  \item Superposición de la ruta seleccionada sobre el mapa. De este modo se podrá visionar la ruta
+    a seguir antes de realizarse.
+  \item Orientación automática del mapa dependiendo de la orientación del dispositivo. Haciendo uso
+    del sensor de orientación del smartphone se rotará la imagen del mapa.
   \item Visualización por pantalla y reproducción sonora de las instrucciones a seguir. 
 \end{itemize}
 
@@ -72,7 +93,8 @@ Además se implementarán las opciones disponibles en todos los sistemas de guia
 
 \section{TECNOLOGÍA ESPECÍFICA / INTENSIFICACIÓN / ITINERARIO CURSADO POR EL ALUMNO}
 
-En la Tabla~\ref{tab:tec-especifica} se muestra la tecnología especifica cursada por el alumno del Grado en Ingeniería Informática.
+En la Tabla~\ref{tab:tec-especifica} se muestra la tecnología especifica cursada por el alumno del
+Grado en Ingeniería Informática.
 
 \begin{table}[hp]
   \centering
@@ -90,7 +112,9 @@ En la Tabla~\ref{tab:tec-especifica} se muestra la tecnología especifica cursad
   \end{tabular}
 \end{table}
 
-Del mismo modo, en la Tabla~\ref{tab:competencias} se enumeran las competencias más destacables de la intensificación cursada y la justificación de uso de esa competencia concreta dentro del proyecto.
+Del mismo modo, en la Tabla~\ref{tab:competencias} se enumeran las competencias más destacables de
+la intensificación cursada y la justificación de uso de esa competencia concreta dentro del
+proyecto.
 
 \rowcolors{2}{tabrowbg}{}
 \begin{spacing}{1.1}
@@ -101,13 +125,25 @@ Del mismo modo, en la Tabla~\ref{tab:competencias} se enumeran las competencias 
   \textbf{Competencia} & \textbf{Justificación} \\
   \hline
   \hline
-    Capacidad para seleccionar, diseñar, desplegar, integrar, evaluar, construir, gestionar, explotar y mantener las tecnologías de hardware, software y redes, dentro de los parámetros de coste y calidad adecuados. & Se pretende crear un sistema de navegación, haciendo uso del hardware, software y las redes disponibles; con el mínimo coste y la mayor calidad posible.\\
+    Capacidad para seleccionar, diseñar, desplegar, integrar, evaluar, construir, gestionar,
+    explotar y mantener las tecnologías de hardware, software y redes, dentro de los parámetros de
+    coste y calidad adecuados. & Se pretende crear un sistema de navegación, haciendo uso del
+    hardware, software y las redes disponibles; con el mínimo coste y la mayor calidad posible.\\
 
-    Capacidad para emplear metodologías centradas en el usuario y la organización para el desarrollo, evaluación y gestión de aplicaciones y sistemas basados en tecnologías de la información que aseguren la accesibilidad, ergonomía y usabilidad de los sistemas. & El diseño del sistema se centrará en el usuario para ratificar que se trata de un sistema accesible, usable y que adapta cómodamente al usuario.\\
+    Capacidad para emplear metodologías centradas en el usuario y la organización para el
+    desarrollo, evaluación y gestión de aplicaciones y sistemas basados en tecnologías de la
+    información que aseguren la accesibilidad, ergonomía y usabilidad de los sistemas. & El diseño
+    del sistema se centrará en el usuario para ratificar que se trata de un sistema accesible,
+    usable y que adapta cómodamente al usuario.\\
 
-    Capacidad de concebir sistemas, aplicaciones y servicios basados en tecnologías de red, incluyendo Internet, web, comercio electrónico, multimedia, servicios interactivos y computación móvil. & El sistema hará uso de servicios de navegación proporcionados en Internet, la procesará y dará al usuario la información necesaria para seguir su camino.\\
+    Capacidad de concebir sistemas, aplicaciones y servicios basados en tecnologías de red,
+    incluyendo Internet, web, comercio electrónico, multimedia, servicios interactivos y computación
+    móvil. & El sistema hará uso de servicios de navegación proporcionados en Internet, la procesará
+    y dará al usuario la información necesaria para seguir su camino.\\
 
-    Capacidad para comprender, aplicar y gestionar la garantía y seguridad de los sistemas informáticos. & El sistema deberá ser resistente a vulnerabilidades propias de la implementación ya que se seguirán las directrices expuestas en \cite{Moreno13}.\\
+    Capacidad para comprender, aplicar y gestionar la garantía y seguridad de los sistemas
+    informáticos. & El sistema deberá ser resistente a vulnerabilidades propias de la implementación
+    ya que se seguirán las directrices expuestas en \cite{Moreno13}.\\
 
   \hline
 \end{longtable}

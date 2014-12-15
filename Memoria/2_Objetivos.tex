@@ -19,41 +19,67 @@ provoca el 26\% de los accidentes producidos por distracciones \cite{Allianz14},
 oír nuestro dispositivo en ambientes abiertos y el uso de cascos o auriculares esta sancionado en
 España \cite{Serrano14}.
 
-Por qué vibración...
-
 Con la finalidad de hacer más segura la navegación para los ciclistas y motoristas, y para facilitar
-su uso para los peatones, el objetivo del \acf{TFG} es el «Desarrollo de un sistema de navegación
+su uso para los peatones, necesitamos otro tipo de interacción implícita. Así pues, si descartamos
+la interacción por medio de la vista por no ser implícita y el oído por lo citado anteriormente,
+sólo nos quedan disponibles el gusto, el olfato y el tacto. Y, puesto que la interacción con el
+usuario por medio del gusto y el olfato está muy poco desarrollada, sólo nos queda el tacto. Por
+lo tanto, haremos uso del tacto por medio de la vibración de nuestros dispositivos.
+
+En resumen, el objetivo del \acf{TFG} es el «desarrollo de un sistema de navegación
   por satélite que se comunique con el usuario por medio de la vibración de alguno de sus
   componentes»
 
 \section{Objetivos específicos}
 
 A partir del objetivo principal descrito en la sección anterior se determinan los objetivos
-específicos en los siguientes apartados.
+específicos necesarios para alcanzarlo.
 
-\subsection{A}
+\subsection{Estudio del estado del arte}
 
+En primer lugar será necesario un estudio del estado del arte con la finalidad de identificar las
+características principales los navegadores actuales y determinar qué debemos desarrollar. De este
+modo, si existiera la posibilidad de añadir un complemento vibratorio a alguna aplicación existente,
+no sería necesario desarrollar desde cero una aplicación; bastaría con crear el plugin.
 
-Puesto que la iteración con los navegadores vía satélite actuales se basan en el contacto
-visual o mensajes auditivos, el trabajo consistirá en incorporar un nuevo tipo de
-interacción implícita: la vibración. Por tanto, el objetivo que se pretende conseguir con
-el trabajo es:
+Por otro lado, una evaluación del estado del arte nos proporcionará una visión global de las
+aplicaciones de navegación actuales y nos permitirá especificar los requisitos necesarios para
+implementar una nueva aplicación.
+
+\subsection{Selección del complemento vibratorio}
+
+Hoy en día existen multitud de complementos vibratorios como relojes, pulseras, móviles, zapatillas,
+etc. Por ello, en segundo lugar, será imprescindible buscar entre los diferentes complementos
+vibratorios y escoger el que más se ajuste a nuestras necesidades.
+
+Para la elección del complemento se pondrá especial atención en que nos permita activar y desactivar
+la vibración cuando estimemos oportuno. Esta característica predominará sobre cualquier otra.
+
+\subsection{Desarrollo de la aplicación}
+
+Una vez terminados los puntos anteriores estaremos en disposición de desarrollar nuestra aplicación.
+Para conseguirlo, habrá que tomar algunas decisiones de diseño como:
 
 \begin{itemize}
-\item Desarrollo de un sistema de navegación vía satélite que se
-  comunique con el usuario por medio de la vibración de alguno de sus componentes
+  \item Elección de la plataforma de desarrollo para smartphone
+  \item Elección del proveedor de mapas
+  \item Elección de la tecnología de geoposicionamiento
+  \item Elección del proveedor de rutas
+  \item Elección del proveedor de geocoding\footnote{https://en.wikipedia.org/wiki/Geocoding}
 \end{itemize}
 
-Este objetivo principal puede desglosarse en varios objetivos específicos:
+Finalmente se procederá a la implementación del sistema con las elecciones tomadas y a la
+realización de las pruebas. Estas pruebas determinarán el correcto funcionamiento del sistema y
+proporcionarán medidas del rendimiento del mismo.
 
-\begin{itemize}
-\item Estudio de las alternativas para interacción implícita
-\item Desarrollo de la aplicación de navegación para smartphone
-\item Búsqueda, selección e integración de de los complementos adecuados para
-  interacción implícita
-\end{itemize}
+\section{Limitaciones}
 
-
+Las limitaciones asociadas al proyecto vendrán dadas por las decisiones tomadas durante el
+desarrollo antes descritas. Por ejemplo, cuando seleccionemos una determinada plataforma de
+desarrollo para smartphone, tendremos las limitaciones de la plataforma como el lenguaje de
+desarrollo. De igual forma, cuando elijamos el proveedor de mapas, la tecnología de posicionamiento,
+el proveedor de rutas o el proveedor de geocoding heredaremos la precisión de los servicios que
+utilicemos.
 
 % Local Variables:
 % TeX-master: "main.tex"

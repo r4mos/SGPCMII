@@ -1,39 +1,188 @@
 \chapter{Antecedentes}
 \label{chap:antecedentes}
 
+introducción a los aspectos importantes del TFG y necesidad de ponerlos en contexto realizando un
+estudio sobre ellos para poder seleccionar lo que nos convenga.
+
 \section{Interacción implícita}
 
 
 \subsection{Interacción implícita en el guiado de personas}
 
 
-\section{Navegación vía satélite}
+\section{Sistemas de navegación por satélite}
 
+Un \acs{SGNS} o \acs{GNSS} consiste en una constelación de satélites que transmite señales que
+permiten determinar nuestras coordenadas geográficas, la altitud y la hora (cuatro dimensiones) con
+mucha exactitud, en cualquier parte del mundo, las 24 horas y en todas las condiciones
+climatológicas.
+
+El origen de la navegación por satélite se remonta a los años sesenta cuando el ejército de Estados
+Unidos desarrolló Transit basado en el efecto Doppler~\cite{SN}. Los satélites viajaban por caminos
+conocidos y transmitiendo una frecuencia conocida. La frecuencia recibida difería ligeramente de la
+frecuencia de emisión debido al movimiento del satélite. Mediante dicha variación, el receptor puede
+determinar su ubicación a un lado o al otro del satélite, y varias de estas mediciones combinadas
+con un conocimiento preciso de la órbita del satélite pueden determinar una posición el
+particular. Este sistema requería que el receptor estuviera casi estático unos 40 minutos para
+establecer su posición.
+
+La primera vez que apareció el concepto de \acs{SGNS} para guiar a civiles fue en 1983 cuando Honda
+se planteó utilizar esta tecnología y desarrolló su sistema de navegación para coches. Pero no lo
+culminó hasta 1990 cuando lo integró en el Honda Legend Acura Legend~\cite{Parra13}.
+
+El funcionamiento de los \acs{SGNS} modernos es más directo. El satélite emite una señal que
+contiene los datos orbitales necesarios para calcular su posición y el tiempo preciso en el que se
+transmitió la señal. De este modo, el receptor compara el momento de la emisión con el tiempo de
+recepción y puede establecer su posición con respecto al satélite. Y, al utilizar varios satélites
+podremos establecer nuestra posición el globo mediante la trilateración (ver
+figura~\ref{fig:trilateracion}).
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{/trilateracion.png}
+    \caption{Ejemplo de trilateración. Estando en B, queremos conocer su posición relativa a los
+      puntos de referencia P1, P2, y P3 en un plano bidimensional. Al medir r1 se reduce nuestra
+      posición a una circunferencia. A continuación, midiendo r2, la reducimos a dos puntos, A y
+      B. Una tercera medición, r3, nos devuelve nuestras coordenadas en B. Una cuarta medición
+      también puede hacerse para reducir y estimar el error.}
+    \label{fig:trilateracion}
+  \end{center}
+\end{figure}
+
+\subsection{Coordenadas geográficas}
+
+Las coordenadas geográficas son el sistema que nos permite representar nuestra posición el
+globo. Este sistema de referencia hace uso de dos coordenadas angulares latitud (Norte y Sur) y
+longitud (Este y Oeste) medidas desde el centro de la tierra y expresadas por regla general en
+grados sexagesimales.
+
+\begin{itemize}
+  \item La latitud es el ángulo que forma el Ecuador con el punto que medimos.
+  \item La longitud es el ángulo se forma entre el meridiano de Greenwich con el punto que medimos.
+\end{itemize}
 
 \subsection{Tecnologías actuales}
 
+En la actualidad predominan dos tecnologías: \acf{GPS} y \acf{GLONASS}. En los siguientes apartados
+se resumen sus características más importantes.
+
+No se han incluido en el estudio ninguno de los sistemas que a fecha de hoy no se consideran
+operativos~\cite{SPSA} como:
+
+\begin{itemize}
+  \item Galileo desarrollado por la Unión Europea.
+  \item \acf{BNTS} desarrollado por la República Popular de China.
+  \item \acf{QZSS} desarrollado por Japón.
+  \item \acf{IRNSS} desarrollado por India.
+\end{itemize}
 
 \begin{definitionlist}
-  \item[GPS]
+  \item[\acf{NAVSTAR-GPS}] Este sistema, también conocido simplemente por \acs{GPS} es el sistema
+    de navegación desarrollado por los Estados Unidos. Los primeros proyectos relacionados empezaron
+    a desarrollarse en 1973 y en ellos se establecieron las bases de lo que hoy conocemos como
+    \acs{GPS}. Los primeros satélites se lanzaron en 1978 y el programa fue plenamente operativo en
+    1995, aunque con un sistema de degradación de señal para los usos civiles que limitaba la señal
+    a una precisión aleatoria entre 15 y 100 metros. En mayo del año 2000 se eliminó dicha
+    limitación permitiendo determinar la posición y la hora de forma precisa, con un error nominal
+    de unos 15 metros.
 
-  \item[GLONASS]
+    En la actualidad, esta tecnología es accesible por la mayoría de los smartphones. Está formada
+    por una constelación de 24 a 27 satélites que se mueven en órbita de unos 20.000 km, por seis
+    planos y con una inclinación de 55 grados.
 
-  \item[Galileo]
+  \item[GLONASS] Al mismo tiempo que se desarrollaba el \acs{GPS}, los rusos también desarrollaron
+    su sistema de navegación \acs{GLONASS}. Los primeros satélites fueron lanzados en 1982 pero el
+    programa no fue operativo hasta 1996 con unos 9 a 11 satélites y un sistema de degradación de
+    señal para usos civiles parecido al de \acs{GPS}. Esta limitación hacía que la precisión fuese
+    de unos 30 metros. En 2007 se eliminaron las limitaciones para uso civil y en 2012 se convirtió
+    en un sistema de navegación plenamente funcional cuando se pusieron en órbita más satélites. El
+    sistema \acs{GLONASS} está optimizado para ser usado en el hemisferio norte y proporciona la
+    posición con un error entre 5 y 15 metros.
+
+    En la actualidad, esta tecnología puede ser usada sólo por algunos smartphones. Está formada por
+    una constelación de 31 satélites que orbitan a una altitud de 19.100 km, situados en tres planos
+    y con una inclinación de 64,8 grados.
 
 \end{definitionlist}
 
 
 \subsection{Aplicaciones de navegación para smartphone}
 
+Aunque existen una gran cantidad de aplicaciones de navegación para smartphone disponibles en las
+tiendas oficiales de aplicaciones, en este apartado analizaremos solamente las aplicaciones más
+usadas.
 
 \begin{definitionlist}
-  \item[Google maps] 
+  \item[Google maps] Google Maps es una aplicación de navegación lanzada por Google en Septiembre de
+    2008 que se puede utilizar tanto en Android como en iOS, Windows Mobile, Symbian o
+    BlackBerry. Además, Google Maps está disponible en múltiples lenguajes.
 
-  \item[iOS maps]
+    Entre las características de la aplicación de Google podemos destacar las siguientes:
 
-  \item[Nokia Here]
+    \begin{itemize}
+      \item Visualización de nuestra posición el mapa mostrando el posible error cometido en la
+        trilateración.
+      \item Visualización de mapas offline previamente descargados.
+      \item Visualización de la cantidad e tráfico de las carreteras.
+      \item Visualización de edificios en 3D en algunas ciudades.
+      \item «Street View» o posibilidad de ver las calles como si te encontrases en ellas.
+      \item Rotación automática del mapa en función de nuestra orientación.
+      \item Cálculo de rutas para peatones, transporte público y vehículos motorizados.
+    \end{itemize}
 
-  \item[Sygic]
+    Las interacciones que utiliza Google Maps para comunicarse con el usuario se realizan por medio
+    de la pantalla, el sonido y la vibración. La pantalla muestra continuamente las próximas
+    acciones a realizar y, cuando se estima oportuno, el smartphone vibra y se escucha por los
+    altavoces la instrucción a realizar. La vibración que se utiliza es la misma para todos los
+    tipos de instrucciones.
+
+    Por otro lado, la aplicación de Google es propietaria y no permite extender su funcionalidad por
+    medio de plugins. Lo único que se puede hacer es crear nuestra propia aplicación utilizando la
+    \acs{API} de mapas y rutas.
+
+  \item[iOS maps] iOS Maps es la aplicación de Apple lanzada en Septiembre de 2012 para sus
+    dispositivos iPhone, iPad y iPod Touch. Esta aplicación es multilenguaje.
+
+    Entre sus características podemos destacar:
+
+    \begin{itemize}
+      \item Visualización de nuestra posición el mapa mostrando el posible error cometido en la
+        trilateración.
+      \item Visualización de la cantidad e tráfico de las carreteras.
+      \item Visualización de edificios en 3D en algunas ciudades.
+      \item Rotación automática del mapa en función de nuestra orientación.
+      \item Cálculo de rutas para peatones y vehículos motorizados.
+    \end{itemize}
+
+    Con respecto a la interacción con el usuario, iOS maps utiliza la pantalla y el sonido. La
+    pantalla mostrando continuamente las instrucciones a seguir y el sonido a la hora de realizar
+    las instrucciones.
+
+    Por otro lado, iOS maps es una aplicación propietaria y no permite extender sus funcionalidades
+    por medio de plugins.
+
+  \item[Nokia HERE] Nokia HERE, antes conocido como Ovi Maps (2007-2011) y como Nokia Maps
+    (2011-2012), es la aplicación de navegación desarrollada por Nokia. Está disponible para Windows
+    Phone, Symbian y Android; y está disponible en múltiples lenguajes.
+
+    Entre sus características es importante destacar:
+
+    \begin{itemize}
+      \item Visualización de nuestra posición el mapa mostrando el posible error cometido en la
+        trilateración.
+      \item Visualización de mapas offline previamente descargados.
+      \item Visualización de la cantidad e tráfico de las carreteras.
+      \item Visualización de edificios en 3D en algunas ciudades.
+      \item Rotación automática del mapa en función de nuestra orientación.
+      \item Cálculo de rutas para peatones, transporte público y vehículos motorizados.
+    \end{itemize}
+
+    Con respecto a la interacción con el usuario, HERE utiliza la pantalla y el sonido. La
+    pantalla mostrando continuamente las instrucciones a desarrollar y, a la hora de realizar
+    las instrucciones, se reproducen sonoramente.
+
+    Finalmente, HERE es un sistema propietario que no permite extender su funcionalidad por medio de
+    plugins ni la utilización de sus mapas.
 
 \end{definitionlist}
 
@@ -171,37 +320,95 @@ entre los jóvenes gracias a su servicio de mensajería instantánea.
 
 \section{Weareables}
 
+La palabra weareable hace referencia al conjunto de aparatos y dispositivos que se sitúan en alguna
+parte del cuerpo interactuando continuamente con el usuario y con otros dispositivos para realizar
+alguna función específica. Hoy en día podemos encontrar relojes, pulseras, colgantes, anillos,
+gafas, ropa o zapatillas que cumplen con esta descripción.
 
+El término wearable tiene raíz inglesa y se puede traducir como «llevable» o «vestible» haciendo
+referencia a computadoras corporales o «llevables» por el usuario. Bajo esta visión, el ordenador
+deja de ser un elemento externo al usuario que usa en determinados espacios para convertirse en un
+elemento con el que interactúa continuamente y lo lleva a todos sitios.
+
+Dentro de esta definición no se considera wearable a otros elementos que usamos diariamente como la
+televisión, la cafetera o nuestro lector de ebooks pese a llevar procesadores. Esto es así porque no
+forman parte de nosotros, es decir, no son «llevables» o «vestibles».
+
+Se estima que los orígenes de la tecnología wearable data de la década de 1970 pero no ha sido hasta
+la década del 2010 cuando la tecnología ha evolucionado lo suficiente para atraer a los
+consumidores. 
+
+Las grandes compañías están apostando por la tecnologías wearables.  En la
+\acf{CES}\footnote{http://www.cesweb.org/} de enero de este año, grandes empresas como Intel,
+Adidas, Sony o Rebook han presentado diferentes complementos wearables. Más tarde, en abril, Google
+presentó sus Google Glass y se espera la llegada del AppleWatch de Apple para la primavera de
+2015. Todo ello hace pensar que los wearables han llegado para quedarse y que los próximos años
+sufrirán una gran expansión.
+
+En este \acs{TFG} se pretende aprovechar la creciente popularidad de los wearables utilizando alguno
+del mercado como complemento vibratorio. De esta forma conseguiremos que nuestro sistema final pueda
+ser usado por la mayor cantidad de gente posible.
 
 \subsection{Weareables vibratorios para smartphone}
 
+A pesar de la gran variedad de dispositivos wearables, no todos tienen la misma forma de interacción
+con el usuario y en este \acs{TFG} sólo estamos interesados en los que se puedan sincronizar con un
+smartphone y sean vibratorios.
+
+A continuación se habla de los diferentes tipos de wearables que disponen de vibración separándolos
+por la forma que tienen de conectarse con el smartphone.
 
 \begin{definitionlist}
-  \item[Relojes]
+  \item[Perfiles bluetooth] La mayoría de dispositivos de bajo coste como colgantes, anillos o
+    pulseras utilizan este método de conexión con el smartphone. Básicamente se sincronizan con
+    nuestro móvil con el perfil de manos libres o \acf{HFP} para que cuando recibamos una llamada
+    el wearable vibre. Como consecuencia de ello, resulta imposible desarrollar aplicaciones para
+    estos complementos porque no podemos controlar a voluntad la vibración del wearable y, de
+    hacerlo vibrar simulando una llamada, no podríamos diferenciar entre una llamada real o una
+    simulada.
 
-  \item[Pulseras]
+  \item[Bluetooth con aplicación propietaria] Otros dispositivos como pulseras o relojes se
+    sincronizan con nuestro smartphone por medio de bluetooth y sus perfiles \acf{HID} o
+    \acf{PAN}. Gracias a ello pueden comunicarse con la aplicación propietaria instalada en el
+    smartphone, configurar los wearables y recibir la información almacenada en el dispositivo.
 
-  \item[Zapatillas]
+    Este tipo conexión es bastante común en los cuantificadores personales pero, al tratarse de
+    software propietario, es necesaria una \acs{API} para poder realizar aplicaciones para
+    ellos. Sorprendentemente sólo la empresa Fitbit proporciona una
+    \acs{API}\footnote{http://dev.fitbit.com/} pero no permiten manipular el vibrador de su
+    dispositivo.
+
+  \item[Bluetooth con Google Play services] Este tipo de conexión es la que realizan los wearables
+    que utilizan como \acs{SO} Android Wear para comunicarse con el smartphone Android. Esto permite
+    que las notificaciones del smartphone lleguen a nuestro wearable de forma transparente al
+    desarrollador y se instalen aplicaciones en el wearable por medio del smartphone.
+
+    A pesar de que Android Wear fue lanzado por Google en marzo de 2014 se trata de una plataforma
+    de desarrollo muy potente porque incorpora la mayoría de \acs{API} de
+    Android\footnote{https://developer.android.com/training/wearables/apps/index.html}. Gracias a
+    ello, se puede controlar el vibrador del wearable a voluntad.
  
 \end{definitionlist}
 
-
 \section{Proveedores de mapas y rutas}
 
+\begin{definitionlist}
+  \item[Google]
 
-\subsection{Google}
-
-
-\subsection{Open Street Maps}
+  \item[Open Street Maps]
+ 
+\end{definitionlist}
 
 
 \section{Proveedores de geocoding}
 
 
-\subsection{Google}
+\begin{definitionlist}
+  \item[Google]
 
-
-\subsection{Open Street Maps}
+  \item[Open Street Maps]
+ 
+\end{definitionlist}
 
 % Local Variables:
 % TeX-master: "main.tex"

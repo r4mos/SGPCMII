@@ -1,14 +1,31 @@
 \chapter{Antecedentes}
 \label{chap:antecedentes}
 
-introducción a los aspectos importantes del TFG y necesidad de ponerlos en contexto realizando un
-estudio sobre ellos para poder seleccionar lo que nos convenga.
+\drop{E}{n} este capitulo se hace una introducción a los aspectos más destacables relacionados con
+el \acs{TFG}. Se empieza presentando el concepto de interacción implícita. Después se ponen en
+contexto los sistemas de navegación por satélite y sus actuales aplicaciones para smartphone. Más
+tarde se hace un estudio por las principales plataformas de desarrollo. Luego se
+indaga en el concepto de wearable y se describen los diferentes tipos de wearable en función de la
+forma de conectarse con el teléfono. Finalmente se hace un repaso por los principales proveedores de
+servicios que serán necesarios a la hora de implementar nuestro sistema.
+
+Con todo ello se espera adquirir los conocimientos necesarios para desarrollar el \acs{TFG}.
 
 \section{Interacción implícita}
 
+Baecker y Buxton definieron en 1987 la \acf{IPO} como «todos los intercambios que suceden entre la
+  persona y el ordenador». En el modelo clásico de \acs{IPO} es la persona la encargada de
+interactuar con el ordenador y decirle qué hacer, es decir, interacción explícita. Pero hay otra
+forma de proceder: que sea el ordenador el encargado de interactuar con la persona sin a intención
+explícita o el conocimiento del usuario, es decir, interacción implícita.
 
-\subsection{Interacción implícita en el guiado de personas}
+En base a ello, podemos definir la interacción implícita como un tipo \acs{IPO} en el que la
+computadora es la encargada de interactuar con el usuario.
 
+En este \acs{TFG} se hará uso de la interacción implícita por medio de la vibración y el sonido para
+comunicarnos con el usuario en los momentos necesarios y decirle qué acción ha de realizar. Otros
+proyectos que utilizan este tipo de interacción para el guiado de personas son \cite{Boemo12} y
+\cite{Merino13}, o las zapatillas \textit{Lechal} \cite{Lechal}.
 
 \section{Sistemas de navegación por satélite}
 
@@ -136,10 +153,6 @@ usadas.
     altavoces la instrucción a realizar. La vibración que se utiliza es la misma para todos los
     tipos de instrucciones.
 
-    Por otro lado, la aplicación de Google es propietaria y no permite extender su funcionalidad por
-    medio de plugins. Lo único que se puede hacer es crear nuestra propia aplicación utilizando la
-    \acs{API} de mapas y rutas.
-
   \item[iOS maps] iOS Maps es la aplicación de Apple lanzada en Septiembre de 2012 para sus
     dispositivos iPhone, iPad y iPod Touch. Esta aplicación es multilenguaje.
 
@@ -157,9 +170,6 @@ usadas.
     Con respecto a la interacción con el usuario, iOS maps utiliza la pantalla y el sonido. La
     pantalla mostrando continuamente las instrucciones a seguir y el sonido a la hora de realizar
     las instrucciones.
-
-    Por otro lado, iOS maps es una aplicación propietaria y no permite extender sus funcionalidades
-    por medio de plugins.
 
   \item[Nokia HERE] Nokia HERE, antes conocido como Ovi Maps (2007-2011) y como Nokia Maps
     (2011-2012), es la aplicación de navegación desarrollada por Nokia. Está disponible para Windows
@@ -181,8 +191,22 @@ usadas.
     pantalla mostrando continuamente las instrucciones a desarrollar y, a la hora de realizar
     las instrucciones, se reproducen sonoramente.
 
-    Finalmente, HERE es un sistema propietario que no permite extender su funcionalidad por medio de
-    plugins ni la utilización de sus mapas.
+  \item[OsmAnd] OsmAnd es la aplicación de navegación de código abierto (GPL v3) para Android basada
+    en los mapas de \acf{OSM}. Existe una versión gratuita y otra de pago que nos permite
+    desbloquear el limite de descargas de mapas offline y ayudar al desarrollo de la aplicación.
+
+    Entre las características más importantes podemos destacar:
+
+    \begin{itemize}
+      \item Visualización de nuestra posición el mapa mostrando el posible error cometido en la
+        trilateración.
+      \item Visualización de mapas offline previamente descargados.
+      \item Rotación automática del mapa en función de nuestra orientación.
+      \item Cálculo de rutas para peatones y vehículos motorizados.
+    \end{itemize}
+
+    La interacción con el usuario se realiza visualizando la pantalla (que puede configurarse para
+    que se encienda antes de cada acción) y por medio del sonido.
 
 \end{definitionlist}
 
@@ -384,29 +408,65 @@ por la forma que tienen de conectarse con el smartphone.
     desarrollador y se instalen aplicaciones en el wearable por medio del smartphone.
 
     A pesar de que Android Wear fue lanzado por Google en marzo de 2014 se trata de una plataforma
-    de desarrollo muy potente porque incorpora la mayoría de \acs{API} de
+    de desarrollo muy potente porque incorpora la mayoría de la \acs{API} de
     Android\footnote{https://developer.android.com/training/wearables/apps/index.html}. Gracias a
     ello, se puede controlar el vibrador del wearable a voluntad.
  
 \end{definitionlist}
 
-\section{Proveedores de mapas y rutas}
+\section{Proveedores de mapas, rutas y geocoding}
+
+Para la realización en este \acs{TFG} del sistema de guiado por satélite será necesario utilizar
+alguno de los proveedores de mapas rutas y geocoding. A continuación se muestran principales
+proveedores de estos servicios. Sobra decir que, salvo restricciones de licencia, es posible
+utilizar los servicios de forma combinada.
 
 \begin{definitionlist}
-  \item[Google]
+  \item[Google] Google es el proveedor de mapas, rutas y geocoding más conocido de la
+    actualidad. Aunque ofrece los tres servicios como servicios web accesibles por medio de
+    \acs{API} y están disponibles para todas las plataformas, poseen una gran integración con
+    Android.
 
-  \item[Open Street Maps]
- 
-\end{definitionlist}
+    Por un lado, la \acs{API} de mapas permite insertar mapas de todas las partes del mundo con el
+    logotipo de Google en nuestra aplicación. De forma gratuita podemos realizar hasta
+    2.500 \footnote{https://developers.google.com/maps/licensing} solicitudes de mapas con 25.000
+    muestras y con una resolución de 640 x 640.
 
+    Por otro, el servicio de rutas nos permite calcular hasta 2.500 rutas diferentes con hasta 10
+    hitos por solicitud. Este servicio nos permite diferenciar entre rutas para peatones, ciclistas,
+    vehículos motorizados o transporte público.
 
-\section{Proveedores de geocoding}
+    Finalmente, el servicio de geocoding de Google permite realizar gratuitamente hasta 2.500
+    peticiones al día. Además, se pueden realizar búsquedas por números de casa.
 
+  \item[Bing] Es el proveedor de mapas de Microsoft que proporciona una \acs{API} con interface
+    \acf{REST} para integrar los servicios de mapas, geocoding y rutas en cualquier aplicación.
 
-\begin{definitionlist}
-  \item[Google]
+    Tanto si la aplicación que desarrollemos está disponible para la descarga gratuita como si es de
+    pago, Bing nos permite un máximo de
+    125.000\footnote{http://www.microsoft.com/maps/Licensing/licensing.aspx} transacciones por año
+    gratuitamente. En estas peticiones van incluidos todos los servicios.
 
-  \item[Open Street Maps]
+  \item[HERE] Es un proveedor de mapas, rutas y geocoding de Nokia que dispone de \acf{SDK} para el
+    desarrollo de aplicaciones en iOS y Android.
+
+    HERE permite realizar un total de
+    100.000\footnote{https://developer.here.com/get-started\#/10134035} peticiones gratuitas al mes
+    entre imágenes de satélite, geocoding y rutas. Es necesario destacar que sólo se pueden calcular
+    rutas para vehículos motorizados y personas, y que la versión de geocoding gratuita no permite
+    buscar a al nivel de números de casa.
+
+  \item[Open Street Map] \acs{OSM} es un proyecto colaborativo para crear mapas libres y
+    gratuitos. Por ello, es posible utilizar sus mapas y rutas bajo la licencia
+    ODbL\footnote{https://en.wikipedia.org/wiki/Open\_Database\_License}.
+
+    Su servicio de rutas permite la opción de calcularlas para peatones, ciclistas y vehículos
+    motorizados. Para ello es necesario registrarse gratuitamente y obtener una clave de usuario.
+
+    Por otro lado, el servicio de geocoding de \acs{OSM} se llama Nominatim y funciona sobre
+    servidores mantenidos por medio de donaciones y con una capacidad limitada. Por ello, dicen
+    poner el límite en «un máximo absoluto de 1 petición» aunque es posible realizar varias. Este
+    servicio no permite realizar búsquedas a nivel de números de casa.
  
 \end{definitionlist}
 

@@ -42,7 +42,7 @@ desarrollo del software puede no estar seguro de la eficacia de un algoritmo o d
 debería plantearse la \acs{IPO}. En estas y otras muchas situaciones, un paradigma de construcción
 de prototipos puede ofrecer el mejor enfoque~\cite{Pressman10}.
 
-El esquema general de prototipado evolutivo se puede ver en la Figura ~\ref{fig:prototipo}. El
+El esquema general de prototipado evolutivo se puede ver en la Figura~\ref{fig:prototipo}. El
 paradigma comienza con una recolección de requisitos, es decir, el desarrollador y el cliente
 definen los objetivos globales para el software, identifican los requisitos conocidos y las áreas
 donde se necesita más definición. Entonces aparece un diseño rápido centrado en los aspectos que
@@ -78,16 +78,102 @@ Por otro lado, el prototipado evolutivo  también puede presentar algunas desven
 \end{itemize}
 
 Debido a estos problemas, aplicar el prototipado evolutivo resulta muy complejo para grandes
-proyectos pero resulta conveniente utilizarlo en sistemas pequeños y de tamaño medio como el planteado en este \acs{TFG}.
+proyectos pero resulta conveniente utilizarlo en sistemas pequeños y de tamaño medio como el
+planteado en este \acs{TFG}. Para proyectos más grandes es recomendable utilizar un modelo híbrido
+entre el modelo en cascada, para desarrollar las partes bien conocidas, y un enfoque evolutivo para
+los aspectos que presenten mayor incertidumbre.
 
 \section{Herramientas}
 
+En esta sección se detallan las herramientas que han sido empeladas para la realización de este
+\acs{TFG}, desde las necesarias para implementar el proyecto hasta las utilizadas para la
+realización del documento.
+
 \subsection{Hardware}
-\begin{definitionlist}
-  \item[]
-\end{definitionlist}
+
+Entre los medios necesarios para la puesta en marcha del sistema y la realización de las pruebas, se
+han requerido los siguientes medios hardware:
+
+\begin{itemize}
+  \item \textbf{Computador} Para el desarrollo de la aplicación y generar la documentación ha sido
+    necesario empelar un ordenador de propósito general. En este caso un Asus
+    X54H~\footnote{http://www.asus.com/Notebooks\_Ultrabooks/X54H/}.
+
+  \item \textbf{Smartphones} Para las pruebas han sido necesarios varios smartphones con diferentes
+    versiones de Android. En todos se ha testeado tanto la aplicación de navegación como la
+    aplicación para los complementos vibratorios:
+    \begin{itemize}
+      \item Nexus 5~\footnote{https://www.google.es/nexus/5/} con Android 5.0.1.
+      \item Nexus One~\footnote{https://en.wikipedia.org/wiki/Nexus\_One} con Android 2.3.7.
+      \item HTC Wildfire S~\footnote{https://en.wikipedia.org/wiki/HTC\_Wildfire\_S} con Android
+        2.3.5.
+    \end{itemize}
+
+  \item \textbf{Smartwatch} Para realizar las pruebas para los complementos vibratorios con Android
+    Wear se ha utilizado el LG G Watch
+    R~\footnote{http://www.lg.com/es/wearables/lg-LGW110-g-watch-r}.
+
+\end{itemize}
 
 \subsection{Software}
+
+A continuación se nombran por categorías las diferentes herramientas software empleadas:
+
+\subsubsection{Sistemas Operativos}
+
+\begin{itemize}
+  \item \textbf{Elementary OS}~\footnote{http://elementaryos.org/} Para la elaboración del trabajo
+    se ha elegido esta distribución GNU/Linux como \acs{SO} del computador de
+    desarrollo. Concretamente en su versión 0.3 Freya.
+
+  \item \textbf{Android}~\footnote{https://developer.android.com/index.html} Para desarrollar
+    nuestra aplicación de navegación y algunos complementos vibratorios se seleccionó el \acs{SO}
+    Android por ser la plataforma con más cuota de mercado y variedad de dispositivos.
+
+  \item \textbf{Android Wear}~\footnote{https://developer.android.com/wear/index.html} Para
+    desarrollar la aplicación de los complementos vibratorios se utilizó Android Wear ya que es la
+    única plataforma de wearables que nos permite acceder al vibrador incorporado.
+
+\end{itemize}
+
+\subsubsection{Herramientas de desarrollo}
+
+\begin{itemize}
+  \item \textbf{Android Studio}~\footnote{https://developer.android.com/sdk/index.html} Para el
+    desarrollo de las aplicaciones del sistema de navegación desarrollado se selecciono Android
+    Studio en su versión 1.0. Este entorno de desarrollo completamente orientado a Android y Android
+    Wear.
+
+  \item \textbf{Git}~\footnote{http://git-scm.com/} Para llevar un control de versiones y así
+    mantener un historial de cambios, tanto en el desarrollo de las aplicaciones como en el
+    desarrollo del proyecto, se ha utilizado Git. El servicio de repositorio empleado ha sido proporcionado por Bitbucket~\footnote{https://bitbucket.org/}.
+
+\end{itemize}
+
+\subsubsection{Documentación y gráficos}
+
+\begin{itemize}
+  \item \textbf{Emacs}~\footnote{https://www.gnu.org/software/emacs/} El editor de texto
+    «extensible, personalizable, auto-documentado y de tiempo real» ha sido utilizado en su versión
+    23.4.1 para la elaboración de la documentación del \acs{TFG} utilizando los modos «latex» y
+    «flyspell».
+
+  \item \textbf{\LaTeX}~\footnote{http://www.latex-project.org/} Para la elaboración de este
+    documento se ha empleado esta herramienta de creación de documentos profesionales. Más
+    concretamente, la implementación \textit{TeX
+      Live}~\footnote{\url{https://www.tug.org/texlive/}}.
+
+  \item \textbf{BibTex}~\footnote{http://www.bibtex.org/} Se ha empleado esta herramienta destinada
+    a la creación de referencias para documentos escritos en \LaTeX para hacer la bibliografía de
+    este documento.
+
+  \item \textbf{draw.io}~\footnote{https://www.draw.io/} Se ha utilizado esta aplicación web para
+    crear la mayoría de diagramas de este documento.
+
+  \item \textbf{Gimp}~\footnote{http://www.gimp.org/} Se ha usado este editor de imágenes avanzado
+    para crear y retocar algunas imágenes del documento. Concretamente en su versión 2.8.14.
+
+\end{itemize}
 
 % Local Variables:
 % TeX-master: "main.tex"

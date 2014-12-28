@@ -15,7 +15,7 @@ sobre los que partimos:
 
 \begin{itemize}
   \item El sistema debe poder guiar a peatones, ciclistas y motoristas.
-  \item El sistema debe desplegarse sobre alguna plataforma de smartphone.
+  \item El sistema debe desplegarse sobre alguna plataforma de \emph{smartphone}.
   \item La interacción con el sistema debe desarrollarse de forma implícita y ser válida para
     peatones, ciclistas y motoristas.
   \item En caso de necesitar complementos para la interacción, deben estar disponibles en el
@@ -44,48 +44,48 @@ los objetivos, el diseño, la implementación y las pruebas de cada una de ellas
 \subsection{Iteración 1: Mostrar mapa}
 
 En la primera iteración nos marcamos como objetivo mostrar una posición cualquiera en el mapa por
-medio de una aplicación de smartphone.
+medio de una aplicación de \emph{smartphone}.
 
 \subsubsection{Diseño}
 
 Para realizar esta primera aproximación tendremos que tomar tres importantes decisiones de diseño:
 
 \begin{itemize}
-  \item Elegir la plataforma de smartphone sobre la que desplegar nuestra aplicación.
+  \item Elegir la plataforma de \emph{smartphone} sobre la que desplegar nuestra aplicación.
   \item Elegir el proveedor de mapas que nos proporcionará las imágenes a mostrar.
   \item Elegir la versión objetivo de la plataforma de desarrollo.
 \end{itemize}
 
-En primer lugar, tras revisar las diferentes plataformas disponibles para smartphone (ver
+En primer lugar, tras revisar las diferentes plataformas disponibles para \emph{smartphone} (ver
 sección~\ref{sec:plataformas}) se estipuló que la mejor alternativa es Android. Por un lado, Android
 posee de la mayor cuota de mercado (81\%) y dispone de una gran variedad de dispositivos en una
 amplia gama de precios. Por otro lado, Android es un \acs{SO} que se integra fácilmente con la
 plataforma de complementos Android Wear (ver sección~\ref{sec:wearables}) que es la única que nos
-permite manipular el vibrador del wearable a voluntad.
+permite manipular el vibrador del \emph{wearable} a voluntad.
 
 En segundo lugar, entre los proveedores de mapas existentes (ver sección~\ref{sec:proveedores}) se
 seleccionó Open Street Map. Se consideró la mejor elección porque nos provee de mapas de gran
 calidad completamente gratuitos. Además, si encontrásemos cualquier tipo de error en los mapas
 suministrados, podríamos corregirlo porque es un proyecto colaborativo. Para simplificar el uso de
-\acs{OSM} se utilizó la librería Osmdroid tal y como se dijo en la
+\acs{OSM} se utilizó la librería \emph{Osmdroid} tal y como se dijo en la
 sección~\ref{sec:herramientasSoftware}.
 
 En tercer y último lugar, se seleccionó como objetivo del desarrollo la \acs{API} de Android 21,
-también conocida como Android 5.0 (Lollipop), por ser la más nueva y poseer el mayor número de
+también conocida como Android 5.0 \emph{Lollipop}, por ser la más nueva y poseer el mayor número de
 funcionalidades. De todos modos, se aseguró la compatibilidad desde la \acs{API} de Android 8,
-también llamada Android 2.2 (Froyo), por medio de la librería Android support.
+también llamada Android 2.2 \emph{Froyo}, por medio de la librería \emph{Android support}.
 
 \subsubsection{Implementación}
 
-Para visualizar los mapas de \acs{OSM} con la ayuda de la librería Osmdroid basta con añadir una
-vista del tipo \texttt{org.osmdroid.views.MapView} al layout de nuestra aplicación (ver
+Para visualizar los mapas de \acs{OSM} con la ayuda de la librería \emph{Osmdroid} basta con añadir
+una vista del tipo \emph{org.osmdroid.views.MapView} al \emph{layout} de nuestra aplicación (ver
 listado~\ref{code:layoutMapView}) y seleccionar el punto del mapa que deseamos centrar en la
 pantalla (ver listado~\ref{code:activityMapView}) por medio de sus coordenadas geográficas.
 
 \begin{listing}[
   float=ht,
   language = xml,
-  caption  = {Ejemplo de layout usando \texttt{org.osmdroid.views.MapView}},
+  caption  = {Ejemplo de \emph{layout} usando \emph{org.osmdroid.views.MapView}},
   label    = code:layoutMapView]
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -104,7 +104,7 @@ pantalla (ver listado~\ref{code:activityMapView}) por medio de sus coordenadas g
 \begin{listing}[
   float=ht,
   language = java,
-  caption  = {Ejemplo de activity mostrando un punto de un mapa en específico},
+  caption  = {Ejemplo de \emph{activity} mostrando un punto de un mapa en específico},
   label    = code:activityMapView]
 public class MainActivity extends Activity {
     @Override public void onCreate(Bundle savedInstanceState) {
@@ -123,12 +123,12 @@ public class MainActivity extends Activity {
 
 Por muy sencillo que pueda parecer, durante la implementación detectamos un problema: el mapa no se
 centraba en la posición seleccionada. Dejaba dicha posición en la esquina superior izquierda y no en
-el centro de la pantalla. Estudiando el problema descubrimos que se trataba de un bug
+el centro de la pantalla. Estudiando el problema descubrimos que se trataba de un \emph{bug}
 documentado~\footnote{https://github.com/osmdroid/osmdroid/issues/22\#issuecomment-43092313} de
-Osmdroid y que se resolvería en la próxima versión de la librería.
+\emph{Osmdroid} y que se resolvería en la próxima versión de la librería.
 
-Para paliar dicho problema, y siguiendo con las instrucciones detalladas en el bug, procedimos a
-implementar un método que lo resolviera (ver listado~\ref{code:centerMap}).
+Para paliar dicho problema, y siguiendo con las instrucciones detalladas en el \emph{bug},
+procedimos a implementar un método que lo resolviera (ver listado~\ref{code:centerMap}).
 
 \begin{listing}[
   float=ht,

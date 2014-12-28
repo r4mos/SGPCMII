@@ -4,19 +4,20 @@
 \drop{E}{n} este capitulo se expone la metodología seguida para llevar a cabo el proyecto y se
 justifica por qué se considera el método más satisfactorio a la hora de implementar este
 \acs{TFG}. Además, se seleccionan y nombran las diferentes herramientas utilizadas para el
-desarrollo del mismo tanto software como hardware.
+desarrollo del mismo tanto \emph{software} como \emph{hardware}.
 
 \section{Metodología de trabajo}
 \label{sec:metodologia}
 
 Al comenzar este \acs{TFG} sólo disponíamos de una idea general del sistema que queríamos
 desarrollar. Puesto que los requisitos de los que disponíamos no eran detallados, se decidió optar
-por un modelo de desarrollo evolutivo para ir detallando las especificaciones a lo largo del
-progreso del proyecto. En particular, el de prototipos desechables o prototipado evolutivo.
+por un modelo de desarrollo \emph{evolutivo} para ir detallando las especificaciones a lo largo del
+progreso del proyecto. En particular, el de \emph{prototipos desechables} o \emph{prototipado
+  evolutivo}.
 
-El desarrollo evolutivo se basa en la idea de desarrollar una implementación inicial, exponiéndola a
-los comentarios del usuario y refinándola a través de las diferentes versiones hasta que se
-desarrolla un sistema adecuado~\cite{Sommerville14}.
+El desarrollo \emph{evolutivo} se basa en la idea de desarrollar una implementación inicial,
+exponiéndola a los comentarios del usuario y refinándola a través de las diferentes versiones hasta
+que se desarrolla un sistema adecuado~\cite{Sommerville14}.
 
 En la Figura~\ref{fig:modelo-evolutivo} se muestra el diagrama de flujo seguido por un modelo
 evolutivo en el que se puede ver como las actividades de especificación, desarrollo y validación se
@@ -25,31 +26,31 @@ realizan de forma concurrente con una rápida retroalimentación entre ellas.
 \begin{figure}[!h]
   \begin{center}
     \includegraphics[width=0.75\textwidth]{/modelo-evolutivo.jpg}
-    \caption{Diagrama de flujo del modelo de desarrollo evolutivo}
+    \caption{Diagrama de flujo del \emph{modelo de desarrollo evolutivo}}
     \label{fig:modelo-evolutivo}
   \end{center}
 \end{figure}
 
 \subsection{Prototipado evolutivo}
 
-El prototipado evolutivo es un modelo de desarrollo de software basado en la realización de
+El \emph{prototipado evolutivo} es un modelo de desarrollo de software basado en la realización de
 prototipos funcionales hasta llegar a un producto final. Se parte de los requisitos mejor
 comprendidos y con mayor prioridad, y se van definiendo los detalles conforme avanza el desarrollo
 de las diferentes versiones.
 
-Un cliente, a menudo, define un conjunto de objetivos generales para el software, pero no identifica
-los requisitos detallados de entrada, proceso o salida. De igual forma, el responsable del
-desarrollo del software puede no estar seguro de la eficacia de un algoritmo o de la forma en que
-debería plantearse la \acs{IPO}. En estas y otras muchas situaciones, un paradigma de construcción
-de prototipos puede ofrecer el mejor enfoque~\cite{Pressman10}.
+Un cliente, a menudo, define un conjunto de objetivos generales para el \emph{software}, pero no
+identifica los requisitos detallados de entrada, proceso o salida. De igual forma, el responsable
+del desarrollo del \emph{software} puede no estar seguro de la eficacia de un algoritmo o de la
+forma en que debería plantearse la \acs{IPO}. En estas y otras muchas situaciones, un paradigma de
+construcción de prototipos puede ofrecer el mejor enfoque~\cite{Pressman10}.
 
-El esquema general de prototipado evolutivo se puede ver en la Figura~\ref{fig:prototipo}. El
-paradigma comienza con una recolección de requisitos, es decir, el desarrollador y el cliente
-definen los objetivos globales para el software, identifican los requisitos conocidos y las áreas
-donde se necesita más definición. Entonces aparece un diseño rápido centrado en los aspectos que
-serán visibles para el cliente y se construye un prototipo. Este prototipo es evaluado por el
-cliente y se utiliza para refinar los requisitos del software. Esta iteración se repite hasta llegar
-al resultado final.
+El esquema general del \emph{prototipado evolutivo} se puede ver en la
+Figura~\ref{fig:prototipo}. El paradigma comienza con una recolección de requisitos, es decir, el
+desarrollador y el cliente definen los objetivos globales para el software, identifican los
+requisitos conocidos y las áreas donde se necesita más definición. Entonces aparece un diseño rápido
+centrado en los aspectos que serán visibles para el cliente y se construye un prototipo. Este
+prototipo es evaluado por el cliente y se utiliza para refinar los requisitos del software. Esta
+iteración se repite hasta llegar al resultado final.
 
 \begin{figure}[!h]
   \begin{center}
@@ -59,18 +60,18 @@ al resultado final.
   \end{center}
 \end{figure}
 
-Entre las ventajas del uso del prototipado evolutivo hay que destacar:
+Entre las ventajas del uso del \emph{prototipado evolutivo} hay que destacar:
 
 \begin{itemize}
   \item La continua obtención de prototipos permite al cliente observar y dirigir el desarrollo del
-    software.
+    \emph{software}.
   \item Las funcionalidades más importantes son desarrolladas en las primeras fases del proyecto y,
     por tanto, son las funcionalidades que más veces se ha probado su correcto funcionamiento.
   \item Como se evalúan prototipos intermedios, es más fácil comprobar si los requisitos planteados
     son correctos y viables.
 \end{itemize}
 
-Por otro lado, el prototipado evolutivo  también puede presentar algunas desventajas:
+Por otro lado, el \emph{prototipado evolutivo} también puede presentar algunas desventajas:
 
 \begin{itemize}
   \item Resulta difícil estimar el coste final del proyecto debido al desconocimiento del número de
@@ -78,7 +79,7 @@ Por otro lado, el prototipado evolutivo  también puede presentar algunas desven
   \item Resulta muy difícil y costoso realizar cambios en la arquitectura del software.
 \end{itemize}
 
-Debido a estos problemas, aplicar el prototipado evolutivo resulta muy complejo para grandes
+Debido a estos problemas, aplicar el \emph{prototipado evolutivo} resulta muy complejo para grandes
 proyectos pero resulta conveniente utilizarlo en sistemas pequeños y de tamaño medio como el
 planteado en este \acs{TFG}. Para proyectos más grandes es recomendable utilizar un modelo híbrido
 entre el modelo en cascada, para desarrollar las partes bien conocidas, y un enfoque evolutivo para
@@ -94,16 +95,16 @@ realización del documento.
 \label{sec:herramientasHardware}
 
 Entre los medios necesarios para la puesta en marcha del sistema y la realización de las pruebas, se
-han requerido los siguientes medios hardware:
+han requerido los siguientes medios \emph{hardware}:
 
 \begin{itemize}
   \item \textbf{Computador} Para el desarrollo de la aplicación y generar la documentación ha sido
     necesario empelar un ordenador de propósito general. En este caso se ha utilizado un ordenador
     portátil Asus X54H~\footnote{http://www.asus.com/Notebooks\_Ultrabooks/X54H/}.
 
-  \item \textbf{Smartphones} Para las pruebas han sido necesarios varios smartphones con diferentes
-    versiones de Android. En todos se ha testeado tanto la aplicación de navegación como la
-    aplicación para los complementos vibratorios:
+  \item \textbf{Smartphones} Para las pruebas han sido necesarios varios \emph{smartphones} con
+    diferentes versiones de Android. En todos se ha testeado tanto la aplicación de navegación como
+    la aplicación para los complementos vibratorios:
     \begin{itemize}
       \item Nexus 5~\footnote{https://www.google.es/nexus/5/} con Android 5.0.1.
       \item Nexus One~\footnote{https://en.wikipedia.org/wiki/Nexus\_One} con Android 2.3.7.
@@ -120,14 +121,14 @@ han requerido los siguientes medios hardware:
 \subsection{Software}
 \label{sec:herramientasSoftware}
 
-A continuación se nombran por categorías las diferentes herramientas software empleadas:
+A continuación se nombran por categorías las diferentes herramientas \emph{software} empleadas:
 
 \subsubsection{Sistemas Operativos}
 
 \begin{itemize}
   \item \textbf{Elementary OS}~\footnote{http://elementaryos.org/} Para la elaboración del trabajo
     se ha elegido esta distribución GNU/Linux como \acs{SO} del computador de
-    desarrollo. Concretamente en su versión 0.3 Freya.
+    desarrollo. Concretamente en su versión 0.3 \emph{Freya}.
 
   \item \textbf{Android}~\footnote{https://developer.android.com/index.html} Para desarrollar
     nuestra aplicación de navegación y algunos complementos vibratorios se seleccionó el \acs{SO}
@@ -135,7 +136,7 @@ A continuación se nombran por categorías las diferentes herramientas software 
 
   \item \textbf{Android Wear}~\footnote{https://developer.android.com/wear/index.html} Para
     desarrollar la aplicación de los complementos vibratorios se utilizó Android Wear ya que es la
-    única plataforma de wearables que nos permite acceder al vibrador incorporado.
+    única plataforma de \emph{wearables} que nos permite acceder al vibrador incorporado.
 
 \end{itemize}
 
@@ -174,11 +175,11 @@ A continuación se nombran por categorías las diferentes herramientas software 
 
   \item \textbf{Gson}~\footnote{https://code.google.com/p/google-gson/} Esta librería es la
     encargada de convertir objetos Java en su representación en JSON y viceversa. Es imprescindible
-    para usar Osmdroid y se utilizó la versión 2.2.4.
+    para usar \emph{Osmdroid} y se utilizó la versión 2.2.4.
 
   \item \textbf{SLF4J}~\footnote{http://www.slf4j.org/} La librería Simple Logging Facade for Java
     (SLF4J) proporciona una \acs{API} de registro Java a través de patrón de fachada simple. Es
-    imprescindible para el uso de Osmdroid y se utilizó en la versión 1.5.8.
+    imprescindible para el uso de \emph{Osmdroid} y se utilizó en la versión 1.5.8.
     %https://es.wikipedia.org/wiki/SLF4J
 
 \end{itemize}

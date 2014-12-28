@@ -7,6 +7,7 @@ justifica por qué se considera el método más satisfactorio a la hora de imple
 desarrollo del mismo tanto software como hardware.
 
 \section{Metodología de trabajo}
+\label{sec:metodologia}
 
 Al comenzar este \acs{TFG} sólo disponíamos de una idea general del sistema que queríamos
 desarrollar. Puesto que los requisitos de los que disponíamos no eran detallados, se decidió optar
@@ -90,14 +91,15 @@ En esta sección se detallan las herramientas que han sido empeladas para la rea
 realización del documento.
 
 \subsection{Hardware}
+\label{sec:herramientasHardware}
 
 Entre los medios necesarios para la puesta en marcha del sistema y la realización de las pruebas, se
 han requerido los siguientes medios hardware:
 
 \begin{itemize}
   \item \textbf{Computador} Para el desarrollo de la aplicación y generar la documentación ha sido
-    necesario empelar un ordenador de propósito general. En este caso un Asus
-    X54H~\footnote{http://www.asus.com/Notebooks\_Ultrabooks/X54H/}.
+    necesario empelar un ordenador de propósito general. En este caso se ha utilizado un ordenador
+    portátil Asus X54H~\footnote{http://www.asus.com/Notebooks\_Ultrabooks/X54H/}.
 
   \item \textbf{Smartphones} Para las pruebas han sido necesarios varios smartphones con diferentes
     versiones de Android. En todos se ha testeado tanto la aplicación de navegación como la
@@ -116,6 +118,7 @@ han requerido los siguientes medios hardware:
 \end{itemize}
 
 \subsection{Software}
+\label{sec:herramientasSoftware}
 
 A continuación se nombran por categorías las diferentes herramientas software empleadas:
 
@@ -146,7 +149,37 @@ A continuación se nombran por categorías las diferentes herramientas software 
 
   \item \textbf{Git}~\footnote{http://git-scm.com/} Para llevar un control de versiones y así
     mantener un historial de cambios, tanto en el desarrollo de las aplicaciones como en el
-    desarrollo del proyecto, se ha utilizado Git. El servicio de repositorio empleado ha sido proporcionado por Bitbucket~\footnote{https://bitbucket.org/}.
+    desarrollo del proyecto, se ha utilizado Git. El servicio de repositorio empleado ha sido
+    proporcionado por Bitbucket~\footnote{https://bitbucket.org/}.
+
+\end{itemize}
+
+\subsubsection{Librerías}
+
+\begin{itemize}
+  \item \textbf{Android
+    support}~\footnote{https://developer.android.com/tools/support-library/index.html} Para lograr
+    la compatibilidad entre las diferentes versiones de Android y de sus \acs{API} se utilizó esta
+    librería. Específicamente la versión 4.
+
+  \item \textbf{Commons Lang}~\footnote{https://commons.apache.org/proper/commons-lang/} Se
+    utilizaron algunos de sus métodos del paquete \texttt{java.util}. Se empleó la versión 3.3.2.
+
+  \item \textbf{Osmdroid}~\footnote{https://github.com/osmdroid/osmdroid} Para acceder a los mapas
+    colaborativos de \acs{OSM} se utilizó esta librería en su versión 4.2.
+
+  \item \textbf{Osmbonuspack}~\footnote{https://code.google.com/p/osmbonuspack/} Para realizar
+    algunas acciones sobre los mapas de \acs{OSM} no disponibles en Osmdroid se utilizó esta
+    librería en su versión 4.9.
+
+  \item \textbf{Gson}~\footnote{https://code.google.com/p/google-gson/} Esta librería es la
+    encargada de convertir objetos Java en su representación en JSON y viceversa. Es imprescindible
+    para usar Osmdroid y se utilizó la versión 2.2.4.
+
+  \item \textbf{SLF4J}~\footnote{http://www.slf4j.org/} La librería Simple Logging Facade for Java
+    (SLF4J) proporciona una \acs{API} de registro Java a través de patrón de fachada simple. Es
+    imprescindible para el uso de Osmdroid y se utilizó en la versión 1.5.8.
+    %https://es.wikipedia.org/wiki/SLF4J
 
 \end{itemize}
 

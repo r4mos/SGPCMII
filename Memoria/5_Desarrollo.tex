@@ -1,21 +1,287 @@
 \chapter{Desarrollo del proyecto}
 \label{chap:desarrollo}
 
-- Especificación de requisitos
-- Itereacciones
-    - Elección de complemento vibratorio (Pulseras, relojes, deportivas, otros móviles)
-    - Elección de plataforma del smartphone (Android, iOS, etc)
-    - Mostrar mapa (Google, OSM, ¿?)
-    - Mostrar posición el mapa (GPS, GLONASS, etc) con error cometido
-    - Orientar mapa (Sensores)
-    - Crear y mostrar ruta (con OSM) hasta un GeoPoint
-    - Navegación por ruta (con GPS + OSM)
-    - Avisos por pantalla
-    - Selector de destino (Google, OSM, Openstreet, Wikipedia, etc)
-    - Avisos sonoros (Google, ¿?)
-    - Avisos vibratorios: Android
-    - Avisos vibratorios: Android Wear (TODO)
-- Pruebas 
+\drop{E}{n} este capítulo se describe el proceso de desarrollo de nuestro sistema de navegación por
+satélite. Se empieza enumerando los requisitos originales del sistema y se explica cómo se
+realizarán las pruebas. Más tarde se explica iteración a iteración las decisiones tomadas, los
+prototipos desarrollados y las pruebas realizadas sobre ellos.
+
+\section{Especificación de requisitos}
+
+Como se comentó anteriormente (ver sección~\ref{sec:metodologia}) los requisitos del sistema se
+han ido detallando a lo largo del desarrollo del proyecto ya que, originalmente, sólo teníamos una
+idea muy general del sistema a desarrollar. A continuación se muestran estos requisitos generales
+sobre los que partimos:
+
+\begin{itemize}
+  \item El sistema debe poder guiar a peatones, ciclistas y motoristas.
+  \item El sistema debe desplegarse sobre alguna plataforma de smartphone.
+  \item La interacción con el sistema debe desarrollarse de forma implícita y ser válida para
+    peatones, ciclistas y motoristas.
+  \item En caso de necesitar complementos para la interacción, deben estar disponibles en el
+    mercado.
+  \item El sistema debe implementar las características básicas del resto de aplicaciones del
+    mercado como mostrar la posición en el mapa, rotar el mapa en función de nuestra orientación o
+    visualizar la ruta que se va a seguir.
+\end{itemize}
+
+\section{Pruebas}
+
+Para describir las pruebas realizadas sobre los diferentes prototipos en este documento se ha
+utilizado el patrón «Given-When-Then». Este patrón divide el proceso de ejección en 3 etapas:
+
+\begin{itemize}
+  \item \textbf{Given} (Dado): Condiciones previas sobre las que se producen los eventos.
+  \item \textbf{When} (Cuando): Operaciones específicas que se producen.
+  \item \textbf{Then} (Entonces): Resultados esperados.
+\end{itemize}
+
+\section{Proceso de desarrollo}
+
+A continuación se indican las iteraciones realizadas durante el desarrollo del \acs{TFG} detallando
+los objetivos, el diseño, la implementación y las pruebas de cada una de ellas.
+
+\subsection{Iteración 1: Mostrar mapa}
+
+En la primera iteración nos marcamos como objetivo mostrar una posición cualquiera en el mapa por
+medio de una aplicación de smartphone.
+
+\subsubsection{Diseño}
+
+Para realizar esta primera aproximación tendremos que tomar tres importantes decisiones de diseño:
+
+\begin{itemize}
+  \item Elegir la plataforma de smartphone sobre la que desplegar nuestra aplicación.
+  \item Elegir el proveedor de mapas que nos proporcionará las imágenes a mostrar.
+  \item Elegir la versión objetivo de la plataforma de desarrollo.
+\end{itemize}
+
+En primer lugar, tras revisar las diferentes plataformas disponibles para smartphone (ver
+sección~\ref{sec:plataformas}) se estipuló que la mejor alternativa es Android. Por un lado, Android
+posee de la mayor cuota de mercado (81\%) y dispone de una gran variedad de dispositivos en una
+amplia gama de precios. Por otro lado, Android es un \acs{SO} que se integra fácilmente con la
+plataforma de complementos Android Wear (ver sección~\ref{sec:wearables}) que es la única que nos
+permite manipular el vibrador del wearable a voluntad.
+
+En segundo lugar, entre los proveedores de mapas existentes (ver sección~\ref{sec:proveedores}) se
+seleccionó Open Street Map. Se consideró la mejor elección porque nos provee de mapas de gran
+calidad completamente gratuitos. Además, si encontrásemos cualquier tipo de error en los mapas
+suministrados, podríamos corregirlo porque es un proyecto colaborativo. Para simplificar el uso de
+\acs{OSM} se utilizó la librería Osmdroid tal y como se dijo en la
+sección~\ref{sec:herramientasSoftware}.
+
+En tercer y último lugar, se seleccionó como objetivo del desarrollo la \acs{API} de Android 21,
+también conocida como Android 5.0 (Lollipop), por ser la más nueva y poseer el mayor número de
+funcionalidades. De todos modos, se aseguró la compatibilidad desde la \acs{API} de Android 8,
+también llamada Android 2.2 (Froyo), por medio de la librería Android support.
+
+\subsubsection{Implementación}
+
+Para visualizar los mapas de \acs{OSM} con la ayuda de la librería Osmdroid basta con añadir una
+vista del tipo \texttt{org.osmdroid.views.MapView} al layout de nuestra aplicación (ver
+listado~\ref{code:layoutMapView}) y seleccionar el punto del mapa que deseamos centrar en la
+pantalla (ver listado~\ref{code:activityMapView}) por medio de sus coordenadas geográficas.
+
+\begin{listing}[
+  float=ht,
+  language = xml,
+  caption  = {Ejemplo de layout usando \texttt{org.osmdroid.views.MapView}},
+  label    = code:layoutMapView]
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical" 
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        
+        <org.osmdroid.views.MapView android:id="@+id/map"
+                android:layout_width="fill_parent" 
+                android:layout_height="fill_parent" />
+                
+</LinearLayout>
+\end{listing}
+
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {Ejemplo de activity mostrando un punto de un mapa en específico},
+  label    = code:activityMapView]
+public class MainActivity extends Activity {
+    @Override public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+
+        MapView map = (MapView)findViewById(R.id.map);
+        map.setMultiTouchControls(true);
+        map.getController().setZoom(18);
+
+        GeoPoint startPoint = new GeoPoint(39.40540171, -3.12204771);
+        map.getController().setCenter(startPoint);
+    }
+}
+\end{listing}
+
+Por muy sencillo que pueda parecer, durante la implementación detectamos un problema: el mapa no se
+centraba en la posición seleccionada. Dejaba dicha posición en la esquina superior izquierda y no en
+el centro de la pantalla. Estudiando el problema descubrimos que se trataba de un bug
+documentado~\footnote{https://github.com/osmdroid/osmdroid/issues/22\#issuecomment-43092313} de
+Osmdroid y que se resolvería en la próxima versión de la librería.
+
+Para paliar dicho problema, y siguiendo con las instrucciones detalladas en el bug, procedimos a
+implementar un método que lo resolviera (ver listado~\ref{code:centerMap}).
+
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {Método utilizado para centrar el mapa en cualquier posición},
+  label    = code:centerMap]
+private void centerMap(final GeoPoint loc) {
+    mMap.getViewTreeObserver().addOnGlobalLayoutListener(
+            new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            mMap.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+            mMap.getController().setCenter(loc);
+        }
+    });
+}
+\end{listing}
+
+\subsubsection{Pruebas}
+
+Para corroborar el correcto funcionamiento del primer prototipo se realizaron dos grupos de pruebas.
+
+\newpage
+\begin{itemize}
+  \item Para determinar la correcta carga de los mapas en diferentes localizaciones:
+
+  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+    \hline
+    \textbf{Dado}     & Diferentes coordenadas geográficas \\
+    \textbf{Cuando}   & Ejecutamos la aplicación \\
+    \textbf{Entonces} & Se muestra dicha ubicación centrada en un mapa \\
+    \hline
+  \end{tabular}
+
+  \item Para determinar el correcto funcionamiento en diferentes versiones de Android:
+
+  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+    \hline 
+    \textbf{Dado} & Diferentes dispositivos con distintas versiones de Android (ver
+    sección~\ref{sec:herramientasHardware}) \\
+    \textbf{Cuando} & Ejecutamos la aplicación \\ 
+    \textbf{Entonces} & Se muestra la ubicación correspondiente centrada en un mapa \\ 
+    \hline
+  \end{tabular}
+\end{itemize}
+
+\subsection{Iteración 2: Mostrar posición actual en el mapa}
+\subsubsection{Diseño}
+\subsubsection{Implementación}
+Elección de tecnología de posicionamiento
+\subsubsection{Pruebas}
+\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+  \hline
+  \textbf{Dado}     & ... \\
+  \textbf{Cuando}   & ... \\
+  \textbf{Entonces} & ... \\
+  \hline
+\end{tabular}
+
+\subsection{Iteración 3: Orientar mapa}
+\subsubsection{Diseño}
+\subsubsection{Implementación}
+Uso de sensores
+\subsubsection{Pruebas}
+\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+  \hline
+  \textbf{Dado}     & ... \\
+  \textbf{Cuando}   & ... \\
+  \textbf{Entonces} & ... \\
+  \hline
+\end{tabular}
+
+\subsection{Iteración 4: Crear y mostrar ruta}
+\subsubsection{Diseño}
+\subsubsection{Implementación}
+Para peatones ciclistas y motoristas por separado.
+Problemas con las rutas rectas
+\subsubsection{Pruebas}
+\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+  \hline
+  \textbf{Dado}     & ... \\
+  \textbf{Cuando}   & ... \\
+  \textbf{Entonces} & ... \\
+  \hline
+\end{tabular}
+
+\subsection{Iteración 5: Navegar por ruta}
+\subsubsection{Diseño}
+\subsubsection{Implementación}
+\subsubsection{Pruebas}
+\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+  \hline
+  \textbf{Dado}     & ... \\
+  \textbf{Cuando}   & ... \\
+  \textbf{Entonces} & ... \\
+  \hline
+\end{tabular}
+
+\subsection{Iteración 6: Selector de destino}
+\subsubsection{Diseño}
+\subsubsection{Implementación}
+Problemas al buscar por número de casa
+\subsubsection{Pruebas}
+\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+  \hline
+  \textbf{Dado}     & ... \\
+  \textbf{Cuando}   & ... \\
+  \textbf{Entonces} & ... \\
+  \hline
+\end{tabular}
+
+\subsection{Iteración 7: Avisos por pantalla}
+\subsubsection{Diseño}
+\subsubsection{Implementación}
+\subsubsection{Pruebas}
+\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+  \hline
+  \textbf{Dado}     & ... \\
+  \textbf{Cuando}   & ... \\
+  \textbf{Entonces} & ... \\
+  \hline
+\end{tabular}
+
+\subsection{Iteración 8: Avisos sonoros}
+\subsubsection{Diseño}
+\subsubsection{Implementación}
+Por qué no avisos grabados...
+\subsubsection{Pruebas}
+\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+  \hline
+  \textbf{Dado}     & ... \\
+  \textbf{Cuando}   & ... \\
+  \textbf{Entonces} & ... \\
+  \hline
+\end{tabular}
+
+\subsection{Iteración 9: Avisos vibratorios}
+\subsubsection{Diseño}
+\subsubsection{Implementación}
+Elección de complemento... puesto que es una barrera de entrada el smartwatch se desarrolla para
+también para otros móviles.
+Codificación de la vibración (rotondas y tal)
+Hablar del paso de mensajes
+Problemas con el paso de mensajes por agrupar pensajes
+
+\subsubsection{Pruebas}
+\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+  \hline
+  \textbf{Dado}     & ... \\
+  \textbf{Cuando}   & ... \\
+  \textbf{Entonces} & ... \\
+  \hline
+\end{tabular}
 
 % Local Variables:
 % TeX-master: "main.tex"

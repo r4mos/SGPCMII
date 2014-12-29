@@ -16,6 +16,7 @@ sobre los que partimos:
 \begin{itemize}
   \item El sistema debe poder guiar a peatones, ciclistas y motoristas.
   \item El sistema debe desplegarse sobre alguna plataforma de \emph{smartphone}.
+  \item El sistema debe ser compatible con la mayoría de versiones de la plataforma.
   \item La interacción con el sistema debe desarrollarse de forma implícita y ser válida para
     peatones, ciclistas y motoristas.
   \item En caso de necesitar complementos para la interacción, deben estar disponibles en el
@@ -28,7 +29,7 @@ sobre los que partimos:
 \section{Pruebas}
 
 Para describir las pruebas realizadas sobre los diferentes prototipos en este documento se ha
-utilizado el patrón «Given-When-Then». Este patrón divide el proceso de ejección en 3 etapas:
+utilizado el patrón «Given-When-Then». Este patrón divide el proceso en 3 etapas:
 
 \begin{itemize}
   \item \textbf{Given} (Dado): Condiciones previas sobre las que se producen los eventos.
@@ -73,19 +74,20 @@ sección~\ref{sec:herramientasSoftware}.
 En tercer y último lugar, se seleccionó como objetivo del desarrollo la \acs{API} de Android 21,
 también conocida como Android 5.0 \emph{Lollipop}, por ser la más nueva y poseer el mayor número de
 funcionalidades. De todos modos, se aseguró la compatibilidad desde la \acs{API} de Android 8,
-también llamada Android 2.2 \emph{Froyo}, por medio de la librería \emph{Android support}.
+también llamada Android 2.2 \emph{Froyo}, por medio de la librería \emph{Android support} para
+asegurarnos de tener compatibilidad con la mayoría de dispositivos Android.
 
 \subsubsection{Implementación}
 
 Para visualizar los mapas de \acs{OSM} con la ayuda de la librería \emph{Osmdroid} basta con añadir
-una vista del tipo \emph{org.osmdroid.views.MapView} al \emph{layout} de nuestra aplicación (ver
+una vista del tipo \texttt{org.osmdroid.views.MapView} al \texttt{layout} de nuestra aplicación (ver
 listado~\ref{code:layoutMapView}) y seleccionar el punto del mapa que deseamos centrar en la
 pantalla (ver listado~\ref{code:activityMapView}) por medio de sus coordenadas geográficas.
 
 \begin{listing}[
   float=ht,
   language = xml,
-  caption  = {Ejemplo de \emph{layout} usando \emph{org.osmdroid.views.MapView}},
+  caption  = {Ejemplo de \texttt{layout} usando \texttt{org.osmdroid.views.MapView}},
   label    = code:layoutMapView]
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -104,10 +106,11 @@ pantalla (ver listado~\ref{code:activityMapView}) por medio de sus coordenadas g
 \begin{listing}[
   float=ht,
   language = java,
-  caption  = {Ejemplo de \emph{activity} mostrando un punto de un mapa en específico},
+  caption  = {Ejemplo de \texttt{activity} mostrando un punto de un mapa en específico},
   label    = code:activityMapView]
 public class MainActivity extends Activity {
-    @Override public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
@@ -149,121 +152,336 @@ private void centerMap(final GeoPoint loc) {
 
 \subsubsection{Pruebas}
 
-Para corroborar el correcto funcionamiento del primer prototipo se realizaron dos grupos de pruebas.
+Al finalizar la implementación del primer prototipo se realizó la siguiente prueba:
 
-\newpage
 \begin{itemize}
-  \item Para determinar la correcta carga de los mapas en diferentes localizaciones:
+  \item Para determinar la correcta carga de los mapas en diferentes localizaciones
 
   \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
     \hline
     \textbf{Dado}     & Diferentes coordenadas geográficas \\
+                      & Diferentes dispositivos con distintas versiones de Android (ver
+                        sección~\ref{sec:herramientasHardware}) \\
     \textbf{Cuando}   & Ejecutamos la aplicación \\
     \textbf{Entonces} & Se muestra dicha ubicación centrada en un mapa \\
-    \hline
-  \end{tabular}
-
-  \item Para determinar el correcto funcionamiento en diferentes versiones de Android:
-
-  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
-    \hline 
-    \textbf{Dado} & Diferentes dispositivos con distintas versiones de Android (ver
-    sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando} & Ejecutamos la aplicación \\ 
-    \textbf{Entonces} & Se muestra la ubicación correspondiente centrada en un mapa \\ 
     \hline
   \end{tabular}
 \end{itemize}
 
 \subsection{Iteración 2: Mostrar posición actual en el mapa}
+
+Una vez evaluado el prototipo de la iteración 1, se procedió a añadir una nueva funcionalidad:
+mostrar la posición actual en la aplicación.
+
 \subsubsection{Diseño}
+
+Para poder mostrar la ubicación actual, es necesario primero conocerla. Para ello, analizamos en la
+sección~\ref{sec:tecnologiasActuales} los diferentes sistemas con los que podemos obtener nuestras
+coordenadas geográficas en la actualidad. Puesto que \acs{GLONASS} no estuvo operativo para uso
+civil hasta 2012 no todos los \emph{smartphones} disponen en la actualidad de esta tecnología y nos
+deja con una única opción razonable: \acs{NAVSTAR-GPS}.
+
 \subsubsection{Implementación}
-Elección de tecnología de posicionamiento
+
+Para hacer uso del \acs{GPS} de nuestro \emph{smartphone} en Android sólo es necesario definir un
+\texttt{LocationListener} e indicar por medio de un \texttt{LocationManager} qué clase lo implementa
+y cada cuanto tiempo queremos que se ejecute (ver listado~\ref{code:locationManager}).
+
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {Ejemplo de uso de \texttt{LocationManager} utilizando la propia clase como
+                 \texttt{LocationListener} y 1 segundo de intervalo entre actualizaciones},
+  label    = code:locationManager]
+if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+    mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
+}
+\end{listing}
+
+Para que una clase implemente un \texttt{LocationListener} debe contener cuatro funciones:
+
+\begin{itemize}
+  \item \textbf{\texttt{onLocationChanged}} Para indicar qué hacer cuando nuestra ubicación cambia.
+  \item \textbf{\texttt{onProviderDisabled}} Para indicar qué hacer cuando se desactiva el
+    \acs{GPS}.
+  \item \textbf{\texttt{onProviderEnabled}} Para indicar qué hacer cuando se activa el \acs{GPS}.
+  \item \textbf{\texttt{onStatusChanged}} Para indicar qué hacer cuando cambia el estado del
+    proveedor del servicio \acs{GPS}. Los posibles estados son \emph{fuera de servicio},
+    \emph{temporalmente no disponible} y \emph{disponible}.
+\end{itemize}
+
+Resulta obvio que sólo necesitamos rellenar el método \texttt{onLocationChanged} con el código
+necesario para mostrar una señal en el mapa (ver listado~\ref{code:onLocationChanged}). Para
+simplificar la forma de dibujar nuestra posición en el mapa y mostrar el error cometido por la
+trilateración (ver sección~\ref{fig:trilateracion}) de forma visual, se ha escrito una clase llamada
+\texttt{LocationOverlay} en base a la clase contenida en \emph{Osmbonuspack} (ver
+sección~\ref{sec:herramientasSoftware}) con el mismo nombre. Lo único verdaderamente significativo
+que diferencia ambas clases es el icono utilizado para especificar nuestra posición en el mapa.
+
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {Ejemplo de implementación de \texttt{LocationListener} utilizando para mostrar la
+                localización un \texttt{LocationOverlay}},
+  label    = code:onLocationChanged]
+public void onLocationChanged(Location loc) {
+    GeoPoint myLocation = new GeoPoint(loc); 	
+    
+    if (!mLocationOverlay.isEnabled()) {
+        mLocationOverlay.setEnabled(true);
+    }
+    mLocationOverlay.setLocation(myLocation);
+    mLocationOverlay.setAccuracy((int)loc.getAccuracy());
+
+    centerMap(myLocation);
+}
+\end{listing}
+
 \subsubsection{Pruebas}
-\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
-  \hline
-  \textbf{Dado}     & ... \\
-  \textbf{Cuando}   & ... \\
-  \textbf{Entonces} & ... \\
-  \hline
-\end{tabular}
+
+Al finalizar la implementación del segundo prototipo se realizó la siguiente prueba:
+
+\begin{itemize}
+  \item Para determinar la correcta carga de los mapas en diferentes localizaciones
+
+  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+    \hline
+    \textbf{Dado}     & Diferentes localizaciones geográficas \\
+                      & Diferentes dispositivos con distintas versiones de Android (ver
+                        sección~\ref{sec:herramientasHardware}) \\
+    \textbf{Cuando}   & Ejecutamos la aplicación \\
+    \textbf{Entonces} & Se muestra dicha ubicación centrada en un mapa \\
+    \hline
+  \end{tabular}
+\end{itemize}
 
 \subsection{Iteración 3: Orientar mapa}
+
+Una vez evaluado el prototipo de la iteración 2 se introdujo una nueva funcionalidad: rotar el mapa
+en función de nuestra orientación. Si por ejemplo caminamos por una calle recta en dirección Oeste,
+en la pantalla se vería una recta vertical. De igual manera, si por ejemplo caminamos por una calle
+en dirección Sur y giramos hacia el Este, en la pantalla se vería un giro a la izquierda.
+
 \subsubsection{Diseño}
+
+Para poder rotar el mapa en función de nuestra orientación es necesario conocer dónde se encuentran
+cualquiera de los puntos cardinales: Norte, Sur, Este u Oeste.
+
+Prácticamente todos los \emph{smartphones} actuales disponen de un componente llamado \emph{sensor
+  de orientación} que nos permite determinar la orientación espacial del teléfono por medio de tres
+valores expresados en grados:
+
+\begin{itemize}
+  \item \textbf{Roll} Mide la inclinación del móvil en ralación a los laterales. Desde -90º con el
+    lateral izquierdo levantado, hasta 90º con el lateral derecho levantado.
+  \item \textbf{Pitch} Mide la inclinación del móvil en relación a la parte anterior y
+    posterior. Desde -90º que corresponde a la posición vertical, hasta los 90º que corresponde con
+    la parte anterior del móvil, pasando por 0º cuando el teléfono se encuentra a nivel.
+  \item \textbf{Azimuth} Mide el punto cardinal Norte en sentido horario de 0º a 360º
+\end{itemize}
+
 \subsubsection{Implementación}
-Uso de sensores
+
+Para hacer uso del sensor de orientación de nuestro \emph{smartphone} Android basta con registrar el
+uso del \texttt{Sensor} de orientación por medio de un \texttt{SensorManager} (ver
+listado~\ref{code:orientacion}) indicando que clase implementa los métodos necesarios para manejar
+el sensor de orientación. En este caso la propia (\texttt{this}).
+
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {Ejemplo de registro de un \texttt{Sensor} de orientación con \texttt{SensorManager}},
+  label    = code:orientacion]
+mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+mSensorManager.registerListener(this, mOrientation, SensorManager.SENSOR_DELAY_NORMAL);
+\end{listing}
+
+El sensor de orientación en Android obliga a implementar en una clase dos métodos:
+
+\begin{itemize}
+  \item \textbf{\texttt{onSensorChanged}} Para definir qué hacer cuando cambie algún valor en el
+    sensor. En el caso del sensor de orientación, proporcionará dichos valores en un \texttt{array}
+    con tres posiciones:
+    \begin{itemize}
+      \item \textbf{Posición 0} Para los grados \texttt{azimuth}.
+      \item \textbf{Posición 1} Para los grados \texttt{pitch}.
+      \item \textbf{Posición 2} Para los grados \texttt{roll}.
+    \end{itemize}
+  \item \textbf{\texttt{onAccuracyChanged}} Para definir qué hacer cuando cambien la precisión del
+    sensor.
+\end{itemize}
+
+Para implementar nuestra rotación de mapa bastó con implementar el método \texttt{onSensorChanged} y
+pasar al mapa dicha rotación (ver listado~\ref{code:accuracyChanged}).
+
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {Ejemplo de rotación de mapa en función del sensor de orientación},
+  label    = code:accuracyChanged]
+public void onSensorChanged(SensorEvent event) {
+    float azimuth = event.values[0];
+    mMap.setMapOrientation(-azimuth);
+}
+\end{listing}
+
 \subsubsection{Pruebas}
-\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
-  \hline
-  \textbf{Dado}     & ... \\
-  \textbf{Cuando}   & ... \\
-  \textbf{Entonces} & ... \\
-  \hline
-\end{tabular}
+
+Al finalizar la implementación del tercer prototipo se realizaron las siguiente pruebas:
+
+\begin{itemize}
+  \item Para comprobar la correcta orientación del mapa
+
+  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+    \hline
+    \textbf{Dado}     & Aplicación ejecutándose mientras se camina en dirección Norte \\
+                      & Diferentes dispositivos con distintas versiones de Android (ver
+                        sección~\ref{sec:herramientasHardware}) \\
+    \textbf{Cuando}   & Se gira al Oeste o al Este \\
+    \textbf{Entonces} & Se muestra un giro a la izquierda y derecha respectivamente \\
+    \hline
+  \end{tabular}
+
+  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+    \hline
+    \textbf{Dado}     & Aplicación ejecutándose mientras se camina en dirección Sur \\
+                      & Diferentes dispositivos con distintas versiones de Android (ver
+                        sección~\ref{sec:herramientasHardware}) \\
+    \textbf{Cuando}   & Se gira al Oeste o al Este \\
+    \textbf{Entonces} & Se muestra un giro a la derecha e izquierda respectivamente \\
+    \hline
+  \end{tabular}
+\end{itemize}
 
 \subsection{Iteración 4: Crear y mostrar ruta}
 \subsubsection{Diseño}
 \subsubsection{Implementación}
 Para peatones ciclistas y motoristas por separado.
 Problemas con las rutas rectas
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {},
+  label    = code:]
+
+\end{listing}
 \subsubsection{Pruebas}
-\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
-  \hline
-  \textbf{Dado}     & ... \\
-  \textbf{Cuando}   & ... \\
-  \textbf{Entonces} & ... \\
-  \hline
-\end{tabular}
+\begin{itemize}
+  \item ...
+
+  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+    \hline
+    \textbf{Dado}     & ... \\
+                      & Diferentes dispositivos con distintas versiones de Android (ver
+                        sección~\ref{sec:herramientasHardware}) \\
+    \textbf{Cuando}   & ... \\
+    \textbf{Entonces} & ... \\
+    \hline
+  \end{tabular}
+\end{itemize}
 
 \subsection{Iteración 5: Navegar por ruta}
 \subsubsection{Diseño}
 \subsubsection{Implementación}
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {},
+  label    = code:]
+
+\end{listing}
 \subsubsection{Pruebas}
-\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
-  \hline
-  \textbf{Dado}     & ... \\
-  \textbf{Cuando}   & ... \\
-  \textbf{Entonces} & ... \\
-  \hline
-\end{tabular}
+\begin{itemize}
+  \item ...
+
+  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+    \hline
+    \textbf{Dado}     & ... \\
+                      & Diferentes dispositivos con distintas versiones de Android (ver
+                        sección~\ref{sec:herramientasHardware}) \\
+    \textbf{Cuando}   & ... \\
+    \textbf{Entonces} & ... \\
+    \hline
+  \end{tabular}
+\end{itemize}
 
 \subsection{Iteración 6: Selector de destino}
 \subsubsection{Diseño}
 \subsubsection{Implementación}
 Problemas al buscar por número de casa
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {},
+  label    = code:]
+
+\end{listing}
 \subsubsection{Pruebas}
-\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
-  \hline
-  \textbf{Dado}     & ... \\
-  \textbf{Cuando}   & ... \\
-  \textbf{Entonces} & ... \\
-  \hline
-\end{tabular}
+\begin{itemize}
+  \item ...
+
+  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+    \hline
+    \textbf{Dado}     & ... \\
+                      & Diferentes dispositivos con distintas versiones de Android (ver
+                        sección~\ref{sec:herramientasHardware}) \\
+    \textbf{Cuando}   & ... \\
+    \textbf{Entonces} & ... \\
+    \hline
+  \end{tabular}
+\end{itemize}
 
 \subsection{Iteración 7: Avisos por pantalla}
 \subsubsection{Diseño}
 \subsubsection{Implementación}
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {},
+  label    = code:]
+
+\end{listing}
 \subsubsection{Pruebas}
-\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
-  \hline
-  \textbf{Dado}     & ... \\
-  \textbf{Cuando}   & ... \\
-  \textbf{Entonces} & ... \\
-  \hline
-\end{tabular}
+\begin{itemize}
+  \item ...
+
+  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+    \hline
+    \textbf{Dado}     & ... \\
+                      & Diferentes dispositivos con distintas versiones de Android (ver
+                        sección~\ref{sec:herramientasHardware}) \\
+    \textbf{Cuando}   & ... \\
+    \textbf{Entonces} & ... \\
+    \hline
+  \end{tabular}
+\end{itemize}
 
 \subsection{Iteración 8: Avisos sonoros}
 \subsubsection{Diseño}
 \subsubsection{Implementación}
 Por qué no avisos grabados...
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {},
+  label    = code:]
+
+\end{listing}
 \subsubsection{Pruebas}
-\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
-  \hline
-  \textbf{Dado}     & ... \\
-  \textbf{Cuando}   & ... \\
-  \textbf{Entonces} & ... \\
-  \hline
-\end{tabular}
+\begin{itemize}
+  \item ...
+
+  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+    \hline
+    \textbf{Dado}     & ... \\
+                      & Diferentes dispositivos con distintas versiones de Android (ver
+                        sección~\ref{sec:herramientasHardware}) \\
+    \textbf{Cuando}   & ... \\
+    \textbf{Entonces} & ... \\
+    \hline
+  \end{tabular}
+\end{itemize}
 
 \subsection{Iteración 9: Avisos vibratorios}
 \subsubsection{Diseño}
@@ -273,15 +491,27 @@ también para otros móviles.
 Codificación de la vibración (rotondas y tal)
 Hablar del paso de mensajes
 Problemas con el paso de mensajes por agrupar pensajes
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {},
+  label    = code:]
 
+\end{listing}
 \subsubsection{Pruebas}
-\begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
-  \hline
-  \textbf{Dado}     & ... \\
-  \textbf{Cuando}   & ... \\
-  \textbf{Entonces} & ... \\
-  \hline
-\end{tabular}
+\begin{itemize}
+  \item ...
+
+  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+    \hline
+    \textbf{Dado}     & ... \\
+                      & Diferentes dispositivos con distintas versiones de Android (ver
+                        sección~\ref{sec:herramientasHardware}) \\
+    \textbf{Cuando}   & ... \\
+    \textbf{Entonces} & ... \\
+    \hline
+  \end{tabular}
+\end{itemize}
 
 % Local Variables:
 % TeX-master: "main.tex"

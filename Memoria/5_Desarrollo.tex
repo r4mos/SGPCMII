@@ -355,142 +355,640 @@ Al finalizar la implementación del tercer prototipo se realizaron las siguiente
 \end{itemize}
 
 \subsection{Iteración 4: Crear y mostrar ruta}
+
+Una vez evaluado el prototipo de la iteración 3, se procedió a añadir una nueva funcionalidad: crear
+rutas para peatones, ciclistas o motoristas desde nuestra posición actual hasta una determinada
+localización geográfica (latitud y longitud) y dibujarla en el mapa.
+
 \subsubsection{Diseño}
+
+Para poder calcular una ruta tenemos que hacer uso de alguno de los proveedores vistos en la
+sección~\ref{sec:proveedores}. Puesto que se optó por usar los mapas de \acs{OSM} y ya tenemos
+importadas las librerías \emph{Osmdroid} y \emph{Osmbonuspack} que nos permiten calcular rutas para
+peatones, ciclistas y motorias; la opción más lógica es utilizar \emph{MapQuest}.
+
 \subsubsection{Implementación}
-Para peatones ciclistas y motoristas por separado.
-Problemas con las rutas rectas
+
+Para la creación y superposición en el mapa de una ruta utilizando \emph{Osmdroid} y
+\emph{Osmbonuspack} basta con indicar el tipo de usuario, el punto de inicio de la ruta y de
+finalización. Con esta información, realiza una consulta en Internet a la \acs{API} de
+\emph{MapQuest}~\footnote{http://wiki.openstreetmap.org/wiki/MapQuest} y nos devuelve una ruta
+específica que solo resta dibujar en el mapa (ver listado~\ref{code:gotov1}).
+
 \begin{listing}[
   float=ht,
   language = java,
-  caption  = {},
-  label    = code:]
+  caption  = {Ejemplo de creación y superposición de una ruta en el mapa},
+  label    = code:gotov1]
+private Boolean gotoGeoPoint(GeoPoint endPoint) {
+    RoadManager roadManager = new MapQuestRoadManager(MAPQUESTAPIKEY);
+    roadManager.addRequestOption("units=k");
+    roadManager.addRequestOption("routeType=fastest");
+    //roadManager.addRequestOption("routeType=shortest");
+    //roadManager.addRequestOption("routeType=bicycle");
+    //roadManager.addRequestOption("routeType=pedestrian");
+    
+    ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
+    waypoints.add(getLastLocation());
+    waypoints.add(endPoint);
+    
+    mRoad = roadManager.getRoad(waypoints);
+            
+    mRoadOverlay = RoadManager.buildRoadOverlay(road, getBaseContext());
+    mRoadOverlay.setWidth(10);
 
+    mMap.getOverlays().add(mRoadOverlay);            
+    mMap.invalidate();
+}
 \end{listing}
-\subsubsection{Pruebas}
+
+Pero existe un problema con el listado~\ref{code:gotov1}: Cuando utilizamos como objetivo de
+desarrollo una \acs{API} de Android superior a 9, no realiza la petición a Internet y nos muestra
+una línea recta entre el origen y el destino. Este \emph{bug} esta documentado en
+\emph{Osmbonuspack}~\footnote{https://code.google.com/p/osmbonuspack/issues/detail?id=9} aunque no
+sea culpa de la librería.
+
+El problema radica en la forma que realizamos la petición a Internet. Desde la \acs{API} de Android
+10 y posteriores, Google decidió que realizar peticiones a Internet en el mismo \emph{thread} en
+el que se ejecuta la \acf{GUI} era un error. Lo estimó así porque podía provocar la sensación de que
+la aplicación no funciona cuando lo que verdaderamente está ocurriendo es que se encuentra esperando
+una respuesta de Internet.
+
+Por tanto, para que nuestras rutas funcionen sólo podemos realizar dos acciones:
+
 \begin{itemize}
-  \item ...
+  \item Eliminar las políticas de \emph{threads} (ver listado~\ref{code:threads}) y seguir usando el
+    mismo código.
+  \item Utilizar un \emph{thread} diferente al de la \acs{GUI} para realizar la petición a Internet.
+    (ver listado~\ref{code:gotov2}.
+\end{itemize}
+
+
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {Eliminación de políticas de threads},
+  label    = code:threads]
+StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+StrictMode.setThreadPolicy(policy);
+\end{listing}
+
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {Ejemplo de creación y superposición de una ruta en el mapa utilizando una
+                 \texttt{AsyncTask}},
+  label    = code:gotov2]
+private void gotoGeoPoint(GeoPoint endPoint) {
+    ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
+    waypoints.add(getLastLocation());
+    waypoints.add(endPoint);
+  
+    new GetRoad().execute(waypoints);
+}
+
+private class GetRoad extends AsyncTask<ArrayList<GeoPoint>, Float, Boolean>{
+    protected Boolean doInBackground(ArrayList<GeoPoint>... params) {
+        RoadManager roadManager = new MapQuestRoadManager(MAPQUESTAPIKEY);
+        roadManager.addRequestOption("units=k");
+        roadManager.addRequestOption("routeType=" + mTransport);
+      
+        mRoad = roadManager.getRoad(params[0]);
+      
+        return true;
+    }
+    protected void onPostExecute(Boolean result) {
+        if (result) gotoGeoPointPosThread();
+  }
+  
+private void gotoGeoPointPosThread() {
+    mRoadOverlay = RoadManager.buildRoadOverlay(mRoad, getBaseContext());
+    mRoadOverlay.setWidth(10);
+  
+    mMap.getOverlays().add(mRoadOverlay);
+    mMap.invalidate();
+}
+\end{listing}
+
+Para implementarlo en nuestro sistema, se seleccionó la segunda opción porque se consideró que se
+trataba de la forma correcta de hacerlo y se añadieron algunas animaciones (no incluidas en el
+listado~\ref{code:gotov2}) para la espera en la recepción de la ruta.
+
+\subsubsection{Pruebas}
+
+Al finalizar la implementación del cuarto prototipo se realizó la siguiente prueba:
+
+\begin{itemize}
+  \item Para comprobar el correcto cálculo de rutas para diferentes usuarios y destinos
 
   \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
     \hline
-    \textbf{Dado}     & ... \\
+    \textbf{Dado}     & Diferentes perfiles de usuarios: peatones, ciclistas y motoristas \\
+                      & Diferentes coordenadas de destinos \\
                       & Diferentes dispositivos con distintas versiones de Android (ver
                         sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & ... \\
-    \textbf{Entonces} & ... \\
+    \textbf{Cuando}   & Llamamos al método \texttt{gotoGeoPoint} \\
+    \textbf{Entonces} & Observamos en el mapa la ruta desde nuestra localización hasta las
+                        coordenadas elegidas teniendo en cuenta nuestro método de desplazamiento \\
     \hline
   \end{tabular}
 \end{itemize}
 
 \subsection{Iteración 5: Navegar por ruta}
-\subsubsection{Diseño}
-\subsubsection{Implementación}
-\begin{listing}[
-  float=ht,
-  language = java,
-  caption  = {},
-  label    = code:]
 
-\end{listing}
-\subsubsection{Pruebas}
+Una vez evaluado el prototipo de la iteración 4, se procedió a añadir una nueva funcionalidad:
+navegar por la ruta creada en la iteración anterior observando los mensajes suministrados por el
+\emph{smartphone}.
+
+\subsubsection{Diseño}
+
+Para diseñar esta nueva funcionalidad se tuvieron en cuenta tres factores:
+
 \begin{itemize}
-  \item ...
+  \item La \textbf{velocidad} a la que nos desplazamos. Hay que tener en cuenta que, cuando estamos
+    usando la aplicación, el tiempo con el que nos tienen que avisar para realizar una acción
+    variará en función de la velocidad que llevemos. Aprovechando este punto, también incorporaremos
+    una mejora visual que tienen la mayoría de aplicaciones de navegación: cambiaremos el
+    \emph{zoom} del mapa en función de la velocidad que llevemos para que no se sufran grandes
+    cambios en el mapa cuando circulamos a una velocidad elevada.
+
+  \item Cómo \textbf{detectamos si se sigue la ruta marcada}. Hay que tener en cuenta que sólo
+    disponemos de nuestras coordenadas geográficas y de las coordenadas del siguiente punto a
+    alcanzar. Si implementamos un algoritmo en el que consideramos que podemos pasar a la siguiente
+    etapa cuando lleguemos a la que estamos realizando, es posible que no funcione. Por ejemplo, si
+    nos acercamos a una etapa de \emph{girar a la derecha} y giramos en el sitio correcto antes de
+    que la aplicación detecte que hemos llegado (probablemente por la precisión de los satélites
+    \acs{GPS}), no cargaría la siguiente etapa y no sabríamos qué está sucediendo.
+
+  \item El posible \textbf{desvío de la ruta establecida}. Hay que plantearnos cómo detectar que nos
+    hemos salido de la ruta marcada y qué hacer en esos casos. Al tratarse de una aplicación de
+    navegación diseñada para que ella interactúe con nosotros y no al contrario, la opción más
+    interesante es que, cuando detecte nuestro desvío, nos avise y nos calcule una nueva ruta desde
+    la posición en la que nos encontramos.
+
+\end{itemize}
+
+\subsubsection{Implementación}
+
+Las tres implementaciones antes descritas, se llevarán a cabo dentro del método
+\texttt{onLocationChanged} que ya comenzamos a escribir en la iteración 2. Se debe realizar en éste
+método porque, tal y como lo tenemos configurado en el \texttt{LocationManager} (ver
+listado~\ref{code:locationManager}), se ejecutará cada segundo con los nuevos datos suministrados
+por los satélites \acs{GPS}:
+
+\begin{itemize}
+  \item En función de la \textbf{velocidad} que llevemos, se consideraron validos los valores de
+    cercanía y \emph{zoom} reflejados en el listado~\ref{code:velocidad}.
+
+    \begin{listing}[
+      float=ht,
+      language = java,
+      caption  = {Ejemplo de implementación de \texttt{LocationListener} utilizado para variar el
+                  zoom del mapa y determinar la distancia necesaria para avisar de las acciones},
+      label    = code:velocidad]
+public void onLocationChanged(Location loc) {  
+  [...]
+    
+  float speed = loc.getSpeed();
+  int metersToFirstWarning;
+
+  if (speed > kmhToMs(100)) {
+      mMap.getController().setZoom(15);
+      metersToFirstWarning = 1000;
+  } else if (speed > kmhToMs(80)) {
+      mMap.getController().setZoom(16);
+      metersToFirstWarning = 500;
+  } else if (speed > kmhToMs(50)) {
+      mMap.getController().setZoom(17);
+      metersToFirstWarning = 100;
+  } else if (speed > kmhToMs(20)) {
+      mMap.getController().setZoom(18);
+      metersToFirstWarning = 60;
+  } else {
+      mMap.getController().setZoom(18);
+      metersToFirstWarning = 30;
+  }
+    \end{listing}
+
+  \item Para \textbf{detectar si seguimos la ruta marcada} se ha implementado el algoritmo del
+    listado~\ref{code:sigueRuta}. El algoritmo indica la acción de \emph{seguir recto} hasta que la
+    distancia hasta la próxima etapa es menor que la distancia del comienzo de los avisos del punto
+    anterior. Es entonces cuando:
+
+    \begin{itemize}
+      \item Si nos acercamos, se nos muestra la etapa a realizar.
+      \item Si nos alejamos, se considera que hemos superado la etapa a realizar. De este modo,
+        pasamos a la siguiente etapa, a menos que nos encontremos en la última y finalicemos la
+        navegación.
+    \end{itemize}
+
+    \begin{listing}[
+      float=ht,
+      language = java,
+      caption  = {Ejemplo de implementación de \texttt{LocationListener} utilizado para seguir una
+                 ruta almacenada en \texttt{mRoad}},
+      label    = code:sigueRuta]
+private Boolean mNewAction = true;
+private int mStep = 0;
+private float mMetersToGoal = Float.MAX_VALUE;
+
+public void onLocationChanged(Location loc) {
+  GeoPoint myLocation = new GeoPoint(loc);
+  
+  [...]
+
+  if (mRoad != null) {
+    float distance = getDistance(myLocation, mRoad.mNodes.get(mStep).mLocation);
+      
+    if (distance < metersToFirstWarning) {
+      if (distance < mMetersToGoal) {
+        if (mNewAction || mMetersToGoal == Float.MAX_VALUE) {
+          mNewAction = false;
+          startAction(getAction(mRoad.mNodes.get(mStep).mManeuverType), distance);
+        }
+        mMetersToGoal = distance;
+      } else {
+        mNewAction = true;
+        mMetersToGoal = Float.MAX_VALUE;
+            
+        if (mStep == mRoad.mNodes.size()-1) {
+          cleanMap();  //Finished
+        } else {
+          mStep++;
+        }
+      }
+    } else {
+      if (mNewAction) {
+        mNewAction = false;
+        startAction(STRAIGHT, distance);
+      }
+    }
+  }
+    \end{listing}
+
+  \item Para detectar cuándo nos \textbf{desviamos de la ruta establecida} hemos utilizado una
+    función de la clase \texttt{RoadOverlay} que nos indica en píxeles a cuanta distancia se
+    encuentra un punto de una ruta (ver listado~\ref{code:desvio}). Puesto que la ruta va a tener siempre la misma anchura en
+    píxeles nos acerquemos o nos alejemos de ella con el \emph{zoom} y nuestro
+    \texttt{LocationOverlay} también (24 píxeles), con éste método podremos determinar cuándo nos
+    hemos desviado y también podremos apreciarlo en el mapa.
+
+    Además para prevenir posibles errores puntuales en la localización, para considerar un desvío de
+    ruta, hemos implementado un contador de errores y sólo se vuelve a calcular el recorrido una vez
+    que se ha detectado 3 veces el desvío. Como las mediciones tardan un segundo en realizarse (ver
+    listado~\ref{code:locationManager}), tardaremos 3 segundos en detectar dicho error.
+
+    \begin{listing}[
+      float=ht,
+      language = java,
+      caption  = {Ejemplo de implementación de \texttt{LocationListener} utilizado para detectar
+                  cuándo nos hemos desviado de la ruta establecida},
+      label    = code:desvio]
+public void onLocationChanged(Location loc) {
+  GeoPoint myLocation = new GeoPoint(loc);
+  
+  [...]
+
+  private int mRoadLost = 0;
+
+  if (mRoadOverlay != null && !mRoadOverlay.isCloseTo(myLocation, 24, mMap)) {
+    if (mRoadLost < 3) {
+      mRoadLost++;
+    } else {
+      startAction(WRONG, 0);
+      GeoPoint endPoint = mRoad.mNodes.get(mRoad.mNodes.size()-1).mLocation;
+      cleanMap();
+      gotoGeoPoint(endPoint);
+    }
+  }
+    \end{listing}
+
+\end{itemize}
+
+\subsubsection{Pruebas}
+
+Al finalizar la implementación del quinto prototipo se realizaron las siguientes pruebas:
+
+\begin{itemize}
+  \item Para comprobar las diferentes configuraciones de \emph{zoom} y distancia para avisar en
+    función de la velocidad.
 
   \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
     \hline
-    \textbf{Dado}     & ... \\
+    \textbf{Dado}     & Diferentes velocidades \\
                       & Diferentes dispositivos con distintas versiones de Android (ver
                         sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & ... \\
-    \textbf{Entonces} & ... \\
+    \textbf{Cuando}   & Pasabas entre los diferentes rangos del listado~\ref{code:locationManager}\\
+    \textbf{Entonces} & Cambiaba el zoom del mapa \\
+    \hline
+  \end{tabular}
+
+  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+    \hline
+    \textbf{Dado}     & Diferentes velocidades \\
+                      & Diferentes dispositivos con distintas versiones de Android (ver
+                        sección~\ref{sec:herramientasHardware}) \\
+    \textbf{Cuando}   & Te acercabas a realizar una acción \\
+    \textbf{Entonces} & La distancia con la que nos avisaba variaba en función de la velocidad \\
+    \hline
+  \end{tabular}
+
+  \item Para comprobar el correcto funcionamiento del guiado entre etapas
+
+  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+    \hline
+    \textbf{Dado}     & Diferentes rutas \\
+                      & Diferentes dispositivos con distintas versiones de Android (ver
+                        sección~\ref{sec:herramientasHardware}) \\
+    \textbf{Cuando}   & Navegas por una ruta \\
+    \textbf{Entonces} & Muestra cada una de las etapas hasta el final \\
+    \hline
+  \end{tabular}
+
+  \item Para comprobar el correcto funcionamiento del sistema cuando nos perdemos
+
+  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+    \hline
+    \textbf{Dado}     & Diferentes rutas \\
+                      & Diferentes dispositivos con distintas versiones de Android (ver
+                        sección~\ref{sec:herramientasHardware}) \\
+    \textbf{Cuando}   & Te desvías de una ruta y pasan 3 segundos \\
+    \textbf{Entonces} & Nos avisa de que nos hemos desviado y recalcula la ruta a seguir desde
+                        nuestra posición actual hasta la meta fijada en un inicio \\
     \hline
   \end{tabular}
 \end{itemize}
 
 \subsection{Iteración 6: Selector de destino}
+
+Una vez evaluado el prototipo del a iteración 5, se procedió a añadir una nueva funcionalidad:
+seleccionar el destino de nuestra ruta especificando la dirección deseada y no sus coordenadas
+geográficas.
+
 \subsubsection{Diseño}
+
+Para determinar las coordenadas geográficas de un sitio introduciendo su nombre hay que hacer uso de
+alguno de los proveedores de \emph{geocoding} estudiados en la sección~\ref{sec:proveedores}. Como
+estamos desarrollando todo el proyecto con \acs{OSM} lo más normal sería hacer uso de
+\emph{Nominatim} por medio de la librería \emph{Osmbonuspack} pero existe una opción mejor: usar la
+\acs{API} de Google que ofrece gratuitamente 2.500 peticiones. Y además, nos permite realizar
+búsquedas no sólo por ciudades y calles como \emph{Nominatim}, sino que también podemos buscar al
+nivel de números de casas.
+
 \subsubsection{Implementación}
-Problemas al buscar por número de casa
+
+Para implementar esta nueva funcionalidad debemos desarrollar una nueva \texttt{Activity}. Ésta será
+la encargada de preguntar al servicio de geocoding por la dirección introducida, permitir
+seleccionar al usuario entre las diferentes respuestas del servicio y devolver al \texttt{Activity}
+principal las coordenadas geográficas y el tipo de transporte seleccionado.
+
+Para hacer uso en Android del geocoding de Google, sólo es necesario declarar un objeto del tipo
+\texttt{Geocoder} pero, al igual que en la cuarta iteración, debemos declararlo dentro de una
+\texttt{AsyncTask} porque hace uso de Internet (Ver listado~\ref{code:geocodingTask}).
+
 \begin{listing}[
   float=ht,
   language = java,
-  caption  = {},
-  label    = code:]
+  caption  = {Ejemplo de implementación de \texttt{Geocoder} dentro de una \texttt{AsyncTask}},
+  label    = code:geocodingTask]
+private List<Address> foundAdresses;
 
+private class GetAddresses extends AsyncTask<Void, Float, Boolean> {
+  protected Boolean doInBackground(Void... params) {
+    Geocoder geocoder = new Geocoder(getApplicationContext(),
+        new Locale(getString(R.string.locale)));
+    String text = search_text.getText().toString();
+
+    try {
+      foundAdresses = geocoder.getFromLocationName(text, 20);
+      return true;
+    } catch (IOException e) {
+      return false;
+    }
+  }
+  
+  protected void onPostExecute(Boolean result) {
+    if (result) getAddressesPost();
+  }
+}
 \end{listing}
 \subsubsection{Pruebas}
+
+Al finalizar la implementación del sexto prototipo se realizaron las siguientes pruebas:
+
 \begin{itemize}
-  \item ...
+  \item Para comprobar el correcto funcionamiento del servicio de \emph{geocoding}
 
   \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
     \hline
-    \textbf{Dado}     & ... \\
+    \textbf{Dado}     & Diferentes dispositivos con distintas versiones de Android (ver
+                        sección~\ref{sec:herramientasHardware}) \\
+    \textbf{Cuando}   & Introducimos diferentes nombres de lugares de diferentes ciudades \\
+    \textbf{Entonces} & La nueva actividad nos muestra las direcciones de los lugares buscados \\
+    \hline
+  \end{tabular}
+
+  \item Para comprobar el correcto funcionamiento del paso de información entre actividades
+
+  \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
+    \hline
+    \textbf{Dado}     & Diferentes nombres introducidos en la nueva actividad \\
                       & Diferentes dispositivos con distintas versiones de Android (ver
                         sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & ... \\
-    \textbf{Entonces} & ... \\
+    \textbf{Cuando}   & Seleccionamos algún resultado de la búsqueda \\
+    \textbf{Entonces} & La aplicación nos guía desde nuestra ubicación hasta el lugar seleccionado\\
     \hline
   \end{tabular}
 \end{itemize}
 
 \subsection{Iteración 7: Avisos por pantalla}
+
+Una vez evaluado el prototipo de la iteración 6 se introdujo una nueva funcionalidad: mostrar los
+avisos de la pantalla de forma que estuvieran integrados dentro de la aplicación y no como hasta
+ahora que se muestran por medio de mensajes \texttt{Toast}.
+
 \subsubsection{Diseño}
+
+Puesto que ya conocemos las acciones que tenemos que realizar y cuándo (ver
+listado~\ref{code:sigueRuta}), sólo tendremos que modificar la apariencia de nuestra aplicación y
+añadir el código necesario para realizar los cambios visuales en el método \texttt{startAction}.
+
+Modificaremos la apariencia de nuestra aplicación añadiendo un panel en el inferior de la
+pantalla. La parte izquierda de dicho panel nos mostrará una imagen de la próxima acción a
+realizar y la distancia que falta para realizarla. La parte derecha del panel nos mostrará
+textualmente la acción a realizar.
+
 \subsubsection{Implementación}
+
+Para modificar la apariencia de nuestra aplicación basta con añadir al \texttt{layout} de nuestra
+actividad principal los paneles del listado~\ref{code:panelLayout}. Las modificaciones en el método
+\texttt{startAction} son poco significativas.
+
 \begin{listing}[
   float=ht,
-  language = java,
-  caption  = {},
-  label    = code:]
+  language = xml,
+  caption  = {Panel inferior de la pantalla de navegación},
+  label    = code:panelLayout]
+<LinearLayout
+  android:id="@+id/navPanel"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:layout_alignParentBottom="true"
+  android:background="#222222"
+  android:orientation="horizontal"
+  android:padding="10dp" >
+  
+    <LinearLayout
+      android:id="@+id/navPanelLeft"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:paddingLeft="10dp"
+      tools:ignore="UseCompoundDrawables" >
+            
+        <ImageView
+          android:id="@+id/navPanelImage"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:contentDescription="@string/empy" />
+              
+        <TextView
+          android:id="@+id/navPanelKm"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          android:gravity="center"
+          android:textColor="#e6e6e6"
+          android:text="@string/empy"
+          android:textAppearance="?android:attr/textAppearanceSmall" />
 
+    </LinearLayout>
+
+    <TextView
+      android:id="@+id/navPanelText"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:gravity="center"
+      android:paddingLeft="10dp"
+      android:paddingRight="10dp"
+      android:text="@string/alert_waiting_for_gps"
+      android:textAppearance="?android:attr/textAppearanceLarge"
+      android:textColor="#e6e6e6" />
+
+</LinearLayout>
 \end{listing}
 \subsubsection{Pruebas}
+
+Al finalizar la implementación del séptimo prototipo se realizó la siguiente prueba:
+
 \begin{itemize}
-  \item ...
+  \item Para comprobar que se muestran las acciones por pantalla
 
   \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
     \hline
-    \textbf{Dado}     & ... \\
+    \textbf{Dado}     & Navegación en curso hacia algún lugar \\
                       & Diferentes dispositivos con distintas versiones de Android (ver
                         sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & ... \\
-    \textbf{Entonces} & ... \\
+    \textbf{Cuando}   & Es necesario realizar alguna acción \\
+    \textbf{Entonces} & Se muestra por pantalla la acción a realizar \\
     \hline
   \end{tabular}
 \end{itemize}
 
 \subsection{Iteración 8: Avisos sonoros}
+
+Una vez evaluado el prototipo de la iteración 7 se introdujo una nueva funcionalidad: escuchar los
+avisos que se muestran por pantalla.
+
 \subsubsection{Diseño}
+
+Al igual que en la iteración anterior, como ya conocemos qué acciones realizar y cuándo (ver
+listado~\ref{code:sigueRuta}) sólo tendremos que añadir el código necesario para escuchar las
+instrucciones en el método \texttt{startAction}.
+
+Tenemos dos posibles formas de escuchar las instrucciones a realizar:
+
+\begin{itemize}
+  \item Tener todas las instrucciones grabadas y reproducirlas en los momentos adecuados.
+  \item Pedir a Internet que nos envíe el sonido de un texto, en este caso la acción a realizar, y
+    reproducirla. Este servicio se llama \emph{text to speech}.
+\end{itemize}
+
+Puesto que existen muchos mensajes diferentes, ya necesitamos la conexión a Internet para recibir
+los mapas y los mensajes se pueden personalizar mucho más con la segunda opción; la elección que se
+tomó para reproducir sonoramente las instrucciones fue \emph{text to speech}. Y se eligió el
+servicio de Google como proveedor por su gran integración con Android.
+
 \subsubsection{Implementación}
-Por qué no avisos grabados...
+
+Para convertir texto a sonido con el servicio de Google solamente hay que instanciar una clase del
+tipo \texttt{TextToSpeech} especificando qué clase implementa la función \texttt{onInit}. Después
+implementar dicha función indicando el lenguaje deseado y llamar al método \texttt{speak}.
+
+En el ejemplo del listado~\ref{code:textToSpeech} se ha simplificado el uso y se han prevenido
+errores creando el método \texttt{convertTextToSpeech}. De esta forma, cuando deseemos reproducir
+sonoramente un texto sólo tendremos que llamar a dicho método.
+
 \begin{listing}[
   float=ht,
   language = java,
-  caption  = {},
-  label    = code:]
+  caption  = {Ejemplo del uso de \texttt{TextToSpeech}},
+  label    = code:textToSpeech]
+private TextToSpeech mTextToSpeech = new TextToSpeech(this, this);
 
+[...]
+
+public void onInit(int status) {
+  if (status == TextToSpeech.SUCCESS) {
+    int result = mTextToSpeech.setLanguage(new Locale(getString(R.string.locale)));
+    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+      Toast.makeText(getBaseContext(),"Error al convertir el sonido", Toast.LENGTH_SHORT).show();
+    } else {
+      convertTextToSpeech("");
+    }
+  } 
+}
+
+private void convertTextToSpeech(String text) {
+  if (!text.equals("") && mTextToSpeech != null) {
+    mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+  }
+}
 \end{listing}
 \subsubsection{Pruebas}
+
+Al finalizar la implementación del octavo prototipo se realizó una prueba similar a la de la
+iteración anterior:
+
 \begin{itemize}
-  \item ...
+  \item Para comprobar que se oyen las acciones a realizar
 
   \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
     \hline
-    \textbf{Dado}     & ... \\
+    \textbf{Dado}     & Navegación en curso hacia algún lugar \\
                       & Diferentes dispositivos con distintas versiones de Android (ver
                         sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & ... \\
-    \textbf{Entonces} & ... \\
+    \textbf{Cuando}   & Es necesario realizar alguna acción \\
+    \textbf{Entonces} & Se oye la acción a realizar \\
     \hline
   \end{tabular}
 \end{itemize}
 
 \subsection{Iteración 9: Avisos vibratorios}
+
+Una vez evaluado el prototipo de la iteración 8 se introdujo una nueva funcionalidad: integrar los
+avisos por medio de vibraciones.
+
 \subsubsection{Diseño}
-\subsubsection{Implementación}
+
+
+
 Elección de complemento... puesto que es una barrera de entrada el smartwatch se desarrolla para
 también para otros móviles.
 Codificación de la vibración (rotondas y tal)
 Hablar del paso de mensajes
 Problemas con el paso de mensajes por agrupar pensajes
+\subsubsection{Implementación}
+
 \begin{listing}[
   float=ht,
   language = java,
@@ -499,6 +997,9 @@ Problemas con el paso de mensajes por agrupar pensajes
 
 \end{listing}
 \subsubsection{Pruebas}
+
+Al finalizar la implementación del noveno prototipo se realizó la siguiente prueba:
+
 \begin{itemize}
   \item ...
 

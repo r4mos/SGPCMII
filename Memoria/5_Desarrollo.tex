@@ -921,8 +921,9 @@ servicio de Google como proveedor por su gran integración con Android.
 \subsubsection{Implementación}
 
 Para convertir texto a sonido con el servicio de Google solamente hay que instanciar una clase del
-tipo \texttt{TextToSpeech} especificando qué clase implementa la función \texttt{onInit}. Después
-implementar dicha función indicando el lenguaje deseado y llamar al método \texttt{speak}.
+tipo \texttt{TextToSpeech} especificando el contexto y qué clase implementa la función
+\texttt{onInit}. Después implementar dicha función indicando el lenguaje deseado y llamar al método
+\texttt{speak}.
 
 En el ejemplo del listado~\ref{code:textToSpeech} se ha simplificado el uso y se han prevenido
 errores creando el método \texttt{convertTextToSpeech}. De esta forma, cuando deseemos reproducir
@@ -980,36 +981,377 @@ avisos por medio de vibraciones.
 
 \subsubsection{Diseño}
 
+Para guiar a un peatón, ciclista o motorista por una ruta específica existen varios tipos de
+acciones a realizar:
 
+\begin{itemize}
+  \item Girar a la izquierda
+  \item Girar a la derecha
+  \item Continuar recto
+  \item Dar media vuelta
+  \item Camino equivocado
+  \item Llegar al destino seleccionado
+  \item En la rotonda, tomar una salida en específico. Por ejemplo la 3º, que no tiene que coincidir
+    con girar a la izquierda.
+\end{itemize}
 
-Elección de complemento... puesto que es una barrera de entrada el smartwatch se desarrolla para
-también para otros móviles.
-Codificación de la vibración (rotondas y tal)
-Hablar del paso de mensajes
-Problemas con el paso de mensajes por agrupar pensajes
+Puesto que se trata de un número elevado de acciones para interpretar con un único vibrador se pensó
+en utilizar un complemento vibratorio y codificar todas las posibles acciones en intuitivas
+instrucciones descritas en el cuadro~\ref{cuadro:vibraciones}.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|l|l|}
+    \hline
+    \textbf{Acción} & \textbf{Codificación} \\
+    \hline
+    Girar a la izquierda & Vibración continua del dispositivo situado a la izquierda \\
+                         & utilizando la frecuencia representada en la figura
+                           ~\ref{fig:graficaGiro} \\
+    \hline
+    Girar a la derecha & Vibración continua del dispositivo situado a la derecha \\
+                       & utilizando la frecuencia representada en la figura
+                           ~\ref{fig:graficaGiro} \\
+    \hline
+    Continuar recto & Sin vibración \\
+    \hline
+    Dar media vuelta & Vibración continua hasta que se realice la acción \\
+    \hline
+    Camino equivocado & Vibración continua durante 5 segundos \\
+    \hline
+    Llegar al destino seleccionado & Repetición en tres ocasiones de la frecuencia representada \\
+                                   & en la figura~\ref{fig:graficaDestino} \\
+    \hline
+    En la rotonda, 1º salida & Vibración continua de ambos dispositivos utilizando la \\
+                             & frecuencia representada en la figura~\ref{fig:graficaRotonda1} \\
+    \hline
+    En la rotonda, 2º salida & Vibración continua de ambos dispositivos utilizando la \\
+                             & frecuencia representada en la figura~\ref{fig:graficaRotonda2} \\
+    \hline
+    En la rotonda, 3º salida & Vibración continua de ambos dispositivos utilizando la \\
+                             & frecuencia representada en la figura~\ref{fig:graficaRotonda3} \\
+    \hline
+    En la rotonda, otra salida & Vibración continua de ambos dispositivos utilizando una \\
+                               & frecuencia deducible con las figuras \ref{fig:graficaRotonda1}, 
+                                   \ref{fig:graficaRotonda2} y \ref{fig:graficaRotonda3}. \\
+    \hline
+  \end{tabular}
+  \caption{Codificación de instrucciones}
+  \label{cuadro:vibraciones}
+\end{table} 
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{/graficaGiro.png}
+    \caption{Frecuencia de vibración para un giro. El eje vertical indica si está (1) o no (0)
+      activo el vibrador, y el eje horizontal indica el tiempo en milisegundos}
+    \label{fig:graficaGiro}
+  \end{center}
+\end{figure}
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{/graficaDestino.png}
+    \caption{Frecuencia de vibración que determina si ha llegado al destino. El eje vertical indica
+      si está (1) o no (0) activo el vibrador, y el eje horizontal indica el tiempo en milisegundos}
+    \label{fig:graficaDestino}
+  \end{center}
+\end{figure}
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{/graficaRotonda1.png}
+    \caption{Frecuencia de vibración para tomar la primera salida de la rotonda. El eje vertical
+      indica si está (1) o no (0) activo el vibrador, y el eje horizontal indica el tiempo en
+      milisegundos}
+    \label{fig:graficaRotonda1}
+  \end{center}
+\end{figure}
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{/graficaRotonda2.png}
+    \caption{Frecuencia de vibración para tomar la segunda salida de la rotonda. El eje vertical
+      indica si está (1) o no (0) activo el vibrador, y el eje horizontal indica el tiempo en
+      milisegundos}
+    \label{fig:graficaRotonda2}
+  \end{center}
+\end{figure}
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{/graficaRotonda3.png}
+    \caption{Frecuencia de vibración para tomar la tercera salida de la rotonda. El eje vertical
+      indica si está (1) o no (0) activo el vibrador, y el eje horizontal indica el tiempo en
+      milisegundos}
+    \label{fig:graficaRotonda3}
+  \end{center}
+\end{figure}
+
+Una vez que tenemos la forma de codificar las posibles acciones de los complementos vibratorios,
+debemos seleccionar qué complementos utilizaremos. En este punto tuvimos un conflicto de
+intereses. Tal y como vimos en la sección~\ref{sec:wearables} los únicos complementos que nos
+permiten controlar su vibrador a voluntad son los que llevan Android Wear como \acs{SO}, pero estos
+dispositivos son muy caros y prácticamente nadie dispone de uno. Por ello, se propuso desarrollar el
+proyecto para poder utilizar tanto \emph{wearables} con Android Wear como otros dispositivos con
+Android. De este modo podrán utilizar el sistema:
+
+\begin{itemize}
+  \item Los usuarios de \textbf{Android Wear} por medio de su \emph{smartphone} y su {wearable}. En
+    el teléfono funcionará la aplicación de navegación y se comunicará con el complemento para que
+    vibre en los momentos apropiados.
+
+  \item Los usuarios que dispongan de \textbf{dos dispositivos con Android}. En uno funcionará la
+    aplicación de navegación y se comunicará con la aplicación del segundo para vibrar en los
+    momentos oportunos.
+
+  \item Los usuarios que dispongan de \textbf{un dispositivo Android} en el que se ejecute la
+    aplicación principal y \textbf{dos complementos} que vibren en los momentos adecuados. Los
+    complementos pueden ser:
+
+    \begin{itemize}
+      \item Dos dispositivos con Android
+      \item Dos dispositivos con Android Wear
+      \item Un dispositivo con Android y otro con Android Wear
+    \end{itemize}
+\end{itemize}
+
+Para soportar este gran número de configuraciones antes expuesta hacemos uso de la arquitectura
+cliente servidor por medio de la tecnología \emph{bluetooth}:
+
+\begin{itemize}
+  \item El \textbf{cliente} es la aplicación principal que implementa el sistema de navegación y se
+    conecta a los demás dispositivos para hacerlos vibrar de la forma que desee (ver
+    cuadro~\ref{cuadro:vibraciones}) y parar la vibración cuando estime oportuno.
+  \item Los \textbf{servidores} serán los diferentes dispositivos con Android o Android Wear que
+    quedarán a la espera de recibir instrucciones del cliente.
+\end{itemize}
+
+De este modo sólo tendremos que implementar en la aplicación de las anteriores iteraciones las
+vibraciones del cuadro~\ref{cuadro:vibraciones}, crear una nueva aplicación para Android y otra para
+Android Wear que también implemente dichas vibraciones y desarrollar un método de paso de mensajes
+por medio de \emph{bluetooth} entre las dos aplicaciones.
+
 \subsubsection{Implementación}
+
+Gracias a que Android y Android Wear comparten gran parte de las \acs{API} podemos utilizar
+prácticamente el mismo código para la aplicación del cliente y la aplicación del servidor.
+
+Para poder hacer uso del vibrador de cualquiera de nuestros dispositivos y codificar el
+cuadro~\ref{cuadro:vibraciones} hicimos uso de la clase \texttt{Vibrator} que, tras inicializarla,
+nos permite manipular el vibrador a voluntad con el método \texttt{vibrate}. De este modo
+desarrollamos los métodos \texttt{startLocalVibration} y \texttt{stopLocalVibration} (ver
+listado~\ref{code:localVibration}).
 
 \begin{listing}[
   float=ht,
   language = java,
-  caption  = {},
-  label    = code:]
+  caption  = {Métodos usados para hacer vibrar el dispositivo con la clase \texttt{Vibrator}},
+  label    = code:localVibration]
+private void startLocalVibration(int action) {
+  if (!mIsInVibration) {
+    mIsInVibration = true;
+    
+    switch (action) {
+      case LEFT:
+      case RIGHT:
+        long[] turn = {0, 900, 1000};
+        mVibrator.vibrate(turn, 0);
+        break;
+		
+      case WRONG:
+        mVibrator.vibrate(5000);
+        break;
+				
+      case UTURN:
+        long[] uturn = {0, 100};
+        mVibrator.vibrate(uturn, 0);
+        break;
+			
+      case DESTINATION:
+        long[] destination = new long[19];
+        for (int i=0; i<3; i++) {
+          destination[i*6+1] = 500;
+          destination[i*6+2] = 200;
+          destination[i*6+3] = 700;
+          destination[i*6+4] = 200;
+          destination[i*6+5] = 900;
+          destination[i*6+6] = 200;
+        }
+        mVibrator.vibrate(destination, -1);
+        break;
 
+      case ROUNDABOUT1:  case ROUNDABOUT2:  case ROUNDABOUT3:
+      case ROUNDABOUT4:  case ROUNDABOUT5:  case ROUNDABOUT6:
+      case ROUNDABOUT7:  case ROUNDABOUT8:
+        int exit = action-20; //roundabout=2X --> x=exit number
+        long[] roundabout = new long[exit*2+1];
+        for (int i=0; i<exit; i++) {
+          if (i != 0) roundabout[i*2] = 200;
+            roundabout[i*2+1] = 500;
+          }
+          roundabout[exit*2] = 1000;
+          mVibrator.vibrate(roundabout, 0);
+          break;
+    }
+  } else {
+    stopLocalVibration();
+    startLocalVibration(action);
+  }
+}
+private void stopLocalVibration() {
+  if (mIsInVibration) {
+    mVibrator.cancel();
+    mIsInVibration = false;
+  }
+}
 \end{listing}
+
+Para establecer una comunicación por \emph{bluetooth} entre el cliente y los servidores utilizamos
+la clase \texttt{BluetoothChatService} distribuida en los ejemplos de
+Android\footnote{https://developer.android.com/resources/samples/BluetoothChat/index.html}. Esta
+clase nos permite abstraernos de la implementación realizada con \texttt{BluetoothSocket} y
+centrarnos en qué hacer cuando cambiamos de estado (\emph{escuchando}, \emph{conectando}, etc) o
+recibimos un mensaje. Además nos permite iniciar el «chat» y enviar mensajes de forma sencilla.
+
+En la aplicación \textbf{cliente}, que es la que desarrollamos en las iteraciones anteriores,
+añadimos un nuevo menú en opciones. Este menú permite activar o desactivar la utilización de la
+vibración y, en caso de activarlo, nos permite seleccionar entre los diferentes dispositivos
+\emph{bluetooth} emparejados y nuestro dispositivo cuál hará de vibrador derecho y cuál de vibrador
+izquierdo. Una vez seleccionado, nuestro cliente intentará iniciar el «chat» con el/los servidor/es
+y se quedará a la espera. En caso de no conseguir establecer conexión simplemente avisará al
+usuario.
+
+Gracias a utilizar la clase \texttt{BluetoothChatServide}, para iniciar el intercambio de mensajes
+sólo es necesario iniciar el servicio con el método \texttt{start} y hacer uso del método
+\texttt{connect} proporcionándole el número \acf{MAC} del dispositivo al que queremos
+conectarnos. Para definir cómo se comporta la \emph{interfaz} de la aplicación durante el proceso de
+conexión hubo que definir un \texttt{Handler} y sobrescribir el método \texttt{handleMesage}
+indicando qué hacer mientras se conecta, cuando se desconecte o cuando falle el intento de
+conexión. Una vez que estemos conectados podremos enviar mensajes a nuestros dispositivos conectados
+por \emph{bluetooth} utilizando los métodos del listado~\ref{code:sendMessage}.
+
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {Métodos utilizados para enviar mensajes por bluetooth haciendo uso de la clase
+               \texttt{BluetoothChatServide}},
+  label    = code:sendMessage]
+private BluetoothChatService mChatServiceLeft = 
+    new BluetoothChatService(this, mHandler);
+private BluetoothChatService mChatServiceRight =
+    new BluetoothChatService(this, mHandler);
+private StringBuffer mOutStringBufferLeft = new StringBuffer("");
+private StringBuffer mOutStringBufferRight = new StringBuffer("");
+
+[...]
+
+private void sendMessage(String message, int who) {
+    if (who == LEFT) {
+      sendMessage(message, mChatServiceLeft, mOutStringBufferLeft);
+    } else if (who == RIGHT) {
+      sendMessage(message, mChatServiceRight, mOutStringBufferRight);
+    }
+}
+
+private void sendMessage(String message, BluetoothChatService d, StringBuffer b) {
+    if (d == null || d.getState() != BluetoothChatService.STATE_CONNECTED) {
+        return;
+    }
+    	
+    message = message + SPLIT;
+    if (message.length() > 0) {
+        byte[] send = message.getBytes();
+        d.write(send);
+        b.setLength(0);
+    }
+}
+\end{listing}
+
+Para el caso de los \textbf{servidores} desarrollamos dos aplicaciones: una para Android y otra para
+Android Wear. En ambas aplicaciones iniciamos el servicio \texttt{BluetoothChatService} al ejecutar
+la aplicación quedándonos a la escucha de conexiones \emph{bluetooth}. Además definimos un
+\texttt{Handler} para especificar qué hacer en los diferentes estados de la conexión con la
+\emph{interfaz} y determinar qué hacer en caso de recibir un mensaje (ver
+listado~\ref{code:servidorHandler}).
+
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {Métodos utilizados en los servidores para leer los mensajes recibidos por medio de de
+               la clase \texttt{BluetoothChatServide} },
+  label    = code:servidorHandler]
+private Handler mHandler = new Handler() {
+  public void handleMessage(Message msg) {
+    switch (msg.what) {
+      case BluetoothChatService.MESSAGE_STATE_CHANGE:
+        switch (msg.arg1) {
+          case BluetoothChatService.STATE_CONNECTING:
+          case BluetoothChatService.STATE_LISTEN:
+          case BluetoothChatService.STATE_NONE:
+            [...]
+            break;
+          case  BluetoothChatService.STATE_DISCONNECTING:
+            [...]
+            break;
+        }
+        break;
+
+      case BluetoothChatService.MESSAGE_READ:
+        byte[] readBuf = (byte[]) msg.obj;
+        String readMessages = new String(readBuf, 0, msg.arg1);
+        String readMessage = "";
+                
+        for (int i=0; i<readMessages.length(); i++) {
+          if (readMessages.charAt(i) == SPLIT) {
+            startAction(readMessage);
+            readMessage = "";
+          } else {
+            readMessage = readMessage + readMessages.charAt(i);
+          }
+        }
+        break;
+
+      [...]
+    }
+  }
+};
+
+private void startAction (String readMessage) {
+  if (readMessage.equals(STOP)) {
+    stopLocalVibration();
+  } else if (readMessage.length() > 1) {
+    stopLocalVibration();
+    int action = Integer.parseInt(readMessage.substring(1));
+    startLocalVibration(action);
+  }
+}
+\end{listing}
+
+Como se puede apreciar en los listados \ref{code:sendMessage} y \ref{code:servidorHandler} a la hora
+de intercambiar mensajes incluimos un separador: \texttt{SPLIT}. Esto se debe a que durante el
+desarrollo del intercambio de mensajes se detectaron errores se sincronización entre los
+\texttt{buffers} del cliente y de los servidores. De este modo nos aseguramos de no malinterpretar
+los mensajes.
+
 \subsubsection{Pruebas}
 
 Al finalizar la implementación del noveno prototipo se realizó la siguiente prueba:
 
 \begin{itemize}
-  \item ...
+  \item Para determinar el correcto funcionamiento de la vibración y del paso de mensajes
 
   \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
     \hline
-    \textbf{Dado}     & ... \\
-                      & Diferentes dispositivos con distintas versiones de Android (ver
-                        sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & ... \\
-    \textbf{Entonces} & ... \\
+    \textbf{Dado}     & Diferentes rutas \\
+                      & Diferentes dispositivos con distintas versiones de Android \\
+                      & Diferentes formas posibles de conectar dichos dispositivos:
+                        Android-Android, Android-Android Wear, Android-Android-Android y 
+                        Android-Android-Android Wear \\
+                      & Todas las posibles acciones de guiado \\
+    \textbf{Cuando}   & Debemos realizar alguna acción \\
+    \textbf{Entonces} & Vibra el dispositivo adecuando con la frecuencia correspondiente a
+                        la acción a realizar \\
     \hline
   \end{tabular}
 \end{itemize}

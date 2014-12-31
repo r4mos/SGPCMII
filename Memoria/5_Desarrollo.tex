@@ -644,12 +644,12 @@ public void onLocationChanged(Location loc) {
       caption  = {Ejemplo de implementación de \texttt{LocationListener} utilizado para detectar
                   cuándo nos hemos desviado de la ruta establecida},
       label    = code:desvio]
+private int mRoadLost = 0;
+
 public void onLocationChanged(Location loc) {
   GeoPoint myLocation = new GeoPoint(loc);
   
   [...]
-
-  private int mRoadLost = 0;
 
   if (mRoadOverlay != null && !mRoadOverlay.isCloseTo(myLocation, 24, mMap)) {
     if (mRoadLost < 3) {

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">NavigantoWear</string>
+    <string name="alert_waiting_instructions">Esperando instrucciones</string>
+    <string name="alert_waiting_connexion">Esperando conexión</string>
+
+</resources>

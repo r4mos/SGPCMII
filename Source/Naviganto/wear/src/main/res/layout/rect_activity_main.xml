@@ -5,5 +5,5 @@
     tools:context=".MainActivity" tools:deviceIds="wear_square">
 
     <TextView android:id="@+id/text" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" android:text="@string/alert_waiting_connexion" />
+        android:layout_height="wrap_content" android:text="@string/alert_waiting_instructions" />
 </LinearLayout>

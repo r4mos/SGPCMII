@@ -5,5 +5,5 @@
 
     <TextView android:id="@+id/text" android:layout_width="wrap_content"
         android:layout_height="wrap_content" android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" android:text="@string/alert_waiting_connexion" />
+        android:layout_centerVertical="true" android:text="@string/alert_waiting_instructions" />
 </RelativeLayout>

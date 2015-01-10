@@ -962,6 +962,7 @@ public class MainActivity
 			/*intent = new Intent(Intent.ACTION_VIEW);
 			intent.setData(Uri.parse("https://bitbucket.org/cr4mos/tfg-sgpcmii"));
 			startActivity(intent);*/
+                sendMessageWear(START_ACTIVITY, "");
                 sendMessageWear(WEAR_MESSAGE_PATH, "1-1");
                 break;
         }

@@ -45,9 +45,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.widget.DrawerLayout;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
 
@@ -96,7 +93,10 @@ public class MainActivity
     private BluetoothChatService mChatServiceRight = null;
     private StringBuffer mOutStringBufferLeft;
     private StringBuffer mOutStringBufferRight;
+
     private GoogleApiClient mApiClient = null;
+    private String mWearLeft = "";
+    private String mWearRight = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -429,31 +429,44 @@ public class MainActivity
     private void startVibrate(int action) {
         stopVibrate();
         switch (mAlertVibrate) {
-            case LTHIS_RBLUETOOTH:
-                if (isLeftAction(action)) {
-                    startLocalVibration(action);
-                }
-                if (isRightAction(action)) {
-                    sendMessageBluetooth(START + action, RIGHT);
-                }
+            case LLOCAL_RBLUETOOTH:
+                if (isLeftAction(action)) startLocalVibration(action);
+                if (isRightAction(action)) sendMessageBluetooth(START + action, RIGHT);
                 break;
 
-            case LBLUETOOTH_RTHIS:
-                if (isLeftAction(action)) {
-                    sendMessageBluetooth(START + action, LEFT);
-                }
-                if (isRightAction(action)) {
-                    startLocalVibration(action);
-                }
+            case LBLUETOOTH_RLOCAL:
+                if (isLeftAction(action)) sendMessageBluetooth(START + action, LEFT);
+                if (isRightAction(action)) startLocalVibration(action);
+                break;
+
+            case LLOCAL_RWEAR:
+                if (isLeftAction(action)) startLocalVibration(action);
+                if (isRightAction(action)) sendMessageWear(START + action, RIGHT);
+                break;
+
+            case LWEAR_RLOCAL:
+                if (isLeftAction(action)) sendMessageWear(START + action, LEFT);
+                if (isRightAction(action)) startLocalVibration(action);
+                break;
+
+            case LBLUETOOTH_RWEAR:
+                if (isLeftAction(action)) sendMessageBluetooth(START + action, LEFT);
+                if (isRightAction(action)) sendMessageWear(START + action, RIGHT);
+                break;
+
+            case LWEAR_RBLUETOOTH:
+                if (isLeftAction(action)) sendMessageWear(START + action, LEFT);
+                if (isRightAction(action)) sendMessageBluetooth(START + action, RIGHT);
                 break;
 
             case LBLUETOOTH_RBLUETOOTH:
-                if (isLeftAction(action)) {
-                    sendMessageBluetooth(START + action, LEFT);
-                }
-                if (isRightAction(action)) {
-                    sendMessageBluetooth(START + action, RIGHT);
-                }
+                if (isLeftAction(action)) sendMessageBluetooth(START + action, LEFT);
+                if (isRightAction(action)) sendMessageBluetooth(START + action, RIGHT);
+                break;
+
+            case LWEAR_RWEAR:
+                if (isLeftAction(action)) sendMessageWear(START + action, LEFT);
+                if (isRightAction(action)) sendMessageWear(START + action, RIGHT);
                 break;
 
             default:
@@ -516,6 +529,9 @@ public class MainActivity
                     roundabout[exit*2] = 1000;
                     mVibrator.vibrate(roundabout, 0);
                     break;
+                case TEST:
+                    mVibrator.vibrate(2000);
+                    break;
             }
         } else {
             stopLocalVibration();
@@ -531,21 +547,67 @@ public class MainActivity
     private void stopVibrate() {
         stopLocalVibration();
         switch (mAlertVibrate) {
-            case LTHIS_RBLUETOOTH:
+            case LLOCAL_RBLUETOOTH:
                 sendMessageBluetooth(STOP, RIGHT);
                 break;
 
-            case LBLUETOOTH_RTHIS:
+            case LBLUETOOTH_RLOCAL:
                 sendMessageBluetooth(STOP, LEFT);
+                break;
+
+            case LLOCAL_RWEAR:
+                sendMessageWear(STOP, RIGHT);
+                break;
+
+            case LWEAR_RLOCAL:
+                sendMessageWear(STOP, LEFT);
+                break;
+
+            case LBLUETOOTH_RWEAR:
+                sendMessageBluetooth(STOP, LEFT);
+                sendMessageWear(STOP, RIGHT);
+                break;
+
+            case LWEAR_RBLUETOOTH:
+                sendMessageWear(STOP, LEFT);
+                sendMessageBluetooth(STOP, RIGHT);
                 break;
 
             case LBLUETOOTH_RBLUETOOTH:
-                sendMessageBluetooth(STOP, RIGHT);
                 sendMessageBluetooth(STOP, LEFT);
+                sendMessageBluetooth(STOP, RIGHT);
+                break;
+
+            case LWEAR_RWEAR:
+                sendMessageWear(STOP, LEFT);
+                sendMessageWear(STOP, RIGHT);
                 break;
 
             default:
                 break;
+        }
+    }
+
+    private void testVibrate() {
+        if (mAlertVibrate > NONE) {
+            Toast.makeText(getBaseContext(), R.string.alert_vibrate_left, Toast.LENGTH_SHORT).show();
+            startVibrate(LEFT);
+            Handler h1 = new Handler();
+            h1.postDelayed(new Runnable() {
+                public void run() {
+                    stopVibrate();
+                    Toast.makeText(getBaseContext(), R.string.alert_vibrate_right, Toast.LENGTH_SHORT).show();
+                    startVibrate(RIGHT);
+                }
+            }, 1900);
+            Handler h2 = new Handler();
+            h2.postDelayed(new Runnable() {
+                public void run() {
+                    stopVibrate();
+                }
+            }, 3800);
+        } else {
+            Toast.makeText(getBaseContext(), R.string.alert_vibrate_disable, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -570,10 +632,10 @@ public class MainActivity
                         Toast.makeText(getApplicationContext(),
                                 R.string.alert_device_disconnected,
                                 Toast.LENGTH_SHORT).show();
-                        disconectBluetoothDevices();
+                        disconectDevices();
                         break;
                     case BluetoothChatService.STATE_CONNECTION_FAILED:
-                        disconectBluetoothDevices();
+                        disconectDevices();
                         showMap();
                         Toast.makeText(getApplicationContext(),
                                 R.string.alert_no_device_connection,
@@ -602,16 +664,25 @@ public class MainActivity
             b.setLength(0);
         }
     }
-    private void disconectBluetoothDevices(){
+    private void disconectDevices(){
+        mAlertVibrate = NONE;
+
         if (mChatServiceLeft != null) {
             mChatServiceLeft.stop();
-            mAlertVibrate = NONE;
             mChatServiceLeft.start();
         }
         if (mChatServiceRight != null) {
             mChatServiceRight.stop();
-            mAlertVibrate = NONE;
             mChatServiceRight.start();
+        }
+
+        if (!mWearLeft.equals("")) {
+            sendMessageWear(END_ACTIVITY, "", mWearLeft);
+            mWearLeft = "";
+        }
+        if (!mWearRight.equals("")) {
+            sendMessageWear(END_ACTIVITY, "", mWearRight);
+            mWearRight = "";
         }
     }
     private void showMap () {
@@ -625,28 +696,26 @@ public class MainActivity
                 R.string.alert_connecting,Toast.LENGTH_SHORT).show();
     }
 
-    private void sendMessageWear( final String path, final String text ) {
+    private void sendMessageWear(String text, int who) {
+        if (who == LEFT) {
+            sendMessageWear(WEAR_MESSAGE_PATH, text, mWearLeft);
+        }else if (who == RIGHT) {
+            sendMessageWear(WEAR_MESSAGE_PATH, text, mWearRight);
+        }
+    }
+    private void sendMessageWear( final String path, final String text, final String nodeId) {
         new Thread( new Runnable() {
             @Override
             public void run() {
-                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
-                for(Node node : nodes.getNodes()) {
-                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
-                            mApiClient, node.getId(), path, text.getBytes() ).await();
-                }
+                Wearable.MessageApi.sendMessage(
+                            mApiClient, nodeId, path, text.getBytes() ).await();
             }
         }).start();
     }
-
     @Override
-    public void onConnected(Bundle bundle) {
-        sendMessageWear(START_ACTIVITY, "");
-    }
-
+    public void onConnected(Bundle bundle) {}
     @Override
-    public void onConnectionSuspended(int i) {
-
-    }
+    public void onConnectionSuspended(int i) {}
 
     /* Override from LocationListener */
     @Override
@@ -900,31 +969,72 @@ public class MainActivity
                 mAlertSounds = mSettings.getBoolean("settingsAlertsSound", false);
 
                 if (mSettings.getBoolean("settingsAlertsVigrate", false)) {
-                    disconectBluetoothDevices();
+                    disconectDevices();
 
-                    String left = mSettings.getString("settingsAlertsVigrateLeft", "");
-                    String right = mSettings.getString("settingsAlertsVigrateRight", "");
+                    String[] left = mSettings.getString("settingsAlertsVigrateLeft", "").split("\\" + SPLIT);
+                    String[] right = mSettings.getString("settingsAlertsVigrateRight", "").split("\\" + SPLIT);
 
-                    if (left.equals(right)) {
+                    String leftDevice = left[0];
+                    String leftPayload = left[1];
+                    String rightDevice = right[0];
+                    String rightPayload = right[1];
+
+                    if (leftDevice.equals(rightDevice) && leftPayload.equals(rightPayload)) {
                         Toast.makeText(getApplicationContext(),
                                 R.string.alert_misconfiguration, Toast.LENGTH_SHORT).show();
-                    } else if (left.equals("") && !right.equals("")) {
-                        mAlertVibrate = LTHIS_RBLUETOOTH;
-                        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(right);
+
+                    } else if (leftDevice.equals(LOCAL) && rightDevice.equals(BLUETOOTH)) {
+                        mAlertVibrate = LLOCAL_RBLUETOOTH;
+                        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(rightPayload);
                         mChatServiceRight.connect(device);
                         showBluetoothConnectingDialog();
-                    } else if (!left.equals("") && right.equals("")) {
-                        mAlertVibrate = LBLUETOOTH_RTHIS;
-                        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(left);
+
+                    } else if (leftDevice.equals(BLUETOOTH) && rightDevice.equals(LOCAL)) {
+                        mAlertVibrate = LBLUETOOTH_RLOCAL;
+                        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(leftPayload);
                         mChatServiceLeft.connect(device);
                         showBluetoothConnectingDialog();
-                    } else if  (!left.equals("") && !right.equals("")) {
+
+                    } else if (leftDevice.equals(LOCAL) && rightDevice.equals(WEAR)) {
+                        mAlertVibrate = LLOCAL_RWEAR;
+                        mWearRight = rightPayload;
+                        sendMessageWear(START_ACTIVITY, "", mWearRight);
+
+                    } else if (leftDevice.equals(WEAR) && rightDevice.equals(LOCAL)) {
+                        mAlertVibrate = LWEAR_RLOCAL;
+                        mWearLeft = leftPayload;
+                        sendMessageWear(START_ACTIVITY, "", mWearLeft);
+
+                    } else if (leftDevice.equals(BLUETOOTH) && rightDevice.equals(WEAR)) {
+                        mAlertVibrate = LBLUETOOTH_RWEAR;
+                        mWearRight = rightPayload;
+                        sendMessageWear(START_ACTIVITY, "", mWearRight);
+                        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(leftPayload);
+                        mChatServiceLeft.connect(device);
+                        showBluetoothConnectingDialog();
+
+                    } else if (leftDevice.equals(WEAR) && rightDevice.equals(BLUETOOTH)) {
+                        mAlertVibrate = LWEAR_RBLUETOOTH;
+                        mWearLeft = leftPayload;
+                        sendMessageWear(START_ACTIVITY, "", mWearLeft);
+                        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(rightPayload);
+                        mChatServiceRight.connect(device);
+                        showBluetoothConnectingDialog();
+
+                    } else if (leftDevice.equals(BLUETOOTH) && rightDevice.equals(BLUETOOTH)) {
                         mAlertVibrate = LBLUETOOTH_RBLUETOOTH;
-                        BluetoothDevice deviceRight = mBluetoothAdapter.getRemoteDevice(right);
-                        BluetoothDevice deviceLeft = mBluetoothAdapter.getRemoteDevice(left);
+                        BluetoothDevice deviceRight = mBluetoothAdapter.getRemoteDevice(rightPayload);
+                        BluetoothDevice deviceLeft = mBluetoothAdapter.getRemoteDevice(leftPayload);
                         mChatServiceRight.connect(deviceRight);
                         mChatServiceLeft.connect(deviceLeft);
                         showBluetoothConnectingDialog();
+
+                    } else if (leftDevice.equals(WEAR) && rightDevice.equals(WEAR)) {
+                        mAlertVibrate = LWEAR_RWEAR;
+                        mWearLeft = leftPayload;
+                        mWearRight = rightPayload;
+                        sendMessageWear(START_ACTIVITY, "", mWearLeft);
+                        sendMessageWear(START_ACTIVITY, "", mWearRight);
                     }
                 }
                 break;
@@ -958,12 +1068,14 @@ public class MainActivity
                 startActivityForResult(intent, SETTINGS);
                 break;
 
+            case TEST:
+                testVibrate();
+                break;
+
             case ABOUT:
-			/*intent = new Intent(Intent.ACTION_VIEW);
-			intent.setData(Uri.parse("https://bitbucket.org/cr4mos/tfg-sgpcmii"));
-			startActivity(intent);*/
-                sendMessageWear(START_ACTIVITY, "");
-                sendMessageWear(WEAR_MESSAGE_PATH, "1-1");
+			    intent = new Intent(Intent.ACTION_VIEW);
+			    intent.setData(Uri.parse("https://bitbucket.org/cr4mos/tfg-sgpcmii"));
+			    startActivity(intent);
                 break;
         }
     }

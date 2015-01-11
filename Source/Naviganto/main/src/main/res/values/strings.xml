@@ -8,6 +8,7 @@
     <string name="navigation_drawer_go">Seleccionar destino</string>
     <string name="navigation_drawer_going">Navegación</string>
     <string name="navigation_drawer_settings">Opciones</string>
+    <string name="navigation_drawer_test">Probar vibración</string>
     <string name="navigation_drawer_about">Sobre Naviganto</string>
     <string name="navigation_drawer_open">Abrir menú</string>
     <string name="navigation_drawer_close">Cerrar menú</string>
@@ -23,6 +24,10 @@
     <string name="settings_display">Visualización</string>
     <string name="settings_display_orientation">Rotar mapa</string>
     <string name="settings_display_orientation_summary">Activa o desactiva la rotación automática del mapa. Gasta más batería</string>
+
+    <string name="settings_local">Local</string>
+    <string name="settings_bluetooth">Bluetooth</string>
+    <string name="settings_wear">Wear</string>
 
     <string name="distance_meters">metros</string>
     <string name="distance_kilometers">kilómetros</string>
@@ -63,6 +68,10 @@
     <string name="alert_device_disconnected">Desconectado de un dispositivo</string>
     <string name="alert_connecting">Conectando&#8230;</string>
     <string name="alert_misconfiguration">Configuración erronea:\nDebe seleccionar dispositivos diferentes para los vibradores</string>
+
+    <string name="alert_vibrate_left">Vibrador izquierdo</string>
+    <string name="alert_vibrate_right">Vibrador derecho</string>
+    <string name="alert_vibrate_disable">Vibración desactivada</string>
 
     <string name="transport_fastest">Moto o coche, camino más rápido</string>
     <string name="transport_shortest">Moto o coche, camino más corto</string>

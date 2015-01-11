@@ -13,13 +13,13 @@
             android:key="settingsAlertsVigrate"
             android:summary="@string/settings_alerts_vibrate_summary"
             android:title="@string/settings_alerts_vibrate"  />
-        
-        <ListPreference
+
+        <es.uclm.esi.tfg.naviganto.TwoLinesListPreference
             android:key="settingsAlertsVigrateLeft"
             android:title="@string/settings_alerts_vibrate_left"
             android:summary="@string/settings_this_device" />
-        
-        <ListPreference
+
+        <es.uclm.esi.tfg.naviganto.TwoLinesListPreference
             android:key="settingsAlertsVigrateRight"
             android:title="@string/settings_alerts_vibrate_right"
             android:summary="@string/settings_this_device" />

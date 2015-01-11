@@ -11,12 +11,19 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.widget.Toast;
 
-public class SettingsActivity extends PreferenceActivity {
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
+
+public class SettingsActivity extends PreferenceActivity implements Const {
 
     private CheckBoxPreference mVibrate;
-    private ListPreference mLeft;
-    private ListPreference mRight;
+    private TwoLinesListPreference mLeft;
+    private TwoLinesListPreference mRight;
+
     private BluetoothAdapter mBtAdapter;
+    private GoogleApiClient mApiClient = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,17 +35,19 @@ public class SettingsActivity extends PreferenceActivity {
             Toast.makeText(this, R.string.alert_no_bluetooth, Toast.LENGTH_LONG).show();
             mVibrate.setEnabled(false);
         }
+        mApiClient = new GoogleApiClient.Builder( this )
+                .addApi( Wearable.API )
+                .build();
+        if (mApiClient != null) mApiClient.connect();
+
 
         mVibrate = (CheckBoxPreference)findPreference("settingsAlertsVigrate");
-        mLeft = (ListPreference)findPreference("settingsAlertsVigrateLeft");
-        mRight = (ListPreference)findPreference("settingsAlertsVigrateRight");
+        mLeft = (TwoLinesListPreference)findPreference("settingsAlertsVigrateLeft");
+        mRight = (TwoLinesListPreference)findPreference("settingsAlertsVigrateRight");
 
         mVibrate.setChecked(false);
         mLeft.setEnabled(false);
         mRight.setEnabled(false);
-
-        mLeft.setEnabled(mVibrate.isChecked());
-        mRight.setEnabled(mVibrate.isChecked());
 
         mVibrate.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue){
@@ -49,48 +58,74 @@ public class SettingsActivity extends PreferenceActivity {
             }
         });
 
-        Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
-        int i = pairedDevices.size() + 1;
-        final CharSequence[] entries = new CharSequence[i];
-        final CharSequence[] values  = new CharSequence[i];
+        initListPreferenceValues();
+    }
 
-        i = 0;
-        entries[i] = getString(R.string.settings_this_device);
-        values[i] = "";
-
-        if (pairedDevices.size() > 0) {
-            for (BluetoothDevice device : pairedDevices) {
-                i++;
-                entries[i] = device.getName();
-                values[i] = device.getAddress();
-            }
-        } else {
-            if (mBtAdapter.isEnabled())
-                Toast.makeText(getApplicationContext(), R.string.alert_no_devices, Toast.LENGTH_SHORT).show();
-            mVibrate.setEnabled(false);
-        }
-
-        mLeft.setEntries(entries);
-        mRight.setEntries(entries);
-        mLeft.setEntryValues(values);
-        mRight.setEntryValues(values);
-        mLeft.setValue("");
-        mRight.setValue("");
-
-        mLeft.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+    private void initListPreferenceValues() {
+        new Thread( new Runnable() {
             @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                mLeft.setSummary(getEntryByValue(newValue.toString(), entries, values));
-                return true;
+            public void run() {
+                Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
+                NodeApi.GetConnectedNodesResult wearNodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+
+                int i = pairedDevices.size() + wearNodes.getNodes().size() + 1;
+                final CharSequence[] entries = new CharSequence[i];
+                final CharSequence[] entriesSubtitles = new CharSequence[i];
+                final CharSequence[] values  = new CharSequence[i];
+
+                i = 0;
+
+                entries[i] = getString(R.string.settings_this_device);
+                entriesSubtitles[i] = getString(R.string.settings_local);
+                values[i] = LOCAL + SPLIT + "this";
+
+                if (pairedDevices.size() > 0) {
+                    for (BluetoothDevice device : pairedDevices) {
+                        i++;
+                        entries[i] = device.getName();
+                        entriesSubtitles[i] = getString(R.string.settings_bluetooth);
+                        values[i] = BLUETOOTH + SPLIT + device.getAddress();
+                    }
+                } else {
+                    if (mBtAdapter.isEnabled())
+                        Toast.makeText(getApplicationContext(), R.string.alert_no_devices, Toast.LENGTH_SHORT).show();
+                    mVibrate.setEnabled(false);
+                }
+
+                if (wearNodes.getNodes().size() > 0) {
+                    for (Node node : wearNodes.getNodes()) {
+                        i++;
+                        entries[i] = node.getDisplayName();
+                        entriesSubtitles[i] = getString(R.string.settings_wear);
+                        values[i] = WEAR + SPLIT + node.getId();
+                    }
+                }
+
+                mLeft.setEntries(entries);
+                mRight.setEntries(entries);
+                mLeft.setEntryValues(values);
+                mRight.setEntryValues(values);
+                mLeft.setEntriesSubtitles(entriesSubtitles);
+                mRight.setEntriesSubtitles(entriesSubtitles);
+                mLeft.setValue(LOCAL + SPLIT + "this");
+                mRight.setValue(LOCAL + SPLIT + "this");
+
+                mLeft.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        mLeft.setSummary(getEntryByValue(newValue.toString(), entries, values));
+                        return true;
+                    }
+                });
+                mRight.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        mRight.setSummary(getEntryByValue(newValue.toString(), entries, values));
+                        return true;
+                    }
+                });
             }
-        });
-        mRight.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                mRight.setSummary(getEntryByValue(newValue.toString(), entries, values));
-                return true;
-            }
-        });
+        }).start();
     }
 
     private CharSequence getEntryByValue(String value, CharSequence[] entries, CharSequence[] values){

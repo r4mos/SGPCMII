@@ -24,7 +24,13 @@ public interface Const {
     static final int EXPLORE = 0;
     static final int GO = 1;
     static final int SETTINGS = 2;
-    static final int ABOUT = 3;
+    static final int ABOUT = 4;
+    static final int TEST = 3;
+
+    //Request Strings
+    static final String LOCAL = "local";
+    static final String BLUETOOTH = "bluetooth";
+    static final String WEAR = "wear";
 
     //Transport
     static final String FASTEST = "fastest";
@@ -34,9 +40,14 @@ public interface Const {
 
     //Vibrate mode
     static final int NONE = 0;
-    static final int LTHIS_RBLUETOOTH = 1;
-    static final int LBLUETOOTH_RTHIS = 2;
-    static final int LBLUETOOTH_RBLUETOOTH = 3;
+    static final int LLOCAL_RBLUETOOTH = 1;
+    static final int LBLUETOOTH_RLOCAL = 2;
+    static final int LLOCAL_RWEAR = 3;
+    static final int LWEAR_RLOCAL = 4;
+    static final int LBLUETOOTH_RWEAR = 5;
+    static final int LWEAR_RBLUETOOTH = 6;
+    static final int LBLUETOOTH_RBLUETOOTH = 7;
+    static final int LWEAR_RWEAR = 8;
 
     //Bluetooth messages
     static final String START = "1";

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Vibrator;
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.widget.Toast;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
@@ -59,13 +61,12 @@ public class MainActivity extends Activity implements Const,  MessageApi.Message
             public void run() {
                 if( messageEvent.getPath().equalsIgnoreCase( WEAR_MESSAGE_PATH ) ) {
                     startAction(new String(messageEvent.getData()));
-                } else if (messageEvent.getPath().equalsIgnoreCase( END_ACTIVITY ) ) {
-                    if ( mApiClient.isConnected() ) {
-                        mApiClient.disconnect();
-                    }
+                }
+                if (messageEvent.getPath().equalsIgnoreCase( END_ACTIVITY ) ) {
                     if (mVibrator != null) {
                         mVibrator.cancel();
                     }
+                    finish();
                 }
             }
         });

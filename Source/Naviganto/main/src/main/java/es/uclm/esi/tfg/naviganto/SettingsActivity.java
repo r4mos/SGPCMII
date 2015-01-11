@@ -1,6 +1,8 @@
 package es.uclm.esi.tfg.naviganto;
 
 import java.util.Set;
+
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
@@ -11,6 +13,8 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
@@ -66,9 +70,13 @@ public class SettingsActivity extends PreferenceActivity implements Const {
             @Override
             public void run() {
                 Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
-                NodeApi.GetConnectedNodesResult wearNodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+                int i = pairedDevices.size() +  1;
 
-                int i = pairedDevices.size() + wearNodes.getNodes().size() + 1;
+                if (isPlayServicesAvailable()) {
+                    NodeApi.GetConnectedNodesResult wearNodes = Wearable.NodeApi.getConnectedNodes(mApiClient).await();
+                    i += wearNodes.getNodes().size();
+                }
+
                 final CharSequence[] entries = new CharSequence[i];
                 final CharSequence[] entriesSubtitles = new CharSequence[i];
                 final CharSequence[] values  = new CharSequence[i];
@@ -92,12 +100,15 @@ public class SettingsActivity extends PreferenceActivity implements Const {
                     mVibrate.setEnabled(false);
                 }
 
-                if (wearNodes.getNodes().size() > 0) {
-                    for (Node node : wearNodes.getNodes()) {
-                        i++;
-                        entries[i] = node.getDisplayName();
-                        entriesSubtitles[i] = getString(R.string.settings_wear);
-                        values[i] = WEAR + SPLIT + node.getId();
+                if (isPlayServicesAvailable()) {
+                    NodeApi.GetConnectedNodesResult wearNodes = Wearable.NodeApi.getConnectedNodes(mApiClient).await();
+                    if (wearNodes.getNodes().size() > 0) {
+                        for (Node node : wearNodes.getNodes()) {
+                            i++;
+                            entries[i] = node.getDisplayName();
+                            entriesSubtitles[i] = getString(R.string.settings_wear);
+                            values[i] = WEAR + SPLIT + node.getId();
+                        }
                     }
                 }
 
@@ -126,6 +137,12 @@ public class SettingsActivity extends PreferenceActivity implements Const {
                 });
             }
         }).start();
+    }
+
+    public boolean isPlayServicesAvailable() {
+        int val = GooglePlayServicesUtil.isGooglePlayServicesAvailable(SettingsActivity.this);
+        if (val == ConnectionResult.SUCCESS) return true;
+        return false;
     }
 
     private CharSequence getEntryByValue(String value, CharSequence[] entries, CharSequence[] values){

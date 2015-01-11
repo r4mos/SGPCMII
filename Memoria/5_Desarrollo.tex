@@ -19,8 +19,8 @@ sobre los que partimos:
   \item El sistema debe ser compatible con la mayoría de versiones de la plataforma.
   \item La interacción con el sistema debe desarrollarse de forma implícita y ser válida para
     peatones, ciclistas y motoristas.
-  \item En caso de necesitar complementos para la interacción, deben estar disponibles en el
-    mercado.
+  \item Los complementos necesarios para la interacción deben estar disponibles en el
+    mercado y estar al alcance del público en general.
   \item El sistema debe implementar las características básicas del resto de aplicaciones del
     mercado como mostrar la posición en el mapa, rotar el mapa en función de nuestra orientación o
     visualizar la ruta que se va a seguir.
@@ -73,9 +73,10 @@ sección~\ref{sec:herramientasSoftware}.
 
 En tercer y último lugar, se seleccionó como objetivo del desarrollo la \acs{API} de Android 21,
 también conocida como Android 5.0 \emph{Lollipop}, por ser la más nueva y poseer el mayor número de
-funcionalidades. De todos modos, se aseguró la compatibilidad desde la \acs{API} de Android 8,
-también llamada Android 2.2 \emph{Froyo}, por medio de la librería \emph{Android support} para
-asegurarnos de tener compatibilidad con la mayoría de dispositivos Android.
+funcionalidades. De todos modos, se aseguró la compatibilidad desde la \acs{API} de Android 10,
+también llamada Android 2.3 \emph{Gingerbread}, por medio de la librería \emph{Android support} para
+asegurarnos de tener compatibilidad con la mayoría de dispositivos Android. El 99.3\% de los
+dispositivos del \emph{Google Play Store} según \emph{Android Studio}.
 
 \subsubsection{Implementación}
 
@@ -678,7 +679,7 @@ Al finalizar la implementación del quinto prototipo se realizaron las siguiente
     \textbf{Dado}     & Diferentes velocidades \\
                       & Diferentes dispositivos con distintas versiones de Android (ver
                         sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & Pasabas entre los diferentes rangos del listado~\ref{code:locationManager}\\
+    \textbf{Cuando}   & Pasabas entre los diferentes rangos del listado~\ref{code:velocidad}\\
     \textbf{Entonces} & Cambiaba el zoom del mapa \\
     \hline
   \end{tabular}
@@ -1128,16 +1129,14 @@ cliente servidor por medio de la tecnología \emph{bluetooth}:
 \end{itemize}
 
 De este modo sólo tendremos que implementar en la aplicación de las anteriores iteraciones las
-vibraciones del cuadro~\ref{cuadro:vibraciones}, crear una nueva aplicación para Android y otra para
+vibraciones del cuadro~\ref{cuadro:vibraciones}, crear una nueva aplicación para Android, otra para
 Android Wear que también implemente dichas vibraciones y desarrollar un método de paso de mensajes
 por medio de \emph{bluetooth} entre las dos aplicaciones.
 
 \subsubsection{Implementación}
 
-Gracias a que Android y Android Wear comparten gran parte de las \acs{API} podemos utilizar
-prácticamente el mismo código para la aplicación del cliente y la aplicación del servidor.
-
-Para poder hacer uso del vibrador de cualquiera de nuestros dispositivos y codificar el
+Gracias a que Android y Android Wear comparten gran parte de las \acs{API} podemos utilizar el mismo
+código para la parte de la vibración en el cliente y en el servidor. Para codificar el
 cuadro~\ref{cuadro:vibraciones} hicimos uso de la clase \texttt{Vibrator} que, tras inicializarla,
 nos permite manipular el vibrador a voluntad con el método \texttt{vibrate}. De este modo
 desarrollamos los métodos \texttt{startLocalVibration} y \texttt{stopLocalVibration} (ver
@@ -1207,29 +1206,39 @@ private void stopLocalVibration() {
 }
 \end{listing}
 
-Para establecer una comunicación por \emph{bluetooth} entre el cliente y los servidores utilizamos
-la clase \texttt{BluetoothChatService} distribuida en los ejemplos de
-Android\footnote{https://developer.android.com/resources/samples/BluetoothChat/index.html}. Esta
-clase nos permite abstraernos de la implementación realizada con \texttt{BluetoothSocket} y
-centrarnos en qué hacer cuando cambiamos de estado (\emph{escuchando}, \emph{conectando}, etc) o
-recibimos un mensaje. Además nos permite iniciar el «chat» y enviar mensajes de forma sencilla.
+Por desgracia, para establecer la comunicación por \emph{bluetooth} entre el cliente y los
+servidores no podemos utilizar el mismo método en Android y Android Wear. Android no se puede
+vincular a otro dispositivo como un \emph{wearable} por medio de los \emph{Play Services} de Android
+y Android Wear da muchos problemas para acceder a la \emph{interfaz bluetooth} y comunicarse por
+otro método diferente a los \emph{Play Services}. Por ello hay que distinguir los dos tipos de
+comunicación: Android-Android y Android-Android Wear.
 
-En la aplicación \textbf{cliente}, que es la que desarrollamos en las iteraciones anteriores,
-añadimos un nuevo menú en opciones. Este menú permite activar o desactivar la utilización de la
-vibración y, en caso de activarlo, nos permite seleccionar entre los diferentes dispositivos
-\emph{bluetooth} emparejados y nuestro dispositivo cuál hará de vibrador derecho y cuál de vibrador
-izquierdo. Una vez seleccionado, nuestro cliente intentará iniciar el «chat» con el/los servidor/es
-y se quedará a la espera. En caso de no conseguir establecer conexión simplemente avisará al
-usuario.
+\begin{definitionlist}
+  \item[Implementación de la comunicación con Android] Para establecer una comunicación por
+    \emph{bluetooth} entre el cliente y los servidores Android utilizamos la clase
+    \texttt{BluetoothChatService} distribuida en los ejemplos de
+    Android\footnote{https://developer.android.com/resources/samples/BluetoothChat/index.html}. Esta
+    clase nos permite abstraernos de la implementación realizada con \texttt{BluetoothSocket} y
+    centrarnos en qué hacer cuando cambiamos de estado (\emph{escuchando}, \emph{conectando}, etc) o
+    recibimos un mensaje. Además nos permite iniciar el «chat» y enviar mensajes de forma sencilla.
 
-Gracias a utilizar la clase \texttt{BluetoothChatServide}, para iniciar el intercambio de mensajes
-sólo es necesario iniciar el servicio con el método \texttt{start} y hacer uso del método
-\texttt{connect} proporcionándole el número \acf{MAC} del dispositivo al que queremos
-conectarnos. Para definir cómo se comporta la \emph{interfaz} de la aplicación durante el proceso de
-conexión hubo que definir un \texttt{Handler} y sobrescribir el método \texttt{handleMesage}
-indicando qué hacer mientras se conecta, cuando se desconecte o cuando falle el intento de
-conexión. Una vez que estemos conectados podremos enviar mensajes a nuestros dispositivos conectados
-por \emph{bluetooth} utilizando los métodos del listado~\ref{code:sendMessage}.
+    En la aplicación \textbf{cliente}, que es la que desarrollamos en las iteraciones anteriores,
+    añadimos un nuevo menú en opciones. Este menú permite activar o desactivar la utilización de la
+    vibración y, en caso de activarlo, nos permite seleccionar entre los diferentes dispositivos
+    \emph{bluetooth} emparejados y nuestro dispositivo local cuál hará de vibrador derecho y cuál de
+    vibrador izquierdo. Una vez seleccionado, nuestro cliente intentará iniciar el «chat» con el/los
+    servidor/es y se quedará a la espera. En caso de no conseguir establecer conexión simplemente
+    avisará al usuario.
+
+    Gracias a utilizar la clase \texttt{BluetoothChatServide}, para iniciar el intercambio de
+    mensajes sólo es necesario iniciar el servicio con el método \texttt{start} y hacer uso del
+    método \texttt{connect} proporcionándole el número \acf{MAC} del dispositivo al que queremos
+    conectarnos. Para definir cómo se comporta la \emph{interfaz gráfica } de la aplicación durante
+    el proceso de conexión hubo que definir un \texttt{Handler} y sobrescribir el método
+    \texttt{handleMesage} indicando qué hacer mientras se conecta, cuando se desconecte o cuando
+    falle el intento de conexión. Una vez que estemos conectados podremos enviar mensajes a nuestros
+    dispositivos conectados por \emph{bluetooth} utilizando los métodos del
+    listado~\ref{code:sendMessage}.
 
 \begin{listing}[
   float=ht,
@@ -1268,17 +1277,16 @@ private void sendMessage(String message, BluetoothChatService d, StringBuffer b)
 }
 \end{listing}
 
-Para el caso de los \textbf{servidores} desarrollamos dos aplicaciones: una para Android y otra para
-Android Wear. En ambas aplicaciones iniciamos el servicio \texttt{BluetoothChatService} al ejecutar
-la aplicación quedándonos a la escucha de conexiones \emph{bluetooth}. Además definimos un
-\texttt{Handler} para especificar qué hacer en los diferentes estados de la conexión con la
-\emph{interfaz} y determinar qué hacer en caso de recibir un mensaje (ver
-listado~\ref{code:servidorHandler}).
+    Para el caso del \textbf{servidor} Android desarrollamos una aplicación que inicia el servicio
+    \texttt{BluetoothChatService} al ejecutarse quedándonos a la escucha de conexiones
+    \emph{bluetooth}. Además definimos un \texttt{Handler} para especificar qué hacer en los
+    diferentes estados de la conexión con la \emph{interfaz gráfica} y determinar qué hacer en caso
+    de recibir un mensaje (ver listado~\ref{code:servidorHandler}).
 
 \begin{listing}[
   float=ht,
   language = java,
-  caption  = {Métodos utilizados en los servidores para leer los mensajes recibidos por medio de de
+  caption  = {Métodos utilizados en los servidores para leer los mensajes recibidos por medio de
                la clase \texttt{BluetoothChatServide} },
   label    = code:servidorHandler]
 private Handler mHandler = new Handler() {
@@ -1328,11 +1336,115 @@ private void startAction (String readMessage) {
 }
 \end{listing}
 
-Como se puede apreciar en los listados \ref{code:sendMessage} y \ref{code:servidorHandler} a la hora
-de intercambiar mensajes incluimos un separador: \texttt{SPLIT}. Esto se debe a que durante el
-desarrollo del intercambio de mensajes se detectaron errores se sincronización entre los
-\texttt{buffers} del cliente y de los servidores. De este modo nos aseguramos de no malinterpretar
-los mensajes.
+    Como se puede apreciar en los listados \ref{code:sendMessage} y \ref{code:servidorHandler} a la
+    hora de intercambiar mensajes incluimos un separador: \texttt{SPLIT}. Esto se debe a que durante
+    el desarrollo del intercambio de mensajes se detectaron errores se sincronización entre los
+    \texttt{buffers} del cliente y de los servidores. De este modo nos aseguramos de no
+    malinterpretar los mensajes.
+
+  \item[Implementación de la comunicación con Android Wear] Para establecer la comunicación
+    \emph{bluetooth} entre el cliente y los servidores Android Wear utilizamos el servicio de paso
+    de mensajes ofrecido por los \emph{Play Services} en la clase \emph{MessageApi}. Esta clase nos
+    permite centrarnos en el envío y recepción de mensajes sin preocuparnos de la conexión.
+
+    En la aplicación \textbf{cliente} desarrollada en iteraciones anteriores y en el apartado
+    anterior, añadimos a la lista de dispositivos de las opciones todos los \emph{wearables}
+    sincronizados por los \emph{Play Services}. Para hacer más intuitiva la selección se añadió un
+    subtítulo debajo de los nombres de los dispositivos indicando si se trataba de un elemento
+    \emph{local}, \emph{bluetooth} o \emph{wear}.
+
+    Gracias a utilizar los \emph{Play Services} para comunicarnos con un dispositivo vinculado sólo
+    nos tendremos que encargar de sobrescribir los métodos \texttt{onConnected} y
+    \texttt{onConnectionSuspended}, inicializar la clase \texttt{GoogleApiClient} y conectarnos a
+    los servicios con el método \texttt{connect} de dicha clase. A partir de entonces podemos enviar
+    mensajes a un nodo conectado indicando su identificador y el tipo de mensaje. En el
+    listado~\ref{code:sendMessageWear} se muestran los métodos utilizados para el envío de mensajes
+    a un \emph{wearable} aunque no se incluye la inicialización de las variables \texttt{mWearLeft}
+    y \texttt{mWearRight} con los identificadores de los nodos correspondientes. Esta parte se
+    realiza tras la selección de los dispositivos en las opciones.
+
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {Métodos utilizados para enviar mensajes por bluetooth haciendo uso de los Play
+               Services},
+  label    = code:sendMessageWear]
+private String mWearLeft = "";
+private String mWearRight = "";
+
+[...]
+
+private void sendMessageWear(String text, int who) {
+    if (who == LEFT) {
+        sendMessageWear(WEAR_MESSAGE_PATH, text, mWearLeft);
+    }else if (who == RIGHT) {
+        sendMessageWear(WEAR_MESSAGE_PATH, text, mWearRight);
+    }
+}
+private void sendMessageWear( final String path, final String text, final String nodeId) {
+    new Thread( new Runnable() {
+        @Override
+        public void run() {
+            Wearable.MessageApi.sendMessage(
+              mApiClient, nodeId, path, text.getBytes() ).await();
+        }
+    }).start();
+}
+\end{listing}
+
+    Para el caso del \textbf{servidor} en Android Wear desarrollamos un servicio y una
+    aplicación. El servicio se encarga de iniciar la aplicación cuando recibe el tipo de mensaje
+    correspondiente y la aplicación se encarga de interpretar el resto de mensajes recibidos para
+    hacer vibrar el dispositivo o finalizar la aplicación. Para ello, en la aplicación nos hemos
+    encargado de sobrescribir los métodos \texttt{onMessageReceived}, \texttt{onConnected} y
+    \texttt{onConnectionSuspended} (ver listado~\ref{code:servidorWearActivity}); inicializar la
+    clase \texttt{GoogleApiClient} y conectarnos a los servicios por medio del método
+    \texttt{connect} de dicha clase.
+
+\begin{listing}[
+  float=ht,
+  language = java,
+  caption  = {Métodos utilizados en los servidores para leer los mensajes recibidos por medio de los
+              Play Services },
+  label    = code:servidorWearActivity]
+private GoogleApiClient mApiClient;
+private Vibrator mVibrator;
+    
+[...]
+
+@Override
+public void onMessageReceived( final MessageEvent messageEvent ) {
+    runOnUiThread( new Runnable() {
+        @Override
+        public void run() {
+            if( messageEvent.getPath().equalsIgnoreCase( WEAR_MESSAGE_PATH ) ) {
+                startAction(new String(messageEvent.getData()));
+            }
+            if (messageEvent.getPath().equalsIgnoreCase( END_ACTIVITY ) ) {
+                if (mVibrator != null) {
+                    mVibrator.cancel();
+                }
+                finish();
+            }
+        }
+    });
+}
+    
+[...]
+    
+@Override
+public void onConnected(Bundle bundle) {
+    Wearable.MessageApi.addListener( mApiClient, this );
+}
+@Override
+public void onConnectionSuspended(int i) {
+    if (mVibrator != null) {
+        mVibrator.cancel();
+    }
+}
+\end{listing}
+
+\end{definitionlist}
 
 \subsubsection{Pruebas}
 
@@ -1349,9 +1461,9 @@ Al finalizar la implementación del noveno prototipo se realizó la siguiente pr
                         Android-Android, Android-Android Wear, Android-Android-Android y 
                         Android-Android-Android Wear \\
                       & Todas las posibles acciones de guiado \\
-    \textbf{Cuando}   & Debemos realizar alguna acción \\
+    \textbf{Cuando}   & Realizamos alguna acción \\
     \textbf{Entonces} & Vibra el dispositivo adecuando con la frecuencia correspondiente a
-                        la acción a realizar \\
+                        la acción a efectuar \\
     \hline
   \end{tabular}
 \end{itemize}

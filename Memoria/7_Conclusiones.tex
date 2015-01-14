@@ -1,19 +1,120 @@
 \chapter{Conclusiones}
 \label{chap:conclusiones}
 
+\drop{E}{n} el siguiente capítulo se presentan las conclusiones extraídas del desarrollo del
+\acs{TFG}. Se comienza hablando de cómo se han alcanzado los diferentes objetivos, se continúa
+describiendo posibles usos del sistema en entornos diferentes a los propuestos inicialmente; y se
+termina enumerando posibles líneas de trabajo futuro que ampliarían la funcionalidad del presente
+proyecto.
+
 \section{Objetivos cumplidos}
 
-En base a los objetivos y los requisitos
+Tras finalizar el desarrollo del trabajo propuesto, se puede considerar que se han alcanzado
+satisfactoriamente los \textbf{objetivos específicos} planteados en el
+Capítulo~\ref{chap:objetivos}:
+
+\begin{itemize}
+  \item El \textbf{estudio del estado del arte} efectuado en los primeros puntos del
+    Capítulo~\ref{chap:antecedentes} nos ha permitido comprender mejor qué es la \emph{interacción
+      implícita}, conocer cómo funcionan los diferentes sistemas de navegación por satélite actuales
+    y entender cómo se encuentra en la actualidad el mercado de los \emph{smpartphones}. Gracias a
+    ello, hemos podido establecer las bases sobre las que se cimienta este proyecto.
+
+    Además, haber realizado un estudio de las diferentes aplicaciones disponibles para
+    \emph{smartphone} (ver sección~\ref{sec:apps}) y otro sobre los principales proveedores de
+    servicios (ver sección~\ref{sec:proveedores}) nos ha proporcionado los conocimientos necesarios
+    sobre el mercado en el que nos encontramos. Esto nos ha posibilitado definir más fácilmente los
+    requisitos de nuestra aplicación y ha permitido que el desarrollo de la misma resultase más
+    breve.
+
+  \item El estudio realizado sobre los \emph{wearables} vibratorios disponibles para
+    \emph{smartphone} (ver sección~\ref{sec:wearables}) nos ha permitido establecer los diferentes
+    tipos de \emph{wearables} existentes en la actualidad y \textbf{seleccionar un complemento
+      vibratorio} adecuado para nuestro sistema.
+
+  \item El proceso de \textbf{desarrollo de la aplicación} (ver sección~\ref{sec:proceso}) nos ha
+    dado como resultado las tres aplicaciones del proyecto: \emph{Naviganto},
+    \emph{NavigantoBluetooth} y \emph{NavigantoWear}. Estas aplicaciones cumplen con la
+    especificación de requisitos expuesta en la sección~\ref{sec:requisitos} y nos ha permitido
+    obtener el sistema de guiado con interacción implícita que se pretendía conseguir con este
+    \acs{TFG}.
+
+\end{itemize}
+
+Por ello, se puede concluir que se ha culminado el \textbf{objetivo general} del proyecto:
+«desarrollo de un sistema de navegación por satélite que se comunique con el usuario por medio de la
+  vibración de alguno de sus componentes»
 
 \section{Otros usos del sistema}
 
-Discapacitados visuales
-En coche también funciona
+Al tratarse de un trabajo dirigido a un público específico: peatones, ciclistas y motoristas; podría
+suponerse que son los únicos que podrían verse beneficiados del mismo, pero no es así.
+
+Por un lado, los conductores de cualquier tipo de vehículo motorizado (coches, camiones, etc)
+podrían usar el sistema desarrollado en este trabajo para realizar sus rutas. \emph{Naviganto}
+supone una alternativa real a las aplicaciones de navegación para \emph{smpartphones} actuales
+siendo la única que puede comunicarse por vibraciones además de por la pantalla y el sonido.
+
+Por otro lado, las personas que sufran algún tipo de discapacidad visual que provoque una
+disminución de su visión podrá utilizar \emph{Naviganto} para sus desplazamientos, especialmente los
+discapacitados con la visión de largo alcance. Puesto que el sistema no se haya desarrollado
+específicamente para ellos, sólo podrían tener dificultad en la configuración inicial de los
+dispositivos vibratorios y en la selección del destino. Estas tareas pueden hacerlas terceras
+personas ya que sólo deben ejecutarse al comienzo de la ruta.
 
 \section{Líneas de trabajo futuro}
 
-Reconocimiento de voz, mapas y voz off line, integración de radares, integración de limites de
-velocidad, integración del estado del tráfico, ...)
+A pesar de haber terminado el proyecto cumpliendo los objetivos propuestos inicialmente, hay
+aspectos del sistema que podrían ser pulidos para mejorarlo en general o para ampliar la cuota de
+usuarios finales del mismo. Estas futuras líneas de trabajo podrían ser:
+
+\begin{definitionlist}
+  \item[Integración para discapacitados visuales] Tal y como se mencionó en la sección anterior, el
+    sistema desarrollado en este proyecto podría usarse por discapacitados visuales para sus
+    desplazamientos. Para que no sea necesaria una tercera persona que configure los vibradores y
+    seleccione el destino de la ruta, se podría incluir un módulo de reconocimiento de voz que
+    sustituya todas las posibles acciones que se realizan en \emph{Naviganto}.
+
+  \item[Implementación de funciones actuales sin conexión a Internet] A pesar de que a día de hoy es
+    difícil encontrar personas que no dispongan de conexión a Internet en su \emph{smartphone}, es
+    posible que en algunos momentos no podamos hacer uso de dicha conexión: ausencia de cobertura,
+    viajes a otros países, etc. Para estas circunstancias sería interesante tener en nuestra
+    aplicación los mapas del lugar, algunas instrucciones sonoras y algunas rutas precalculadas.
+
+  \item[Implementación de nuevas funcionalidades] Entre las nuevas funcionalidades que se podrían
+    incluir en \emph{Naviganto} podemos destacar dos que ya existen en otras aplicaciones de
+    navegación para vehículos como:
+
+    \begin{itemize}
+      \item Representación visual del límite de velocidad de la vía en función del vehículo que se
+        utilice para el desplazamiento e implementar una forma de avisarnos cuando sobrepasemos
+        dicho límite.
+      \item Representación visual del estado del tráfico de la vía por la que se circule.
+    \end{itemize}
+
+    Además, resultaría interesante integrar dentro de nuestro sistema una funcionalidad que no hemos
+    podido ver en el resto de aplicaciones estudiadas en la sección~\ref{sec:apps}: aviso de radares
+    fijos para los desplazamientos con vehículos motorizados. Puesto que la información de la
+    localización de los radares es
+    pública~\footnote{http://www.dgt.es/es/el-trafico/control-de-velocidad/} y es legal avisar de
+    dichos radares en España~\cite{Arias14}, resultaría una funcionalidad muy interesante y fácil de
+    integrar con avisos vibratorios.
+
+  \item[Desarrollo para otras plataformas] En la actualidad, sólo tendría sentido portar el sistema
+    desarrollado sobre Android con un 81\% de cuota de mercado a su principal competidor: iOS
+    con el 12,9\% de cuota de mercado.
+
+    Para que esta portabilidad tuviera éxito habría que modificar la forma en la que el sistema se
+    comunica con los \emph{wearables} (ya que en iOS no tendríamos disponibles los \emph{Play
+      Services}) u olvidarnos de los \emph{wearables} con Android Wear, pero no de los
+    \emph{wearables}. Aunque en la actualidad solamente los dispositivos con Android Wear permiten
+    la manipulación a voluntad de su vibrador (ver sección~\ref{sec:wearables}), a lo largo de 2015
+    Apple presentará su propio \emph{smartwatch} con su propio \acs{SO}: Watch
+    OS~\footnote{https://www.apple.com/es/watch/overview/}. Como se espera que este \acs{SO} sea el
+    competidor de Android Wear, también se espera que nos permita manipular el vibrador a nuestro
+    antojo.
+
+\end{definitionlist} 
 
 % Local Variables:
 % TeX-master: "main.tex"

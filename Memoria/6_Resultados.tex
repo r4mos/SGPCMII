@@ -78,7 +78,25 @@ elaborado el cuadro~\ref{cuadro:costes} con una estimación del coste.
 \end{table}
 
 El coste obtenido es puramente informativo ya que para calcular el presupuesto real se deben tener
-en cuenta otros muchos factores.
+en cuenta otros muchos factores. De todos modos, es de suponer que el coste del desarrollo de
+\emph{Naviganto} se ajustará más al cuadro~\ref{cuadro:costes} que a la estimación ofrecida del
+comando \texttt{sloccount} (ver listado~\ref{code:cocomo}) que calcula el tamaño del proyecto en
+líneas de código y emplea el modelo \acf{COCOMO} para obtener la estimación del tiempo y los costes
+necesarios para desarrollar el sistema.
+
+\begin{listing}[
+  float=ht,
+  caption  = {Estimación de los costes del desarrollo de Naviganto según sloccount},
+  label    = code:cocomo]
+Total Physical Source Lines of Code (SLOC)                = 32,085
+Development Effort Estimate, Person-Years (Person-Months) = 7.63 (91.59)
+ (Basic COCOMO model, Person-Months = 2.4 * (KSLOC**1.05))
+Schedule Estimate, Years (Months)                         = 1.16 (13.91)
+ (Basic COCOMO model, Months = 2.5 * (person-months**0.38))
+Estimated Average Number of Developers (Effort/Schedule)  = 6.58
+Total Estimated Cost to Develop                           = $ 1,031,000
+ (average salary = $56,286/year, overhead = 2.40).
+\end{listing}
 
 \subsection{Profiling}
 
@@ -332,6 +350,7 @@ figura~\ref{fig:graficaDestino}).
   \end{minipage}
 \end{figure}
 
+\newpage %<-- Sin el salto de página queda muy lioso...
 \section{Repositorio}
 
 El código desarrollado durante el transcurso del proyecto y la documentación de esta memoria se

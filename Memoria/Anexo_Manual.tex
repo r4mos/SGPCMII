@@ -1,0 +1,75 @@
+\chapter{Manual de usuario}
+\label{chap:manual}
+
+El presente anexo se presenta un manual de usuario destinado a explicar todas las funcionalidades
+desarrolladas del sistema desarrollado en este proyecto.
+
+\section{Introducción}
+
+El sistema consta de tres aplicaciones diferentes:
+
+\begin{itemize}
+  \item \textbf{Naviganto} Encargado de implementar todas las funciones de navegación por satélite y
+    de comunicarse con los complementos vibratorios y activarlos.
+  \item \textbf{Naviganto Bluetooth} Encargado de implementar el complemento vibratorio en
+    Android.
+  \item \textbf{Naviganto Wear} Encargado de implementar el complemento vibratorio en Android Wear.
+\end{itemize}
+
+Para el funcionamiento del sistema basta con instalar la aplicación \emph{Naviganto} en nuestro
+dispositivo; pero sólo con esta aplicación no podremos hacer uso de la vibración para que nos guíe
+en nuestra navegación. Por tanto, para el funcionamiento completo del sistema necesitaremos dos
+dispositivos como mínimo: uno colocado en la parte izquierda de nuestro cuerpo y otro que
+colocaremos en la parte derecha. En el cuadro~\ref{cuadro:convinacionesApps} se resumen todas las
+posibles combinaciones válidas entre las aplicaciones del sistema para hacer uso del funcionamiento
+completo.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Naviganto} & \textbf{Naviganto Bluetooth} & \textbf{Naviganto Wear} \\
+    \hline
+    1 (izquierda) & 1 (derecha)             & 0                       \\
+    \hline
+    1 (derecha)   & 1 (izquierda)           & 0                       \\
+    \hline
+    1             & 2 (izquierda y derecha) & 0                       \\
+    \hline
+    1 (izquierda) & 0                       & 1 (derecha)             \\
+    \hline
+    1 (derecha)   & 0                       & 1 (izquierda)           \\
+    \hline
+    1             & 0                       & 2 (izquierda y derecha) \\
+    \hline
+    1             & 1 (izquierda)           & 1 (derecha)             \\
+    \hline
+    1             & 1 (derecha)             & 1 (izquierda)           \\
+    \hline
+  \end{tabular}
+  \caption{Resumen de combinaciones entre las aplicaciones del sistema}
+  \label{cuadro:convinacionesApps}
+\end{table}
+
+
+\section{Instalación}
+\subsubsection{Naviganto}
+\subsubsection{Naviganto Bluetooth}
+\subsubsection{Naviganto Wear}
+
+\section{Uso de Naviganto}
+\subsection{Configuración}
+\subsubsection{Avisos sonoros}
+\subsubsection{Avisos vibratorios}
+\subsubsection{Rotación de mapa}
+\subsection{Navegación}
+\subsubsection{Explorar mapa}
+\subsubsection{Guiado por ruta}
+
+% Local Variables:
+% TeX-master: "main.tex"
+%  coding: utf-8
+%  mode: latex
+%  mode: flyspell
+%  ispell-local-dictionary: "castellano8"
+% End:

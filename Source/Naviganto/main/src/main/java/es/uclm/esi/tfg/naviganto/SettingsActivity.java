@@ -29,6 +29,10 @@ public class SettingsActivity extends PreferenceActivity implements Const {
     private BluetoothAdapter mBtAdapter;
     private GoogleApiClient mApiClient = null;
 
+    private CharSequence[] mEntries;
+    private CharSequence[] mEntriesSubtitles;
+    private CharSequence[] mValues;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,80 +67,99 @@ public class SettingsActivity extends PreferenceActivity implements Const {
         });
 
         initListPreferenceValues();
+        if (isPlayServicesAvailable()) addWearListPreferenceValues();
     }
 
     private void initListPreferenceValues() {
+        Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
+        int i = pairedDevices.size() +  1;
+
+        mEntries = new CharSequence[i];
+        mEntriesSubtitles = new CharSequence[i];
+        mValues = new CharSequence[i];
+
+        i = 0;
+
+        mEntries[i] = getString(R.string.settings_this_device);
+        mEntriesSubtitles[i] = getString(R.string.settings_local);
+        mValues[i] = LOCAL + SPLIT + "this";
+
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
+                i++;
+                mEntries[i] = device.getName();
+                mEntriesSubtitles[i] = getString(R.string.settings_bluetooth);
+                mValues[i] = BLUETOOTH + SPLIT + device.getAddress();
+            }
+        } else {
+            if (mBtAdapter.isEnabled())
+               Toast.makeText(getApplicationContext(), R.string.alert_no_devices, Toast.LENGTH_SHORT).show();
+            mVibrate.setEnabled(false);
+        }
+
+        putListPreferenceValues(mEntries, mEntriesSubtitles, mValues);
+    }
+
+    public void putListPreferenceValues(final CharSequence[] e, CharSequence[] es, final CharSequence[] v){
+        mLeft.setEntries(e);
+        mRight.setEntries(e);
+
+        mLeft.setEntryValues(v);
+        mRight.setEntryValues(v);
+
+        mLeft.setEntriesSubtitles(es);
+        mRight.setEntriesSubtitles(es);
+
+        mLeft.setValue(LOCAL + SPLIT + "this");
+        mRight.setValue(LOCAL + SPLIT + "this");
+
+        mLeft.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                mLeft.setSummary(getEntryByValue(newValue.toString(), e, v));
+                return true;
+            }
+        });
+        mRight.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                mRight.setSummary(getEntryByValue(newValue.toString(), e, v));
+                return true;
+            }
+        });
+    }
+
+    private void addWearListPreferenceValues(){
         new Thread( new Runnable() {
             @Override
             public void run() {
-                Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
-                int i = pairedDevices.size() +  1;
+                NodeApi.GetConnectedNodesResult wearNodes = Wearable.NodeApi.getConnectedNodes(mApiClient).await();
 
-                if (isPlayServicesAvailable()) {
-                    NodeApi.GetConnectedNodesResult wearNodes = Wearable.NodeApi.getConnectedNodes(mApiClient).await();
-                    i += wearNodes.getNodes().size();
-                }
+                int i = mEntries.length + wearNodes.getNodes().size();
 
                 final CharSequence[] entries = new CharSequence[i];
                 final CharSequence[] entriesSubtitles = new CharSequence[i];
                 final CharSequence[] values  = new CharSequence[i];
 
-                i = 0;
+                for (int j=0; j<mEntries.length; j++) {
+                    entries[j] = mEntries[j];
+                    entriesSubtitles[j] = mEntriesSubtitles[j];
+                    values[j] = mValues[j];
+                }
 
-                entries[i] = getString(R.string.settings_this_device);
-                entriesSubtitles[i] = getString(R.string.settings_local);
-                values[i] = LOCAL + SPLIT + "this";
-
-                if (pairedDevices.size() > 0) {
-                    for (BluetoothDevice device : pairedDevices) {
+                i = mEntries.length - 1;
+                if (wearNodes.getNodes().size() > 0) {
+                    for (Node node : wearNodes.getNodes()) {
                         i++;
-                        entries[i] = device.getName();
-                        entriesSubtitles[i] = getString(R.string.settings_bluetooth);
-                        values[i] = BLUETOOTH + SPLIT + device.getAddress();
-                    }
-                } else {
-                    if (mBtAdapter.isEnabled())
-                        Toast.makeText(getApplicationContext(), R.string.alert_no_devices, Toast.LENGTH_SHORT).show();
-                    mVibrate.setEnabled(false);
-                }
-
-                if (isPlayServicesAvailable()) {
-                    NodeApi.GetConnectedNodesResult wearNodes = Wearable.NodeApi.getConnectedNodes(mApiClient).await();
-                    if (wearNodes.getNodes().size() > 0) {
-                        for (Node node : wearNodes.getNodes()) {
-                            i++;
-                            entries[i] = node.getDisplayName();
-                            entriesSubtitles[i] = getString(R.string.settings_wear);
-                            values[i] = WEAR + SPLIT + node.getId();
-                        }
+                        entries[i] = node.getDisplayName();
+                        entriesSubtitles[i] = "Wear";
+                        values[i] = WEAR + SPLIT + node.getId();
                     }
                 }
 
-                mLeft.setEntries(entries);
-                mRight.setEntries(entries);
-                mLeft.setEntryValues(values);
-                mRight.setEntryValues(values);
-                mLeft.setEntriesSubtitles(entriesSubtitles);
-                mRight.setEntriesSubtitles(entriesSubtitles);
-                mLeft.setValue(LOCAL + SPLIT + "this");
-                mRight.setValue(LOCAL + SPLIT + "this");
-
-                mLeft.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-                    @Override
-                    public boolean onPreferenceChange(Preference preference, Object newValue) {
-                        mLeft.setSummary(getEntryByValue(newValue.toString(), entries, values));
-                        return true;
-                    }
-                });
-                mRight.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-                    @Override
-                    public boolean onPreferenceChange(Preference preference, Object newValue) {
-                        mRight.setSummary(getEntryByValue(newValue.toString(), entries, values));
-                        return true;
-                    }
-                });
+                putListPreferenceValues(entries, entriesSubtitles, values);
             }
-        }).start();
+}       ).start();
     }
 
     public boolean isPlayServicesAvailable() {

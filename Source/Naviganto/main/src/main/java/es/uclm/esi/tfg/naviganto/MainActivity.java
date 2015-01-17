@@ -794,14 +794,18 @@ public class MainActivity
         }
 
         //Road lost control
-        if (mRoadOverlay != null && !mRoadOverlay.isCloseTo(myLocation, 24, mMap)) {
-            if (mRoadLost < 3) {
-                mRoadLost++;
-            } else {
-                startAction(WRONG, 0);
-                GeoPoint endPoint = mRoad.mNodes.get(mRoad.mNodes.size()-1).mLocation;
-                cleanMap();
-                gotoGeoPoint(endPoint);
+        if (mRoadOverlay != null) {
+            int allowableError = 24;
+            if (mTransport.equals(PEDESTRIAN)) allowableError = 54;
+            if (!mRoadOverlay.isCloseTo(myLocation, allowableError, mMap)) {
+                if (mRoadLost < 3) {
+                    mRoadLost++;
+                } else {
+                    startAction(WRONG, 0);
+                    GeoPoint endPoint = mRoad.mNodes.get(mRoad.mNodes.size()-1).mLocation;
+                    cleanMap();
+                    gotoGeoPoint(endPoint);
+                }
             }
         }
     }

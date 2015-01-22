@@ -9,8 +9,6 @@ concepto de \emph{wearable} y se describen los diferentes tipos de \emph{wearabl
 forma de conectarse con el teléfono. Finalmente se hace un repaso por los principales proveedores de
 servicios que serán necesarios a la hora de implementar nuestro sistema. 
 
-Con todo ello se espera adquirir los conocimientos necesarios para desarrollar el \acs{TFG}.
-
 \section{Interacción implícita}
 
 Baecker y Buxton definieron en 1987 la \acf{IPO} como «todos los intercambios que suceden entre la
@@ -70,7 +68,7 @@ coordenadas en B. Una cuarta medición también puede hacerse para reducir y est
 \subsection{Coordenadas geográficas}
 \label{sec:coordenadas}
 
-Las coordenadas geográficas son el sistema que nos permite representar nuestra posición el
+Las coordenadas geográficas son el sistema que nos permite representar nuestra posición en el
 globo. Este sistema de referencia hace uso de dos coordenadas angulares \emph{latitud} (Norte y Sur)
 y \emph{longitud} (Este y Oeste) medidas desde el centro de la tierra y expresadas por regla general
 en grados sexagesimales.
@@ -111,7 +109,7 @@ operativos~\cite{SPSA} como:
     formada por una constelación de 24 a 27 satélites que se mueven en órbita de unos 20.000 km, por
     seis planos y con una inclinación de 55 grados.
 
-  \item[GLONASS] Al mismo tiempo que se desarrollaba el \acs{GPS}, los rusos también desarrollaron
+  \item[GLONASS] Al mismo tiempo que se desarrollaba el \acs{GPS}, en Rusia también desarrollaron
     su sistema de navegación \acs{GLONASS}. Los primeros satélites fueron lanzados en 1982 pero el
     programa no fue operativo hasta 1996 con unos 9 a 11 satélites y un sistema de degradación de
     señal para usos civiles parecido al de \acs{GPS}. Esta limitación hacía que la precisión fuese
@@ -135,9 +133,9 @@ las tiendas oficiales de aplicaciones, en este apartado analizaremos solamente l
 usadas.
 
 \begin{definitionlist}
-  \item[Google maps] Google Maps es una aplicación de navegación lanzada por Google en Septiembre de
+  \item[Google maps] Google Maps es una aplicación de navegación lanzada por Google en septiembre de
     2008 que se puede utilizar tanto en Android como en iOS, Windows Mobile, Symbian o
-    BlackBerry. Además, Google Maps está disponible en múltiples lenguajes.
+    BlackBerry. Además, Google Maps está disponible en múltiples idiomas.
 
     Entre las características de la aplicación de Google podemos destacar las siguientes:
 
@@ -147,7 +145,7 @@ usadas.
       \item Visualización de mapas offline previamente descargados.
       \item Visualización de la cantidad e tráfico de las carreteras.
       \item Visualización de edificios en 3D en algunas ciudades.
-      \item «Street View» o posibilidad de ver las calles como si te encontrases en ellas.
+      \item «Street View» o posibilidad de ver fotografías de las calles.
       \item Rotación automática del mapa en función de nuestra orientación.
       \item Cálculo de rutas para peatones, transporte público y vehículos motorizados.
     \end{itemize}
@@ -159,14 +157,13 @@ usadas.
     tipos de instrucciones.
 
   \item[iOS maps] iOS Maps es la aplicación de Apple lanzada en Septiembre de 2012 para sus
-    dispositivos iPhone, iPad y iPod Touch. Esta aplicación es multilenguaje.
-
-    Entre sus características podemos destacar:
+    dispositivos iPhone, iPad y iPod Touch. Esta aplicación es multilenguaje. Entre sus
+    características podemos destacar:
 
     \begin{itemize}
       \item Visualización de nuestra posición el mapa mostrando el posible error cometido en la
         \emph{trilateración}.
-      \item Visualización de la cantidad e tráfico de las carreteras.
+      \item Visualización de la cantidad de tráfico de las carreteras.
       \item Visualización de edificios en 3D en algunas ciudades.
       \item Rotación automática del mapa en función de nuestra orientación.
       \item Cálculo de rutas para peatones y vehículos motorizados.
@@ -291,7 +288,7 @@ desarrollar a terceros aplicaciones para sus dispositivos y mantenerlas bajo el 
     un pequeño grupo de dispositivos bastante potentes.
 
   \item[Desventajas] Apple no permite instalar de forma legal aplicaciones que no hayan sido
-    validadas por medio de su \emph{AppStore}. Si queremos desarrollar aplicaciones deberemos pagar
+    validadas por medio de su \emph{AppStore}. Si queremos desarrollar aplicaciones hay que pagar
     una licencia anual de 99\$.
 
     Por otro lado, los dispositivos de Apple son en general bastante caros y no están al alcance de
@@ -312,7 +309,7 @@ utilizarán Windows Phone.
 
 \begin{definitionlist}
   \item[Ventajas] Microsoft provee de un entorno de trabajo como \emph{Visual Studio}, con una gran
-    cantidad de \acf{API}, que permite que la programación resulte lo más sencilla posible.
+    cantidad de librerías, que permite que la programación resulte lo más sencilla posible.
 
   \item[Desventajas] La mayor desventaja de Windows Phone viene dada por su tardía llegada al
     mercado que le ha hecho difícil competir con los otros \acs{SO}. Estos ya tienen bastante cuota
@@ -370,13 +367,13 @@ sido hasta la década del 2010 cuando la tecnología ha evolucionado lo suficien
 consumidores.
 
 Las grandes compañías están apostando por la tecnologías \emph{wearables}.  En la
-\acf{CES}\footnote{http://www.cesweb.org/} de enero de este año, grandes empresas como Intel,
+\acf{CES}\footnote{http://www.cesweb.org/} de enero de 2014, grandes empresas como Intel,
 Adidas, Sony o Rebook han presentado diferentes complementos \emph{wearables}. Más tarde, en abril,
 Google presentó sus \emph{Google Glass} y se espera la llegada del \emph{AppleWatch} de Apple para
 la primavera de 2015. Todo ello hace pensar que los wearables han llegado para quedarse y que los
 próximos años sufrirán una gran expansión.
 
-En este \acs{TFG} se pretende aprovechar la creciente popularidad de los \emph{wearables} utilizando
+En este proyecto se pretende aprovechar la creciente popularidad de los \emph{wearables} utilizando
 alguno del mercado como complemento vibratorio. De esta forma conseguiremos que nuestro sistema
 final pueda ser usado por la mayor cantidad de gente posible.
 
@@ -405,11 +402,11 @@ por la forma que tienen de conectarse con el \emph{smartphone}.
     \emph{smartphone}, configurar los wearables y recibir la información almacenada en el
     dispositivo.
 
-    Este tipo conexión es bastante común en los \emph{cuantificadores personales} pero, al tratarse
-    de \emph{software} propietario, es necesaria una \acs{API} para poder realizar aplicaciones para
-    ellos. Sorprendentemente sólo la empresa Fitbit proporciona una
-    \acs{API}\footnote{http://dev.fitbit.com/} pero no permiten manipular el vibrador de su
-    dispositivo.
+    Este tipo de conexión es bastante común en los \emph{cuantificadores personales} pero, al
+    tratarse de \emph{software} propietario, es necesaria una \acs{API} para poder realizar
+    aplicaciones para ellos. Sorprendentemente sólo la empresa
+    Fitbit\footnote{http://dev.fitbit.com/} proporciona una \acs{API} pero no permiten manipular el
+    vibrador de su dispositivo.
 
   \item[Bluetooth con Google Play services] Este tipo de conexión es la que realizan los
     \emph{wearables} que utilizan como \acs{SO} Android Wear para comunicarse con el
@@ -464,7 +461,7 @@ utilizar los servicios de forma combinada.
     HERE permite realizar un total de 100.000~\cite{LicenciaHERE} peticiones gratuitas al mes entre
     imágenes de satélite, \emph{geocoding} y rutas. Es necesario destacar que sólo se pueden
     calcular rutas para vehículos motorizados y personas, y que la versión de \emph{geocoding}
-    gratuita no permite buscar a al nivel de números de casa.
+    gratuita no permite buscar al nivel de números de casa.
 
   \item[Open Street Map] \acs{OSM} es un proyecto colaborativo para crear mapas libres y
     gratuitos. Por ello, es posible utilizar sus mapas y rutas bajo la licencia

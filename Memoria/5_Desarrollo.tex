@@ -387,9 +387,6 @@ private Boolean gotoGeoPoint(GeoPoint endPoint) {
     RoadManager roadManager = new MapQuestRoadManager(MAPQUESTAPIKEY);
     roadManager.addRequestOption("units=k");
     roadManager.addRequestOption("routeType=fastest");
-    //roadManager.addRequestOption("routeType=shortest");
-    //roadManager.addRequestOption("routeType=bicycle");
-    //roadManager.addRequestOption("routeType=pedestrian");
     
     ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
     waypoints.add(getLastLocation());

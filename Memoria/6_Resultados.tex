@@ -3,7 +3,7 @@
 
 \drop{E}{n} el siguiente capítulo se presentan los resultados obtenidos tras desarrollar el
 sistema. Para ello se hace un análisis de los recursos que consume y el coste económico
-de desarrollarlo. Además se especifica paso a paso un caso de uso en concreto. Finalmente se
+de desarrollarlo. Además se especifica paso a paso un caso de uso concreto. Finalmente se
 proporciona la dirección del repositorio donde están contenidos todos los archivos del proyecto.
 
 \section{Recursos y costes}
@@ -49,8 +49,7 @@ dedicación media de 6 horas diarias y 5 días a la semana, da como resultado un
 trabajo. Todo ello sin contabilizar el tiempo dedicado a la elaboración del presente documento.
 
 Tomando como referencia la media en España de unos 16 \euro/hora para los analistas y
-desarrolladores sin experiencia
-laboral~\footnote{http://www.tusalario.es/main/salario/comparatusalario} y los elementos
+desarrolladores~\footnote{http://www.tusalario.es/main/salario/comparatusalario} y los elementos
 \emph{hardware} necesarios (ver sección~\ref{sec:herramientasHardware}) para el desarrollo, se ha
 elaborado el cuadro~\ref{cuadro:costes} con una estimación del coste.
 
@@ -80,23 +79,31 @@ elaborado el cuadro~\ref{cuadro:costes} con una estimación del coste.
 El coste obtenido es puramente informativo ya que para calcular el presupuesto real se deben tener
 en cuenta otros muchos factores. De todos modos, es de suponer que el coste del desarrollo de
 \emph{Naviganto} se ajustará más al cuadro~\ref{cuadro:costes} que a la estimación ofrecida del
-comando \texttt{sloccount} (ver listado~\ref{code:cocomo}) que calcula el tamaño del proyecto en
+comando \texttt{sloccount} (ver cuadro~\ref{cuadro:cocomo}) que calcula el tamaño del proyecto en
 líneas de código y emplea el modelo \acf{COCOMO} para obtener la estimación del tiempo y los costes
 necesarios para desarrollar el sistema.
 
-\begin{listing}[
-  float=ht,
-  caption  = {Estimación de los costes del desarrollo de Naviganto según sloccount},
-  label    = code:cocomo]
-Total Physical Source Lines of Code (SLOC)                = 3,206
-Development Effort Estimate, Person-Years (Person-Months) = 0.68 (8.16)
- (Basic COCOMO model, Person-Months = 2.4 * (KSLOC**1.05))
-Schedule Estimate, Years (Months)                         = 0.46 (5.55)
- (Basic COCOMO model, Months = 2.5 * (person-months**0.38))
-Estimated Average Number of Developers (Effort/Schedule)  = 1.47
-Total Estimated Cost to Develop                           = $ 91,813
- (average salary = $56,286/year, overhead = 2.40).
-\end{listing}
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|l|r|}
+    \hline
+    Total Physical Source Lines of Code (SLOC) & 3,206 \\
+    \hline
+    Development Effort Estimate, Person-Years (Person-Months) & 0.68 (8.16) \\
+    (Basic COCOMO model, Person-Months = 2.4 * (KSLOC**1.05)) & \\
+    \hline
+    Schedule Estimate, Years (Months) & 0.46 (5.55) \\
+    (Basic COCOMO model, Months = 2.5 * (person-months**0.38)) & \\
+    \hline
+    Estimated Average Number of Developers (Effort/Schedule) & 1.47 \\
+    \hline
+    Total Estimated Cost to Develop & \$ 91,813 \\
+    (average salary = \$56,286/year, overhead = 2.40) & \\
+    \hline
+  \end{tabular}
+  \caption{Estimación de los costes del desarrollo de Naviganto según sloccount}
+  \label{cuadro:cocomo}
+\end{table}
 
 \subsection{Profiling}
 
@@ -262,14 +269,14 @@ figuras~\ref{fig:NavigantoBluetoothEsperando} y~\ref{fig:NavigantowearEsperando}
   \begin{minipage}[b]{0.5\linewidth}
     \begin{center}
       \includegraphics[width=0.85\textwidth]{/navigantobluetooth-esperando.png}
-      \caption{NavigantoBluetooth esperando instrucciones}
+      \caption{NavigantoBluetooth esperando}
       \label{fig:NavigantoBluetoothEsperando}
     \end{center}
   \end{minipage}
   \begin{minipage}[b]{0.5\linewidth}
     \begin{center}
       \includegraphics[width=0.85\textwidth]{/navigantowear-esperando.png}
-      \caption{NavigantoWear esperando instrucciones}
+      \caption{NavigantoWear esperando}
       \label{fig:NavigantowearEsperando}
     \end{center}
   \end{minipage}
@@ -367,13 +374,15 @@ git clone https://bitbucket.org/cr4mos/tfg-sgpcmii.git
 Si sólo desea descargar las aplicaciones finales, diríjase a:
 
 \begin{listing}
-https://bitbucket.org/cr4mos/tfg-sgpcmii/src/e64e936da95e832f950617ebd50aec729aa9ee8c/Source/apk/?at=master
+https://bitbucket.org/cr4mos/tfg-sgpcmii/downloads
 \end{listing}
 
 Aunque si dispone de \emph{Play Store} en su \emph{smartphone} Android podrá descargar e instalar
 las aplicaciones más fácilmente accediendo a:
 
-\begin{listing}
+\begin{listing}[
+ basicstyle = \scriptsize\lstfont,
+]
 https://play.google.com/store/apps/details?id=es.uclm.esi.tfg.naviganto
 https://play.google.com/store/apps/details?id=es.uclm.esi.tfg.navigantobluetooth
 https://play.google.com/store/apps/details?id=es.uclm.esi.tfg.navigantoWear

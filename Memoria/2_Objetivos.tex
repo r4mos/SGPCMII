@@ -20,12 +20,11 @@ oír el dispositivo en ambientes abiertos y el uso de cascos o auriculares esta 
 España \cite{Serrano14}.
 
 Con la finalidad de hacer más segura la navegación para los ciclistas y motoristas, y para facilitar
-su uso para los peatones, se necesita otro tipo de \emph{interacción implícita}. Así pues, si
-descartamos la interacción por medio de la vista por no ser implícita y el oído por lo citado
+su uso para los peatones, se necesita otro tipo de \emph{interacción implícita}. Así pues, si se
+descarta la interacción por medio de la vista por no ser implícita y el oído por lo citado
 anteriormente, sólo nos quedan disponibles el gusto, el olfato y el tacto. Y, puesto que la
-interacción con el usuario por medio del gusto y el olfato está muy poco desarrollada, sólo nos
-queda el tacto. Por lo tanto, haremos uso del tacto por medio de la vibración de nuestros
-dispositivos.
+interacción con el usuario por medio del gusto y el olfato está muy poco desarrollada, sólo queda el
+tacto. Por lo tanto, se hará uso del tacto por medio de la vibración de los dispositivos.
 
 En resumen, el objetivo del \acf{TFG} es el «desarrollo de un sistema de navegación
   por satélite que se comunique con el usuario por medio de la vibración de alguno de sus
@@ -36,44 +35,46 @@ En resumen, el objetivo del \acf{TFG} es el «desarrollo de un sistema de navega
 A partir del objetivo principal descrito en la sección anterior se determinan los objetivos
 específicos necesarios para alcanzarlo.
 
-\subsection{Estudio del estado del arte}
+\subsection{Desarrollo del sistema de posicionamiento}
 
-En primer lugar será necesario un estudio del \emph{estado del arte}. Esto nos otorgará los
-conocimientos necesarios sobre la \emph{interacción implícita}, los sistemas de navegación y
-las plataformas de \emph{smartphone} que necesitamos para el desarrollo del \acs{TFG}.
-
-Además, un estudio relacionado con las aplicaciones disponibles para smartphone nos
-proporcionará una visión global y nos permitirá especificar los requisitos necesarios para
-implementar una nueva aplicación. Se destacarán las características principales de cada aplicación
-de navegación y se podrá especial interés en determinar la forma que utilizan para comunicarse con
-sus usuarios.
-
-\subsection{Selección del complemento vibratorio}
-
-Hoy en día existen multitud de complementos vibratorios como relojes, pulseras, móviles, zapatillas
-deportivas, etc. Por ello, en segundo lugar, será imprescindible buscar entre los diferentes
-complementos vibratorios y escoger el que más se ajuste a nuestras necesidades.
-
-Para la elección del complemento se pondrá especial atención en que nos permita activar y desactivar
-la vibración cuando estimemos oportuno. Esta característica predominará sobre cualquier otra.
-
-\subsection{Desarrollo de la aplicación}
-
-Una vez terminados los puntos anteriores estaremos en disposición de desarrollar nuestra aplicación.
-Para conseguirlo, habrá que tomar algunas decisiones de diseño como:
+Se implementará un sistema que permita conocer la posición del usuario en el globo y
+la represente en un mapa. Dicho sistema será el encargado de actualizar la posición del usuario
+cuando cambie su localización. Para ello será necesario tomar algunas decisiones como:
 
 \begin{itemize}
-  \item Elección de la plataforma de desarrollo para \emph{smartphone}
+  \item Elección de la plataforma de desarrollo
   \item Elección del proveedor de mapas
-  \item Elección de la tecnología de geoposicionamiento
+  \item Elección de tecnología de posicionamiento
+\end{itemize}
+
+\subsection{Desarrollo del sistema de navegación}
+
+Se implementará un sistema que nos permita navegar desde la posición del usuario hasta otra posición
+determinada por el nombre del lugar. Para ello se tomarán algunas decisiones de diseño como:
+
+\begin{itemize}
   \item Elección del proveedor de rutas
   \item Elección del proveedor de \emph{geocoding}\footnote{El geocoding es un proceso mediante el
     cual se obtienen las coordenadas geográficas de un sitio. Para ello basta con introducir una
     descripción, una dirección postal o el nombre del lugar.}
 \end{itemize}
 
-Finalmente se procederá a la implementación del sistema con las elecciones tomadas y la
-realización de las pruebas. Estas pruebas determinarán el correcto funcionamiento del sistema.
+\subsection{Desarrollo del sistema de reproducción de audio}
+
+Se implementará un sistema de reproducción de audio que permita escuchar las instrucciones
+necesarias para seguir una ruta. Para ello será necesario seleccionar un proveedor de \emph{text to
+  speech}\footnote{Un servicio text to speech proporciona el audio de un texto introducido}.
+
+\subsection{Desarrollo del sistema de comunicación con otros dispositivos}
+
+Se implementará un sistema de comunicación que permita el paso de mensajes entre los diferentes
+dispositivos del sistema. Para ello será necesario elegir la tecnología o tecnologías (Wi-Fi,
+Bluetooth, etc) sobre la que se implementará la arquitectura cliente-servidor.
+
+\subsection{Desarrollo del sistema vibratorio}
+
+Se implementará un sistema vibratorio que, con ambos dispositivos, codifique todas las posibles
+acciones que el usuario pueda realizar. Para ello, hará uso de diferentes frecuencias de vibración en los dispositivos de modo que la codificación resulte intuitiva.
 
 \section{Limitaciones}
 

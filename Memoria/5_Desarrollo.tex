@@ -9,10 +9,10 @@ prototipos desarrollados y las pruebas realizadas sobre ellos.
 \section{Especificación de requisitos}
 \label{sec:requisitos}
 
-Como se comentó anteriormente (ver sección~\ref{sec:metodologia}) los requisitos del sistema se
-han ido detallando a lo largo del desarrollo del proyecto ya que, originalmente, sólo teníamos una
-idea muy general del sistema a desarrollar. A continuación se muestran estos requisitos generales
-sobre los que partimos:
+Como se comentó anteriormente (ver sección~\ref{sec:metodologia}) los requisitos del sistema se han
+ido detallando a lo largo del desarrollo del proyecto ya que, originalmente, sólo tenía una idea muy
+general del sistema a desarrollar. A continuación se muestran estos requisitos generales sobre los
+que se partió:
 
 \begin{itemize}
   \item El sistema debe poder guiar a peatones, ciclistas y motoristas.
@@ -47,16 +47,16 @@ los objetivos, el diseño, la implementación y las pruebas de cada una de ellas
 \subsection{Iteración 1: Mostrar mapa}
 \label{sec:ite1}
 
-En la primera iteración nos marcamos como objetivo mostrar una posición cualquiera en el mapa por
+En la primera iteración se marcó como objetivo mostrar una posición cualquiera en el mapa por
 medio de una aplicación de \emph{smartphone}.
 
 \subsubsection{Diseño}
 
-Para realizar esta primera aproximación tendremos que tomar tres importantes decisiones de diseño:
+Para realizar esta primera aproximación hay que tomar tres importantes decisiones de diseño:
 
 \begin{itemize}
-  \item Elegir la plataforma de \emph{smartphone} sobre la que desplegar nuestra aplicación.
-  \item Elegir el proveedor de mapas que nos proporcionará las imágenes a mostrar.
+  \item Elegir la plataforma de \emph{smartphone} sobre la que desplegar la aplicación.
+  \item Elegir el proveedor de mapas que proporcionará las imágenes a mostrar.
   \item Elegir la versión objetivo de la plataforma de desarrollo.
 \end{itemize}
 
@@ -64,13 +64,13 @@ En primer lugar, tras revisar las diferentes plataformas disponibles para \emph{
 sección~\ref{sec:plataformas}) se estipuló que la mejor alternativa es Android. Por un lado, Android
 posee de la mayor cuota de mercado (81\%) y dispone de una gran variedad de dispositivos en una
 amplia gama de precios. Por otro lado, Android es un \acs{SO} que se integra fácilmente con la
-plataforma de complementos Android Wear (ver sección~\ref{sec:wearables}) que es la única que nos
+plataforma de complementos Android Wear (ver sección~\ref{sec:wearables}) que es la única que
 permite manipular el vibrador del \emph{wearable} a voluntad.
 
 En segundo lugar, entre los proveedores de mapas existentes (ver sección~\ref{sec:proveedores}) se
 seleccionó Open Street Map. Se consideró la mejor elección porque nos provee de mapas de gran
-calidad completamente gratuitos. Además, si encontrásemos cualquier tipo de error en los mapas
-suministrados, podríamos corregirlo porque es un proyecto colaborativo. Para simplificar el uso de
+calidad completamente gratuitos. Además, si se encontrase cualquier tipo de error en los mapas
+suministrados, se podría corregir porque es un proyecto colaborativo. Para simplificar el uso de
 \acs{OSM} se utilizó la librería \emph{Osmdroid} tal y como se dijo en la
 sección~\ref{sec:herramientasSoftware}.
 
@@ -78,14 +78,14 @@ En tercer y último lugar, se seleccionó como objetivo del desarrollo la \acs{A
 también conocida como Android 5.0 \emph{Lollipop}, por ser la más nueva y poseer el mayor número de
 funcionalidades. De todos modos, se aseguró la compatibilidad desde la \acs{API} de Android 10,
 también llamada Android 2.3 \emph{Gingerbread}, por medio de la librería \emph{Android support} para
-asegurarnos de tener compatibilidad con la mayoría de dispositivos Android. El 99.3\% de los
+asegurarse de tener compatibilidad con la mayoría de dispositivos Android. El 99.3\% de los
 dispositivos del \emph{Google Play Store} según \emph{Android Studio}.
 
 \subsubsection{Implementación}
 
 Para visualizar los mapas de \acs{OSM} con la ayuda de la librería \emph{Osmdroid} basta con añadir
 una vista del tipo \texttt{org.osmdroid.views.MapView} al \texttt{layout} de nuestra aplicación (ver
-listado~\ref{code:layoutMapView}) y seleccionar el punto del mapa que deseamos centrar en la
+listado~\ref{code:layoutMapView}) y seleccionar el punto del mapa que se desea centrar en la
 pantalla (ver listado~\ref{code:activityMapView}) por medio de sus coordenadas geográficas.
 
 \begin{listing}[
@@ -128,14 +128,14 @@ public class MainActivity extends Activity {
 }
 \end{listing}
 
-Por muy sencillo que pueda parecer, durante la implementación detectamos un problema: el mapa no se
+Por muy sencillo que pueda parecer, durante la implementación se detectó un problema: el mapa no se
 centraba en la posición seleccionada. Dejaba dicha posición en la esquina superior izquierda y no en
-el centro de la pantalla. Estudiando el problema descubrimos que se trataba de un \emph{bug}
+el centro de la pantalla. Estudiando el problema se descubrió que se trataba de un \emph{bug}
 documentado~\footnote{https://github.com/osmdroid/osmdroid/issues/22\#issuecomment-43092313} de
 \emph{Osmdroid} y que se resolvería en la próxima versión de la librería.
 
 Para paliar dicho problema, y siguiendo con las instrucciones detalladas en el \emph{bug},
-procedimos a implementar un método que lo resolviera (ver listado~\ref{code:centerMap}).
+se procedió a implementar un método que lo resolviera (ver listado~\ref{code:centerMap}).
 
 \begin{listing}[
   float=ht,
@@ -166,7 +166,7 @@ Al finalizar la implementación del primer prototipo se realizó la siguiente pr
     \textbf{Dado}     & Diferentes coordenadas geográficas \\
                       & Diferentes dispositivos con distintas versiones de Android (ver
                         sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & Ejecutamos la aplicación \\
+    \textbf{Cuando}   & Se ejecuta la aplicación \\
     \textbf{Entonces} & Se muestra dicha ubicación centrada en un mapa \\
     \hline
   \end{tabular}
@@ -180,17 +180,17 @@ mostrar la posición actual en la aplicación.
 
 \subsubsection{Diseño}
 
-Para poder mostrar la ubicación actual, es necesario primero conocerla. Para ello, analizamos en la
-sección~\ref{sec:tecnologiasActuales} los diferentes sistemas con los que podemos obtener nuestras
-coordenadas geográficas en la actualidad. Puesto que \acs{GLONASS} no estuvo operativo para uso
+Para poder mostrar la ubicación actual, es necesario primero conocerla. Para ello, se analizaron en
+la sección~\ref{sec:tecnologiasActuales} los diferentes sistemas con los que obtener las coordenadas
+geográficas del dispositivo en la actualidad. Puesto que \acs{GLONASS} no estuvo operativo para uso
 civil hasta 2012 no todos los \emph{smartphones} disponen en la actualidad de esta tecnología y nos
 deja con una única opción razonable: \acs{NAVSTAR-GPS}.
 
 \subsubsection{Implementación}
 
-Para hacer uso del \acs{GPS} de nuestro \emph{smartphone} en Android sólo es necesario definir un
+Para hacer uso del \acs{GPS} del \emph{smartphone} en Android sólo es necesario definir un
 \texttt{LocationListener} e indicar por medio de un \texttt{LocationManager} qué clase lo implementa
-y cada cuanto tiempo queremos que se ejecute (ver listado~\ref{code:locationManager}).
+y cada cuánto tiempo se tiene que ejecutar (ver listado~\ref{code:locationManager}).
 
 \begin{listing}[
   float=ht,
@@ -216,13 +216,13 @@ Para que una clase implemente un \texttt{LocationListener} debe contener cuatro 
     \emph{temporalmente no disponible} y \emph{disponible}.
 \end{itemize}
 
-Resulta obvio que sólo necesitamos rellenar el método \texttt{onLocationChanged} con el código
+Resulta obvio que sólo se necesita rellenar el método \texttt{onLocationChanged} con el código
 necesario para mostrar una señal en el mapa (ver listado~\ref{code:onLocationChanged}). Para
-simplificar la forma de dibujar nuestra posición en el mapa y mostrar el error cometido por la
+simplificar la forma de dibujar la posición en el mapa y mostrar el error cometido por la
 trilateración (ver sección~\ref{fig:trilateracion}) de forma visual, se ha escrito una clase llamada
 \texttt{LocationOverlay} en base a la clase contenida en \emph{Osmbonuspack} (ver
 sección~\ref{sec:herramientasSoftware}) con el mismo nombre. Lo único verdaderamente significativo
-que diferencia ambas clases es el icono utilizado para especificar nuestra posición en el mapa.
+que diferencia ambas clases es el icono utilizado para especificar la posición en el mapa.
 
 \begin{listing}[
   float=ht,
@@ -255,7 +255,7 @@ Al finalizar la implementación del segundo prototipo se realizó la siguiente p
     \textbf{Dado}     & Diferentes localizaciones geográficas \\
                       & Diferentes dispositivos con distintas versiones de Android (ver
                         sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & Ejecutamos la aplicación \\
+    \textbf{Cuando}   & Se ejecuta la aplicación \\
     \textbf{Entonces} & Se muestra dicha ubicación centrada en un mapa \\
     \hline
   \end{tabular}
@@ -265,17 +265,18 @@ Al finalizar la implementación del segundo prototipo se realizó la siguiente p
 \label{sec:ite3}
 
 Una vez evaluado el prototipo de la iteración 2 se introdujo una nueva funcionalidad: rotar el mapa
-en función de nuestra orientación. Si por ejemplo caminamos por una calle recta en dirección Oeste,
-en la pantalla se vería una recta vertical. De igual manera, si por ejemplo caminamos por una calle
-en dirección Sur y giramos hacia el Este, en la pantalla se vería un giro a la izquierda.
+en función de la orientación del dispositivo. Si por ejemplo se camina por una calle recta en
+dirección Oeste, en la pantalla se vería una recta vertical. De igual manera, si por ejemplo
+se camina por una calle en dirección Sur y se gira hacia el Este, en la pantalla se vería un giro a
+la izquierda.
 
 \subsubsection{Diseño}
 
-Para poder rotar el mapa en función de nuestra orientación es necesario conocer dónde se encuentran
+Para poder rotar el mapa en función de la orientación es necesario conocer dónde se encuentran
 cualquiera de los puntos cardinales: Norte, Sur, Este u Oeste.
 
 Prácticamente todos los \emph{smartphones} actuales disponen de un componente llamado \emph{sensor
-  de orientación} que nos permite determinar la orientación espacial del teléfono por medio de tres
+  de orientación} que permite determinar la orientación espacial del teléfono por medio de tres
 valores expresados en grados:
 
 \begin{itemize}
@@ -289,7 +290,7 @@ valores expresados en grados:
 
 \subsubsection{Implementación}
 
-Para hacer uso del sensor de orientación de nuestro \emph{smartphone} Android basta con registrar el
+Para hacer uso del sensor de orientación del \emph{smartphone} Android basta con registrar el
 uso del \texttt{Sensor} de orientación por medio de un \texttt{SensorManager} (ver
 listado~\ref{code:orientacion}) indicando que clase implementa los métodos necesarios para manejar
 el sensor de orientación. En este caso la propia (\texttt{this}).
@@ -321,7 +322,7 @@ El sensor de orientación en Android obliga a implementar en una clase dos méto
     sensor.
 \end{itemize}
 
-Para implementar nuestra rotación de mapa bastó con implementar el método \texttt{onSensorChanged} y
+Para implementar la rotación de mapa bastó con implementar el método \texttt{onSensorChanged} y
 pasar al mapa dicha rotación (ver listado~\ref{code:accuracyChanged}).
 
 \begin{listing}[
@@ -367,14 +368,14 @@ Al finalizar la implementación del tercer prototipo se realizaron las siguiente
 \label{sec:ite4}
 
 Una vez evaluado el prototipo de la iteración 3, se procedió a añadir una nueva funcionalidad: crear
-rutas para peatones, ciclistas o motoristas desde nuestra posición actual hasta una determinada
+rutas para peatones, ciclistas o motoristas desde la posición actual hasta una determinada
 localización geográfica (latitud y longitud) y dibujarla en el mapa.
 
 \subsubsection{Diseño}
 
-Para poder calcular una ruta tenemos que hacer uso de alguno de los proveedores vistos en la
-sección~\ref{sec:proveedores}. Puesto que se optó por usar los mapas de \acs{OSM} y ya tenemos
-importadas las librerías \emph{Osmdroid} y \emph{Osmbonuspack} que nos permiten calcular rutas para
+Para poder calcular una ruta hay que hacer uso de alguno de los proveedores vistos en la
+sección~\ref{sec:proveedores}. Puesto que se optó por usar los mapas de \acs{OSM} y ya se tienen
+importadas las librerías \emph{Osmdroid} y \emph{Osmbonuspack} que permiten calcular rutas para
 peatones, ciclistas y motorias; la opción más lógica es utilizar \emph{MapQuest}.
 
 \subsubsection{Implementación}
@@ -382,7 +383,7 @@ peatones, ciclistas y motorias; la opción más lógica es utilizar \emph{MapQue
 Para la creación y superposición en el mapa de una ruta utilizando \emph{Osmdroid} y
 \emph{Osmbonuspack} basta con indicar el tipo de usuario, el punto de inicio de la ruta y de
 finalización. Con esta información, realiza una consulta en Internet a la \acs{API} de
-\emph{MapQuest}~\footnote{http://wiki.openstreetmap.org/wiki/MapQuest} y nos devuelve una ruta
+\emph{MapQuest}~\footnote{http://wiki.openstreetmap.org/wiki/MapQuest} y devuelve una ruta
 específica que solo resta dibujar en el mapa (ver listado~\ref{code:gotov1}).
 
 \begin{listing}[
@@ -409,19 +410,19 @@ private Boolean gotoGeoPoint(GeoPoint endPoint) {
 }
 \end{listing}
 
-Pero existe un problema con el listado~\ref{code:gotov1}: Cuando utilizamos como objetivo de
-desarrollo una \acs{API} de Android superior a 9, no realiza la petición a Internet y nos muestra
+Pero existe un problema con el listado~\ref{code:gotov1}: Cuando se utiliza como objetivo de
+desarrollo una \acs{API} de Android superior a 9, no realiza la petición a Internet y muestra
 una línea recta entre el origen y el destino. Este \emph{bug} esta documentado en
 \emph{Osmbonuspack}~\footnote{https://code.google.com/p/osmbonuspack/issues/detail?id=9} aunque no
 sea culpa de la librería.
 
-El problema radica en la forma que realizamos la petición a Internet. Desde la \acs{API} de Android
+El problema radica en la forma que se realiza la petición a Internet. Desde la \acs{API} de Android
 10 y posteriores, Google decidió que realizar peticiones a Internet en el mismo \emph{thread} en
 el que se ejecuta la \acf{GUI} era un error. Lo estimó así porque podía provocar la sensación de que
-la aplicación no funciona cuando lo que verdaderamente está ocurriendo es que se encuentra esperando
+la aplicación no funciona cuando lo que verdaderamente ocurre es que se encuentra esperando
 una respuesta de Internet.
 
-Por tanto, para que nuestras rutas funcionen sólo podemos realizar dos acciones:
+Por tanto, para que las rutas funcionen sólo se pueden realizar dos acciones:
 
 \begin{itemize}
   \item Eliminar las políticas de \emph{threads} (ver listado~\ref{code:threads}) y seguir usando el
@@ -477,8 +478,8 @@ private void gotoGeoPointPosThread() {
 }
 \end{listing}
 
-Para implementarlo en nuestro sistema, se seleccionó la segunda opción porque se consideró que se
-trataba de la forma correcta de hacerlo y se añadieron algunas animaciones (no incluidas en el
+Para implementarlo en nuestro sistema, se seleccionó la segunda opción porque se consideró que era
+la forma correcta de hacerlo y se añadieron algunas animaciones (no incluidas en el
 listado~\ref{code:gotov2}) para la espera en la recepción de la ruta.
 
 \subsubsection{Pruebas}
@@ -494,9 +495,9 @@ Al finalizar la implementación del cuarto prototipo se realizó la siguiente pr
                       & Diferentes coordenadas de destinos \\
                       & Diferentes dispositivos con distintas versiones de Android (ver
                         sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & Llamamos al método \texttt{gotoGeoPoint} \\
-    \textbf{Entonces} & Observamos en el mapa la ruta desde nuestra localización hasta las
-                        coordenadas elegidas teniendo en cuenta nuestro método de desplazamiento \\
+    \textbf{Cuando}   & Se llama al método \texttt{gotoGeoPoint} \\
+    \textbf{Entonces} & Se observa en el mapa la ruta desde nuestra localización hasta las
+                        coordenadas elegidas teniendo en cuenta el método de desplazamiento \\
     \hline
   \end{tabular}
 \end{itemize}
@@ -513,40 +514,40 @@ navegar por la ruta creada en la iteración anterior observando los mensajes sum
 Para diseñar esta nueva funcionalidad se tuvieron en cuenta tres factores:
 
 \begin{itemize}
-  \item La \textbf{velocidad} a la que nos desplazamos. Hay que tener en cuenta que, cuando estamos
-    usando la aplicación, el tiempo con el que nos tienen que avisar para realizar una acción
-    variará en función de la velocidad que llevemos. Aprovechando este punto, también incorporaremos
-    una mejora visual que tienen la mayoría de aplicaciones de navegación: cambiaremos el
-    \emph{zoom} del mapa en función de la velocidad que llevemos para que no se sufran grandes
-    cambios en el mapa cuando circulamos a una velocidad elevada.
+  \item La \textbf{velocidad} a la que se desplaza el usuario. Hay que tener en cuenta que, cuando
+    se hace uso de la aplicación, el tiempo con el que hay que avisar para realizar una acción
+    variará en función de la velocidad que se lleve. Aprovechando este punto, también se incorpora
+    una mejora visual que tienen la mayoría de aplicaciones de navegación: cambiar el \emph{zoom}
+    del mapa en función de la velocidad que se lleve para que no sufra grandes cambios a la hora de
+    circular a una velocidad elevada.
 
-  \item Cómo \textbf{detectamos si se sigue la ruta marcada}. Hay que tener en cuenta que sólo
-    disponemos de nuestras coordenadas geográficas y de las coordenadas del siguiente punto a
-    alcanzar. Si implementamos un algoritmo en el que consideramos que podemos pasar a la siguiente
-    etapa cuando lleguemos a la que estamos realizando, es posible que no funcione. Por ejemplo, si
-    nos acercamos a una etapa de \emph{girar a la derecha} y giramos en el sitio correcto antes de
-    que la aplicación detecte que hemos llegado (probablemente por la precisión de los satélites
+  \item Cómo \textbf{detectar si se sigue la ruta marcada}. Hay que tener en cuenta que sólo se
+    dispone de las coordenadas geográficas del dispositivo y de las coordenadas del siguiente punto
+    a alcanzar. Si se implementa un algoritmo que permita pasar a la siguiente etapa cuando se
+    llegue a la que se encuentra realizando, es posible que no funcione. Por ejemplo, si nos
+    acercamos a una etapa de \emph{girar a la derecha} y giramos en el sitio correcto antes de que
+    la aplicación detecte que hemos llegado (probablemente por la precisión de los satélites
     \acs{GPS}), no cargaría la siguiente etapa y no sabríamos qué está sucediendo.
 
-  \item El posible \textbf{desvío de la ruta establecida}. Hay que plantearnos cómo detectar que nos
-    hemos salido de la ruta marcada y qué hacer en esos casos. Al tratarse de una aplicación de
-    navegación diseñada para que ella interactúe con nosotros y no al contrario, la opción más
-    interesante es que, cuando detecte nuestro desvío, nos avise y nos calcule una nueva ruta desde
-    la posición en la que nos encontramos.
+  \item El posible \textbf{desvío de la ruta establecida}. Hay que plantearse cómo detectar las
+    salidas de la ruta marcada y qué hacer en esos casos. Al tratarse de una aplicación de
+    navegación diseñada para que ella interactúe con el usuario y no al contrario, la opción más
+    interesante es que, cuando detecte el desvío, avise al usuario y calcule una nueva ruta desde
+    la posición en la que se encuentre.
 
 \end{itemize}
 
 \subsubsection{Implementación}
 
-Las tres implementaciones antes descritas, se llevarán a cabo dentro del método
-\texttt{onLocationChanged} que ya comenzamos a escribir en la iteración 2. Se debe realizar en éste
-método porque, tal y como lo tenemos configurado en el \texttt{LocationManager} (ver
+Las tres implementaciones antes descritas, se llevaron a cabo dentro del método
+\texttt{onLocationChanged} que ya se comenzó a escribir en la iteración 2. Se debe realizar en éste
+método porque, tal y como está configurado en el \texttt{LocationManager} (ver
 listado~\ref{code:locationManager}), se ejecutará cada segundo con los nuevos datos suministrados
 por los satélites \acs{GPS}:
 
 \begin{itemize}
-  \item En función de la \textbf{velocidad} que llevemos, se consideraron validos los valores de
-    cercanía y \emph{zoom} reflejados en el listado~\ref{code:velocidad}.
+  \item En función de la \textbf{velocidad}, se consideraron validos los valores de cercanía y
+    \emph{zoom} reflejados en el listado~\ref{code:velocidad}.
 
     \begin{listing}[
       float=ht,
@@ -578,16 +579,15 @@ public void onLocationChanged(Location loc) {
   }
     \end{listing}
 
-  \item Para \textbf{detectar si seguimos la ruta marcada} se ha implementado el algoritmo del
+  \item Para \textbf{detectar se sigue la ruta marcada} se ha implementado el algoritmo del
     listado~\ref{code:sigueRuta}. El algoritmo indica la acción de \emph{seguir recto} hasta que la
     distancia hasta la próxima etapa es menor que la distancia del comienzo de los avisos del punto
     anterior. Es entonces cuando:
 
     \begin{itemize}
-      \item Si nos acercamos, se nos muestra la etapa a realizar.
-      \item Si nos alejamos, se considera que hemos superado la etapa a realizar. De este modo,
-        pasamos a la siguiente etapa, a menos que nos encontremos en la última y finalicemos la
-        navegación.
+      \item Si se acerca, se muestra la etapa a realizar.
+      \item Si se aleja, se considera superada la etapa a realizar. De este modo, se pasa a la
+        siguiente etapa, a menos que sea la última y finalice la navegación.
     \end{itemize}
 
 \newpage
@@ -634,22 +634,22 @@ public void onLocationChanged(Location loc) {
   }
     \end{listing}
 
-  \item Para detectar cuándo nos \textbf{desviamos de la ruta establecida} hemos utilizado una
-    función de la clase \texttt{RoadOverlay} que nos indica en píxeles a cuanta distancia se
-    encuentra un punto de una ruta (ver listado~\ref{code:desvio}). Puesto que la ruta va a tener siempre la misma anchura en
-    píxeles nos acerquemos o nos alejemos de ella con el \emph{zoom} y nuestro
-    \texttt{LocationOverlay} también (24 píxeles), con éste método podremos determinar cuándo nos
-    hemos desviado y también podremos apreciarlo en el mapa.
+  \item Para detectar cuándo se \textbf{desvía de la ruta establecida} se ha utilizado una función
+    de la clase \texttt{RoadOverlay} que indica en píxeles a cuanta distancia se encuentra un punto
+    de una ruta (ver listado~\ref{code:desvio}). Puesto que la ruta va a tener siempre la misma
+    anchura en píxeles tanto acercándose como alejándose de ella con el \emph{zoom} y el
+    \texttt{LocationOverlay} también (24 píxeles), con éste método se puede determinar cuándo se
+    abandona la ruta establecida y coincidirá con lo expresado en la pantalla.
 
     Además para prevenir posibles errores puntuales en la localización, para considerar un desvío de
-    ruta, hemos implementado un contador de errores y sólo se vuelve a calcular el recorrido una vez
-    que se ha detectado 3 veces el desvío. Como las mediciones tardan un segundo en realizarse (ver
-    listado~\ref{code:locationManager}), tardaremos 3 segundos en detectar el error.
+    ruta, se ha implementado un contador de errores y sólo se vuelve a calcular el recorrido una vez
+    que se ha detectado 3 veces el desvío. Como las medidas tardan un segundo en realizarse (ver
+    listado~\ref{code:locationManager}), se tardará 3 segundos en detectar el error.
 
     \begin{listing}[
       language = java,
       caption  = {Ejemplo de implementación de \texttt{LocationListener} utilizado para detectar
-                  cuándo nos hemos desviado de la ruta establecida},
+                  cuándo se desvía de la ruta establecida},
       label    = code:desvio]
 private int mRoadLost = 0;
 
@@ -687,8 +687,8 @@ Al finalizar la implementación del quinto prototipo se realizaron las siguiente
     \textbf{Dado}     & Diferentes velocidades \\
                       & Diferentes dispositivos con distintas versiones de Android (ver
                         sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & Pasabas entre los diferentes rangos del listado~\ref{code:velocidad}\\
-    \textbf{Entonces} & Cambiaba el zoom del mapa \\
+    \textbf{Cuando}   & Se pasa entre los diferentes rangos del listado~\ref{code:velocidad}\\
+    \textbf{Entonces} & Cambia el zoom del mapa \\
     \hline
   \end{tabular}
 
@@ -697,8 +697,8 @@ Al finalizar la implementación del quinto prototipo se realizaron las siguiente
     \textbf{Dado}     & Diferentes velocidades \\
                       & Diferentes dispositivos con distintas versiones de Android (ver
                         sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & Te acercabas a realizar una acción \\
-    \textbf{Entonces} & La distancia con la que nos avisaba variaba en función de la velocidad \\
+    \textbf{Cuando}   & Se acerca una acción \\
+    \textbf{Entonces} & La distancia con la que avisa varia en función de la velocidad \\
     \hline
   \end{tabular}
 
@@ -709,7 +709,7 @@ Al finalizar la implementación del quinto prototipo se realizaron las siguiente
     \textbf{Dado}     & Diferentes rutas \\
                       & Diferentes dispositivos con distintas versiones de Android (ver
                         sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & Navegas por una ruta \\
+    \textbf{Cuando}   & Se navega por una ruta \\
     \textbf{Entonces} & Muestra cada una de las etapas hasta el final \\
     \hline
   \end{tabular}
@@ -721,9 +721,9 @@ Al finalizar la implementación del quinto prototipo se realizaron las siguiente
     \textbf{Dado}     & Diferentes rutas \\
                       & Diferentes dispositivos con distintas versiones de Android (ver
                         sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & Te desvías de una ruta y pasan 3 segundos \\
-    \textbf{Entonces} & Nos avisa de que nos hemos desviado y recalcula la ruta a seguir desde
-                        nuestra posición actual hasta la meta fijada en un inicio \\
+    \textbf{Cuando}   & Se desvía de una ruta y pasan 3 segundos \\
+    \textbf{Entonces} & Avisa del desvío y recalcula la ruta a seguir desde
+                        la posición actual hasta la meta fijada en un inicio \\
     \hline
   \end{tabular}
 \end{itemize}
@@ -739,21 +739,21 @@ geográficas.
 
 Para determinar las coordenadas geográficas de un sitio introduciendo su nombre hay que hacer uso de
 alguno de los proveedores de \emph{geocoding} estudiados en la sección~\ref{sec:proveedores}. Como
-estamos desarrollando todo el proyecto con \acs{OSM} lo más normal sería hacer uso de
+se está desarrollando todo el proyecto con \acs{OSM} lo más normal sería hacer uso de
 \emph{Nominatim} por medio de la librería \emph{Osmbonuspack} pero existe una opción mejor: usar la
-\acs{API} de Google que ofrece gratuitamente 2.500 peticiones. Y además, nos permite realizar
-búsquedas no sólo por ciudades y calles como \emph{Nominatim}, sino que también podemos buscar al
-nivel de números de casas.
+\acs{API} de Google que ofrece gratuitamente 2.500 peticiones. Y además, permite realizar
+búsquedas no sólo por ciudades y calles como \emph{Nominatim}, sino que también es posible buscar a
+nivel de números de casa.
 
 \subsubsection{Implementación}
 
-Para implementar esta nueva funcionalidad debemos desarrollar una nueva \texttt{Activity}. Ésta será
+Para implementar esta nueva funcionalidad hay que desarrollar una nueva \texttt{Activity}. Ésta será
 la encargada de preguntar al servicio de geocoding por la dirección introducida, permitir
 seleccionar al usuario entre las diferentes respuestas del servicio y devolver al \texttt{Activity}
 principal las coordenadas geográficas y el tipo de transporte seleccionado.
 
 Para hacer uso en Android del geocoding de Google, sólo es necesario declarar un objeto del tipo
-\texttt{Geocoder} pero, al igual que en la cuarta iteración, debemos declararlo dentro de una
+\texttt{Geocoder} pero, al igual que en la cuarta iteración, hay que declararlo dentro de una
 \texttt{AsyncTask} porque hace uso de Internet (Ver listado~\ref{code:geocodingTask}).
 
 \begin{listing}[
@@ -793,8 +793,8 @@ Al finalizar la implementación del sexto prototipo se realizaron las siguientes
     \hline
     \textbf{Dado}     & Diferentes dispositivos con distintas versiones de Android (ver
                         sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & Introducimos diferentes nombres de lugares de diferentes ciudades \\
-    \textbf{Entonces} & La nueva actividad nos muestra las direcciones de los lugares buscados \\
+    \textbf{Cuando}   & Se introducen diferentes nombres de lugares de diferentes ciudades \\
+    \textbf{Entonces} & La nueva actividad muestra las direcciones de los lugares buscados \\
     \hline
   \end{tabular}
 
@@ -805,8 +805,8 @@ Al finalizar la implementación del sexto prototipo se realizaron las siguientes
     \textbf{Dado}     & Diferentes nombres introducidos en la nueva actividad \\
                       & Diferentes dispositivos con distintas versiones de Android (ver
                         sección~\ref{sec:herramientasHardware}) \\
-    \textbf{Cuando}   & Seleccionamos algún resultado de la búsqueda \\
-    \textbf{Entonces} & La aplicación nos guía desde nuestra ubicación hasta el lugar seleccionado\\
+    \textbf{Cuando}   & Se selecciona algún resultado de la búsqueda \\
+    \textbf{Entonces} & La aplicación guía desde la ubicación actual hasta el lugar seleccionado\\
     \hline
   \end{tabular}
 \end{itemize}
@@ -820,18 +820,18 @@ ahora que se muestran por medio de mensajes \texttt{Toast}.
 
 \subsubsection{Diseño}
 
-Puesto que ya conocemos las acciones que tenemos que realizar y cuándo (ver
-listado~\ref{code:sigueRuta}), sólo tendremos que modificar la apariencia de nuestra aplicación y
+Puesto que se conocen las acciones que el usuario debe realizar y cuándo (ver
+listado~\ref{code:sigueRuta}), sólo hay que modificar la apariencia de la aplicación y
 añadir el código necesario para realizar los cambios visuales en el método \texttt{startAction}.
 
-Modificaremos la apariencia de nuestra aplicación añadiendo un panel en el inferior de la
-pantalla. La parte izquierda de dicho panel nos mostrará una imagen de la próxima acción a
-realizar y la distancia que falta para realizarla. La parte derecha del panel nos mostrará
-textualmente la acción a realizar.
+Para modificar la apariencia de la aplicación se añadió un panel en la parte inferior de la
+pantalla. La parte izquierda del panel muestra una imagen de la próxima acción a realizar y la
+distancia que falta para realizarla. La parte derecha del panel muestra textualmente la acción que
+se debe realizar.
 
 \subsubsection{Implementación}
 
-Para modificar la apariencia de nuestra aplicación basta con añadir al \texttt{layout} de nuestra
+Para modificar la apariencia de la aplicación basta con añadir al \texttt{layout} de la
 actividad principal los paneles del listado~\ref{code:panelLayout}. Las modificaciones en el método
 \texttt{startAction} son poco significativas.
 
@@ -913,19 +913,19 @@ avisos que se muestran por pantalla.
 
 \subsubsection{Diseño}
 
-Al igual que en la iteración anterior, como ya conocemos qué acciones realizar y cuándo (ver
-listado~\ref{code:sigueRuta}) sólo tendremos que añadir el código necesario para escuchar las
+Al igual que en la iteración anterior, como ya se conocen las acciones a realizar y cuándo (ver
+listado~\ref{code:sigueRuta}) sólo hay que añadir el código necesario para escuchar las
 instrucciones en el método \texttt{startAction}.
 
-Tenemos dos posibles formas de escuchar las instrucciones a realizar:
+Hay dos posibles formas de escuchar las instrucciones a realizar:
 
 \begin{itemize}
   \item Tener todas las instrucciones grabadas y reproducirlas en los momentos adecuados.
-  \item Pedir a Internet que nos envíe el sonido de un texto, en este caso la acción a realizar, y
+  \item Pedir a Internet que envíe el sonido de un texto, en este caso la acción a realizar, y
     reproducirla. Este servicio se llama \emph{text to speech}.
 \end{itemize}
 
-Puesto que existen muchos mensajes diferentes, ya necesitamos la conexión a Internet para recibir
+Puesto que existen muchos mensajes diferentes, ya es necesaria la conexión a Internet para recibir
 los mapas y los mensajes se pueden personalizar mucho más con la segunda opción; la elección que se
 tomó para reproducir sonoramente las instrucciones fue \emph{text to speech}. Y se eligió el
 servicio de Google como proveedor por su gran integración con Android.
@@ -938,8 +938,8 @@ tipo \texttt{TextToSpeech} especificando el contexto y qué clase implementa la 
 \texttt{speak}.
 
 En el ejemplo del listado~\ref{code:textToSpeech} se ha simplificado el uso y se han prevenido
-errores creando el método \texttt{convertTextToSpeech}. De esta forma, cuando deseemos reproducir
-sonoramente un texto sólo tendremos que llamar a dicho método.
+errores creando el método \texttt{convertTextToSpeech}. De esta forma, cuando se desee reproducir
+sonoramente un texto sólo hay que llamar a dicho método.
 
 \begin{listing}[
   language = java,
@@ -1071,9 +1071,9 @@ instrucciones descritas en el cuadro~\ref{cuadro:vibraciones}.
   \end{center}
 \end{figure}
 
-Una vez que tenemos la forma de codificar las posibles acciones de los complementos vibratorios,
-debemos seleccionar qué complementos utilizaremos. En este punto tuvimos un conflicto de
-intereses. Tal y como vimos en la sección~\ref{sec:wearables} los únicos complementos que nos
+Una vez determinada la forma de codificar las posibles acciones de los complementos vibratorios,
+hay que seleccionar qué complementos se utilizarán. En este punto surgió un conflicto de
+intereses. Tal y se vió en la sección~\ref{sec:wearables} los únicos complementos que
 permiten controlar su vibrador a voluntad son los que llevan Android Wear como \acs{SO}, pero estos
 dispositivos son muy caros y prácticamente nadie dispone de uno. Por ello, se propuso desarrollar el
 proyecto para poder utilizar tanto \emph{wearables} con Android Wear como otros dispositivos con
@@ -1130,7 +1130,7 @@ Android. De este modo podrán utilizar el sistema:
     \end{itemize}
 \end{itemize}
 
-Para soportar este gran número de configuraciones antes expuesta hacemos uso de la arquitectura
+Para soportar este gran número de configuraciones antes expuesta se hace uso de la arquitectura
 cliente servidor por medio de la tecnología \emph{bluetooth}:
 
 \begin{itemize}
@@ -1141,18 +1141,18 @@ cliente servidor por medio de la tecnología \emph{bluetooth}:
     quedarán a la espera de recibir instrucciones del cliente.
 \end{itemize}
 
-De este modo sólo tendremos que implementar en la aplicación de las anteriores iteraciones las
+De este modo sólo hay que implementar en la aplicación de las anteriores iteraciones las
 vibraciones del cuadro~\ref{cuadro:vibraciones}, crear una nueva aplicación para Android, otra para
 Android Wear que también implemente dichas vibraciones y desarrollar un método de paso de mensajes
 por medio de \emph{bluetooth} entre las dos aplicaciones.
 
 \subsubsection{Implementación}
 
-Gracias a que Android y Android Wear comparten gran parte de las \acs{API} podemos utilizar el mismo
-código para la parte de la vibración en el cliente y en el servidor. Para codificar el
-cuadro~\ref{cuadro:vibraciones} hicimos uso de la clase \texttt{Vibrator} que, tras inicializarla,
-nos permite manipular el vibrador a voluntad con el método \texttt{vibrate}. De este modo
-desarrollamos los métodos \texttt{startLocalVibration} y \texttt{stopLocalVibration} (ver
+Gracias a que Android y Android Wear comparten gran parte de las \acs{API} se puede utilizar el
+mismo código para la parte de la vibración en el cliente y en el servidor. Para codificar el
+cuadro~\ref{cuadro:vibraciones} se hizo uso de la clase \texttt{Vibrator} que, tras inicializarla,
+permite manipular el vibrador a voluntad con el método \texttt{vibrate}. De este modo
+se desarrollaron los métodos \texttt{startLocalVibration} y \texttt{stopLocalVibration} (ver
 listado~\ref{code:localVibration}).
 
 \begin{listing}[
@@ -1220,7 +1220,7 @@ private void stopLocalVibration() {
 \end{listing}
 
 Por desgracia, para establecer la comunicación por \emph{bluetooth} entre el cliente y los
-servidores no podemos utilizar el mismo método en Android y Android Wear. Android no se puede
+servidores no se puede utilizar el mismo método en Android y Android Wear. Android no se puede
 vincular a otro dispositivo como un \emph{wearable} por medio de los \emph{Play Services} de Android
 y Android Wear da muchos problemas para acceder a la \emph{interfaz bluetooth} y comunicarse por
 otro método diferente a los \emph{Play Services}. Por ello hay que distinguir los dos tipos de
@@ -1229,18 +1229,18 @@ comunicación: Android-Android y Android-Android Wear.
 \newpage
 \begin{definitionlist}
   \item[Implementación de la comunicación con Android] Para establecer una comunicación por
-    \emph{bluetooth} entre el cliente y los servidores Android utilizamos la clase
+    \emph{bluetooth} entre el cliente y los servidores Android se utilizó la clase
     \texttt{BluetoothChatService} distribuida en los ejemplos de
     Android\footnote{https://developer.android.com/resources/samples/BluetoothChat/index.html}. Esta
-    clase nos permite abstraernos de la implementación realizada con \texttt{BluetoothSocket} y
-    centrarnos en qué hacer cuando cambiamos de estado (\emph{escuchando}, \emph{conectando}, etc) o
-    recibimos un mensaje. Además nos permite iniciar el «chat» y enviar mensajes de forma sencilla.
+    clase permite abstraerse de la implementación realizada con \texttt{BluetoothSocket} y
+    centrarse en qué hacer cuando cambia de estado (\emph{escuchando}, \emph{conectando}, etc) o
+    recibe un mensaje. Además permite iniciar el «chat» y enviar mensajes de forma sencilla.
 
-    En la aplicación \textbf{cliente}, que es la que desarrollamos en las iteraciones anteriores,
-    añadimos un nuevo menú en opciones. Este menú permite activar o desactivar la utilización de la
-    vibración y, en caso de activarlo, nos permite seleccionar entre los diferentes dispositivos
-    \emph{bluetooth} emparejados y nuestro dispositivo local cuál hará de vibrador derecho y cuál de
-    vibrador izquierdo. Una vez seleccionado, nuestro cliente intentará iniciar el «chat» con el/los
+    En la aplicación \textbf{cliente}, que es la que se desarrolló en las iteraciones anteriores,
+    se añadió un nuevo menú en opciones. Este menú permite activar o desactivar la utilización de la
+    vibración y, en caso de activarlo, permite seleccionar entre los diferentes dispositivos
+    \emph{bluetooth} emparejados y el dispositivo local cuál hará de vibrador derecho y cuál de
+    vibrador izquierdo. Una vez seleccionado, el cliente intentará iniciar el «chat» con el/los
     servidor/es y se quedará a la espera. En caso de no conseguir establecer conexión simplemente
     avisará al usuario.
 
@@ -1282,17 +1282,17 @@ private void sendMessage(String message, BluetoothChatService d, StringBuffer b)
 
     Gracias a utilizar la clase \texttt{BluetoothChatServide}, para iniciar el intercambio de
     mensajes sólo es necesario iniciar el servicio con el método \texttt{start} y hacer uso del
-    método \texttt{connect} proporcionándole el número \acf{MAC} del dispositivo al que queremos
-    conectarnos. Para definir cómo se comporta la \emph{interfaz gráfica } de la aplicación durante
-    el proceso de conexión hubo que definir un \texttt{Handler} y sobrescribir el método
+    método \texttt{connect} proporcionándole el número \acf{MAC} del dispositivo al que se quiere
+    conectar. Para definir cómo se comporta la \emph{interfaz gráfica } de la aplicación durante el
+    proceso de conexión hubo que definir un \texttt{Handler} y sobrescribir el método
     \texttt{handleMesage} indicando qué hacer mientras se conecta, cuando se desconecte o cuando
-    falle el intento de conexión. Una vez que estemos conectados podremos enviar mensajes a nuestros
+    falle el intento de conexión. Una vez existe conexión se pueden enviar mensajes a los
     dispositivos conectados por \emph{bluetooth} utilizando los métodos del
     listado~\ref{code:sendMessage}.
 
-    Para el caso del \textbf{servidor} Android desarrollamos una aplicación que inicia el servicio
-    \texttt{BluetoothChatService} al ejecutarse quedándonos a la escucha de conexiones
-    \emph{bluetooth}. Además definimos un \texttt{Handler} para especificar qué hacer en los
+    Para el caso del \textbf{servidor} Android se desarrolló una aplicación que inicia el servicio
+    \texttt{BluetoothChatService} al ejecutarse quedando a la escucha de conexiones
+    \emph{bluetooth}. Además se definió un \texttt{Handler} para especificar qué hacer en los
     diferentes estados de la conexión con la \emph{interfaz gráfica} y determinar qué hacer en caso
     de recibir un mensaje (ver listado~\ref{code:servidorHandler}).
 
@@ -1350,26 +1350,26 @@ private void startAction (String readMessage) {
 \end{listing}
 
     Como se puede apreciar en los listados \ref{code:sendMessage} y \ref{code:servidorHandler} a la
-    hora de intercambiar mensajes incluimos un separador: \texttt{SPLIT}. Esto se debe a que durante
-    el desarrollo del intercambio de mensajes se detectaron errores se sincronización entre los
-    \texttt{buffers} del cliente y de los servidores. De este modo nos aseguramos de no
+    hora de intercambiar mensajes se incluyó un separador: \texttt{SPLIT}. Esto se debe a que
+    durante el desarrollo del intercambio de mensajes se detectaron errores se sincronización entre
+    los \texttt{buffers} del cliente y de los servidores. Este es el modo de asegurarse de no
     malinterpretar los mensajes.
 
   \item[Implementación de la comunicación con Android Wear] Para establecer la comunicación
-    \emph{bluetooth} entre el cliente y los servidores Android Wear utilizamos el servicio de paso
-    de mensajes ofrecido por los \emph{Play Services} en la clase \emph{MessageApi}. Esta clase nos
-    permite centrarnos en el envío y recepción de mensajes sin preocuparnos de la conexión.
+    \emph{bluetooth} entre el cliente y los servidores Android Wear se utilizó el servicio de paso
+    de mensajes ofrecido por los \emph{Play Services} en la clase \emph{MessageApi}. Esta clase
+    permite centrarse en el envío y recepción de mensajes sin preocuparse de la conexión.
 
     En la aplicación \textbf{cliente} desarrollada en iteraciones anteriores y en el apartado
-    anterior, añadimos a la lista de dispositivos de las opciones todos los \emph{wearables}
+    anterior, se añadió a la lista de dispositivos de las opciones todos los \emph{wearables}
     sincronizados por los \emph{Play Services}. Para hacer más intuitiva la selección se añadió un
     subtítulo debajo de los nombres de los dispositivos indicando si se trataba de un elemento
     \emph{local}, \emph{bluetooth} o \emph{wear}.
 
     Gracias a utilizar los \emph{Play Services} para comunicarnos con un dispositivo vinculado sólo
-    nos tendremos que encargar de sobrescribir los métodos \texttt{onConnected} y
-    \texttt{onConnectionSuspended}, inicializar la clase \texttt{GoogleApiClient} y conectarnos a
-    los servicios con el método \texttt{connect} de dicha clase. A partir de entonces podemos enviar
+    hay que encargarse de sobrescribir los métodos \texttt{onConnected} y
+    \texttt{onConnectionSuspended}, inicializar la clase \texttt{GoogleApiClient} y conectarse a los
+    servicios con el método \texttt{connect} de dicha clase. A partir de entonces se pueden enviar
     mensajes a un nodo conectado indicando su identificador y el tipo de mensaje. En el
     listado~\ref{code:sendMessageWear} se muestran los métodos utilizados para el envío de mensajes
     a un \emph{wearable} aunque no se incluye la inicialización de las variables \texttt{mWearLeft}
@@ -1404,14 +1404,14 @@ private void sendMessageWear( final String path, final String text, final String
 }
 \end{listing}
 
-    Para el caso del \textbf{servidor} en Android Wear desarrollamos un servicio y una
+    Para el caso del \textbf{servidor} en Android Wear se desarrolló un servicio y una
     aplicación. El servicio se encarga de iniciar la aplicación cuando recibe el tipo de mensaje
     correspondiente (ver listado~\ref{code:servicioWear}) y la aplicación se encarga de interpretar
     el resto de mensajes recibidos para hacer vibrar el dispositivo o finalizar la aplicación. Para
-    ello, en la aplicación nos hemos encargado de sobrescribir los métodos
-    \texttt{onMessageReceived}, \texttt{onConnected} y \texttt{onConnectionSuspended} (ver
-    listado~\ref{code:servidorWearActivity}); inicializar la clase \texttt{GoogleApiClient} y
-    conectarnos a los servicios por medio del método \texttt{connect} de dicha clase.
+    ello, en la aplicación se ha sobrescrito los métodos \texttt{onMessageReceived},
+    \texttt{onConnected} y \texttt{onConnectionSuspended} (ver
+    listado~\ref{code:servidorWearActivity}); se inicializa la clase \texttt{GoogleApiClient} y se
+    conecta a los servicios por medio del método \texttt{connect} de dicha clase.
 
 \begin{listing}[
   language = java,

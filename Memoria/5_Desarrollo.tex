@@ -142,14 +142,14 @@ procedimos a implementar un método que lo resolviera (ver listado~\ref{code:cen
   caption  = {Método utilizado para centrar el mapa en cualquier posición},
   label    = code:centerMap]
 private void centerMap(final GeoPoint loc) {
-    mMap.getViewTreeObserver().addOnGlobalLayoutListener(
-            new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            mMap.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-            mMap.getController().setCenter(loc);
-        }
-    });
+  mMap.getViewTreeObserver().addOnGlobalLayoutListener(
+          new ViewTreeObserver.OnGlobalLayoutListener() {
+    @Override
+    public void onGlobalLayout() {
+      mMap.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+      mMap.getController().setCenter(loc);
+    }
+  });
 }
 \end{listing}
 
@@ -196,11 +196,12 @@ y cada cuanto tiempo queremos que se ejecute (ver listado~\ref{code:locationMana
   caption  = {Ejemplo de uso de \texttt{LocationManager} utilizando la propia clase como
                  \texttt{LocationListener} y 1 segundo de intervalo entre actualizaciones},
   label    = code:locationManager]
-if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
     mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
 }
 \end{listing}
 
+\newpage
 Para que una clase implemente un \texttt{LocationListener} debe contener cuatro funciones:
 
 \begin{itemize}
@@ -295,8 +296,10 @@ el sensor de orientación. En este caso la propia (\texttt{this}).
   language = java,
   caption  = {Ejemplo de registro de un \texttt{Sensor} de orientación con \texttt{SensorManager}},
   label    = code:orientacion]
-mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+mSensorManager = 
+   (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+mOrientation =
+   mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 mSensorManager.registerListener(this, mOrientation, SensorManager.SENSOR_DELAY_NORMAL);
 \end{listing}
 
@@ -386,7 +389,7 @@ específica que solo resta dibujar en el mapa (ver listado~\ref{code:gotov1}).
 private Boolean gotoGeoPoint(GeoPoint endPoint) {
     RoadManager roadManager = new MapQuestRoadManager(MAPQUESTAPIKEY);
     roadManager.addRequestOption("units=k");
-    roadManager.addRequestOption("routeType=fastest");
+    roadManager.addRequestOption("routeType=bitycle");
     
     ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
     waypoints.add(getLastLocation());
@@ -394,7 +397,7 @@ private Boolean gotoGeoPoint(GeoPoint endPoint) {
     
     mRoad = roadManager.getRoad(waypoints);
             
-    mRoadOverlay = RoadManager.buildRoadOverlay(road, getBaseContext());
+    mRoadOverlay=RoadManager.buildRoadOverlay(road, getBaseContext());
     mRoadOverlay.setWidth(10);
 
     mMap.getOverlays().add(mRoadOverlay);            
@@ -434,7 +437,6 @@ StrictMode.setThreadPolicy(policy);
 \end{listing}
 
 \begin{listing}[
-  float=ht,
   language = java,
   caption  = {Ejemplo de creación y superposición de una ruta en el mapa utilizando una
                  \texttt{AsyncTask}},
@@ -462,7 +464,8 @@ private class GetRoad extends AsyncTask<ArrayList<GeoPoint>, Float, Boolean>{
   }
   
 private void gotoGeoPointPosThread() {
-    mRoadOverlay = RoadManager.buildRoadOverlay(mRoad, getBaseContext());
+    mRoadOverlay = RoadManager.buildRoadOverlay( mRoad,
+      getBaseContext() );
     mRoadOverlay.setWidth(10);
   
     mMap.getOverlays().add(mRoadOverlay);
@@ -582,8 +585,8 @@ public void onLocationChanged(Location loc) {
         navegación.
     \end{itemize}
 
+\newpage
     \begin{listing}[
-      float=ht,
       language = java,
       caption  = {Ejemplo de implementación de \texttt{LocationListener} utilizado para seguir una
                  ruta almacenada en \texttt{mRoad}},
@@ -636,10 +639,9 @@ public void onLocationChanged(Location loc) {
     Además para prevenir posibles errores puntuales en la localización, para considerar un desvío de
     ruta, hemos implementado un contador de errores y sólo se vuelve a calcular el recorrido una vez
     que se ha detectado 3 veces el desvío. Como las mediciones tardan un segundo en realizarse (ver
-    listado~\ref{code:locationManager}), tardaremos 3 segundos en detectar dicho error.
+    listado~\ref{code:locationManager}), tardaremos 3 segundos en detectar el error.
 
     \begin{listing}[
-      float=ht,
       language = java,
       caption  = {Ejemplo de implementación de \texttt{LocationListener} utilizado para detectar
                   cuándo nos hemos desviado de la ruta establecida},
@@ -651,12 +653,14 @@ public void onLocationChanged(Location loc) {
   
   [...]
 
-  if (mRoadOverlay != null && !mRoadOverlay.isCloseTo(myLocation, 24, mMap)) {
+  if (mRoadOverlay != null && 
+      !mRoadOverlay.isCloseTo(myLocation, 24, mMap)) {
     if (mRoadLost < 3) {
       mRoadLost++;
     } else {
       startAction(WRONG, 0);
-      GeoPoint endPoint = mRoad.mNodes.get(mRoad.mNodes.size()-1).mLocation;
+      GeoPoint endPoint = 
+        mRoad.mNodes.get(mRoad.mNodes.size()-1).mLocation;
       cleanMap();
       gotoGeoPoint(endPoint);
     }
@@ -930,7 +934,6 @@ errores creando el método \texttt{convertTextToSpeech}. De esta forma, cuando d
 sonoramente un texto sólo tendremos que llamar a dicho método.
 
 \begin{listing}[
-  float=ht,
   language = java,
   caption  = {Ejemplo del uso de \texttt{TextToSpeech}},
   label    = code:textToSpeech]
@@ -940,8 +943,9 @@ private TextToSpeech mTextToSpeech = new TextToSpeech(this, this);
 
 public void onInit(int status) {
   if (status == TextToSpeech.SUCCESS) {
-    int result = mTextToSpeech.setLanguage(new Locale(getString(R.string.locale)));
-    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+    int result = mTextToSpeech.setLanguage(new Locale("es"));
+    if (result == TextToSpeech.LANG_MISSING_DATA || 
+        result == TextToSpeech.LANG_NOT_SUPPORTED) {
       Toast.makeText(getBaseContext(),"Error al convertir el sonido", Toast.LENGTH_SHORT).show();
     } else {
       convertTextToSpeech("");
@@ -1058,6 +1062,15 @@ instrucciones descritas en el cuadro~\ref{cuadro:vibraciones}.
   \end{center}
 \end{figure}
 
+Una vez que tenemos la forma de codificar las posibles acciones de los complementos vibratorios,
+debemos seleccionar qué complementos utilizaremos. En este punto tuvimos un conflicto de
+intereses. Tal y como vimos en la sección~\ref{sec:wearables} los únicos complementos que nos
+permiten controlar su vibrador a voluntad son los que llevan Android Wear como \acs{SO}, pero estos
+dispositivos son muy caros y prácticamente nadie dispone de uno. Por ello, se propuso desarrollar el
+proyecto para poder utilizar tanto \emph{wearables} con Android Wear como otros dispositivos con
+Android. De este modo podrán utilizar el sistema:
+
+\newpage
 \begin{figure}[!h]
   \begin{center}
     \includegraphics[width=0.7\textwidth]{/graficaRotonda1.png}
@@ -1087,14 +1100,6 @@ instrucciones descritas en el cuadro~\ref{cuadro:vibraciones}.
     \label{fig:graficaRotonda3}
   \end{center}
 \end{figure}
-
-Una vez que tenemos la forma de codificar las posibles acciones de los complementos vibratorios,
-debemos seleccionar qué complementos utilizaremos. En este punto tuvimos un conflicto de
-intereses. Tal y como vimos en la sección~\ref{sec:wearables} los únicos complementos que nos
-permiten controlar su vibrador a voluntad son los que llevan Android Wear como \acs{SO}, pero estos
-dispositivos son muy caros y prácticamente nadie dispone de uno. Por ello, se propuso desarrollar el
-proyecto para poder utilizar tanto \emph{wearables} con Android Wear como otros dispositivos con
-Android. De este modo podrán utilizar el sistema:
 
 \begin{itemize}
   \item Los usuarios de \textbf{Android Wear} por medio de su \emph{smartphone} y su {wearable}. En
@@ -1212,6 +1217,7 @@ y Android Wear da muchos problemas para acceder a la \emph{interfaz bluetooth} y
 otro método diferente a los \emph{Play Services}. Por ello hay que distinguir los dos tipos de
 comunicación: Android-Android y Android-Android Wear.
 
+\newpage
 \begin{definitionlist}
   \item[Implementación de la comunicación con Android] Para establecer una comunicación por
     \emph{bluetooth} entre el cliente y los servidores Android utilizamos la clase
@@ -1229,6 +1235,42 @@ comunicación: Android-Android y Android-Android Wear.
     servidor/es y se quedará a la espera. En caso de no conseguir establecer conexión simplemente
     avisará al usuario.
 
+\begin{listing}[
+  language = java,
+  caption  = {Métodos utilizados para enviar mensajes por bluetooth haciendo uso de la clase
+               \texttt{BluetoothChatServide}},
+  label    = code:sendMessage]
+private BluetoothChatService mChatServiceLeft = 
+  new BluetoothChatService(this, mHandler);
+private BluetoothChatService mChatServiceRight =
+  new BluetoothChatService(this, mHandler);
+private StringBuffer mOutStringBufferLeft = new StringBuffer("");
+private StringBuffer mOutStringBufferRight =new StringBuffer("");
+
+[...]
+
+private void sendMessage(String message, int who) {
+  if (who == LEFT) {
+    sendMessage(message, mChatServiceLeft, mOutStringBufferLeft);
+  } else if (who == RIGHT) {
+    sendMessage(message,mChatServiceRight,mOutStringBufferRight);
+  }
+}
+private void sendMessage(String message, BluetoothChatService d, StringBuffer b) {
+  if (d == null || 
+      d.getState() != BluetoothChatService.STATE_CONNECTED) {
+    return;
+  }
+    	
+  message = message + SPLIT;
+  if (message.length() > 0) {
+      byte[] send = message.getBytes();
+      d.write(send);
+      b.setLength(0);
+  }
+}
+\end{listing}
+
     Gracias a utilizar la clase \texttt{BluetoothChatServide}, para iniciar el intercambio de
     mensajes sólo es necesario iniciar el servicio con el método \texttt{start} y hacer uso del
     método \texttt{connect} proporcionándole el número \acf{MAC} del dispositivo al que queremos
@@ -1238,43 +1280,6 @@ comunicación: Android-Android y Android-Android Wear.
     falle el intento de conexión. Una vez que estemos conectados podremos enviar mensajes a nuestros
     dispositivos conectados por \emph{bluetooth} utilizando los métodos del
     listado~\ref{code:sendMessage}.
-
-\begin{listing}[
-  float=ht,
-  language = java,
-  caption  = {Métodos utilizados para enviar mensajes por bluetooth haciendo uso de la clase
-               \texttt{BluetoothChatServide}},
-  label    = code:sendMessage]
-private BluetoothChatService mChatServiceLeft = 
-    new BluetoothChatService(this, mHandler);
-private BluetoothChatService mChatServiceRight =
-    new BluetoothChatService(this, mHandler);
-private StringBuffer mOutStringBufferLeft = new StringBuffer("");
-private StringBuffer mOutStringBufferRight = new StringBuffer("");
-
-[...]
-
-private void sendMessage(String message, int who) {
-    if (who == LEFT) {
-      sendMessage(message, mChatServiceLeft, mOutStringBufferLeft);
-    } else if (who == RIGHT) {
-      sendMessage(message, mChatServiceRight, mOutStringBufferRight);
-    }
-}
-
-private void sendMessage(String message, BluetoothChatService d, StringBuffer b) {
-    if (d == null || d.getState() != BluetoothChatService.STATE_CONNECTED) {
-        return;
-    }
-    	
-    message = message + SPLIT;
-    if (message.length() > 0) {
-        byte[] send = message.getBytes();
-        d.write(send);
-        b.setLength(0);
-    }
-}
-\end{listing}
 
     Para el caso del \textbf{servidor} Android desarrollamos una aplicación que inicia el servicio
     \texttt{BluetoothChatService} al ejecutarse quedándonos a la escucha de conexiones
@@ -1363,7 +1368,6 @@ private void startAction (String readMessage) {
     realiza tras la selección de los dispositivos en las opciones.
 
 \begin{listing}[
-  float=ht,
   language = java,
   caption  = {Métodos utilizados para enviar mensajes por bluetooth haciendo uso de los Play
                Services},
@@ -1385,7 +1389,7 @@ private void sendMessageWear( final String path, final String text, final String
         @Override
         public void run() {
             Wearable.MessageApi.sendMessage(
-              mApiClient, nodeId, path, text.getBytes() ).await();
+              mApiClient, nodeId, path, text.getBytes()).await();
         }
     }).start();
 }
@@ -1393,15 +1397,32 @@ private void sendMessageWear( final String path, final String text, final String
 
     Para el caso del \textbf{servidor} en Android Wear desarrollamos un servicio y una
     aplicación. El servicio se encarga de iniciar la aplicación cuando recibe el tipo de mensaje
-    correspondiente y la aplicación se encarga de interpretar el resto de mensajes recibidos para
-    hacer vibrar el dispositivo o finalizar la aplicación. Para ello, en la aplicación nos hemos
-    encargado de sobrescribir los métodos \texttt{onMessageReceived}, \texttt{onConnected} y
-    \texttt{onConnectionSuspended} (ver listado~\ref{code:servidorWearActivity}); inicializar la
-    clase \texttt{GoogleApiClient} y conectarnos a los servicios por medio del método
-    \texttt{connect} de dicha clase.
+    correspondiente (ver listado~\ref{code:servicioWear}) y la aplicación se encarga de interpretar
+    el resto de mensajes recibidos para hacer vibrar el dispositivo o finalizar la aplicación. Para
+    ello, en la aplicación nos hemos encargado de sobrescribir los métodos
+    \texttt{onMessageReceived}, \texttt{onConnected} y \texttt{onConnectionSuspended} (ver
+    listado~\ref{code:servidorWearActivity}); inicializar la clase \texttt{GoogleApiClient} y
+    conectarnos a los servicios por medio del método \texttt{connect} de dicha clase.
 
 \begin{listing}[
-  float=ht,
+  language = java,
+  caption  = {Servicio que inicia la aplicación en el wearable},
+  label    = code:servicioWear]
+public class WearMessageListenerService extends WearableListenerService implements Const{
+  public void onMessageReceived(MessageEvent messageEvent) {
+    if(messageEvent.getPath().equalsIgnoreCase(START_ACTIVITY)) {
+      Intent intent = new Intent( this, MainActivity.class );
+      intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+      startActivity( intent );
+    } else {
+      super.onMessageReceived(messageEvent);
+    }
+  }
+}
+\end{listing}
+
+\newpage
+\begin{listing}[
   language = java,
   caption  = {Métodos utilizados en los servidores para leer los mensajes recibidos por medio de los
               Play Services },
@@ -1413,20 +1434,20 @@ private Vibrator mVibrator;
 
 @Override
 public void onMessageReceived( final MessageEvent messageEvent ) {
-    runOnUiThread( new Runnable() {
-        @Override
-        public void run() {
-            if( messageEvent.getPath().equalsIgnoreCase( WEAR_MESSAGE_PATH ) ) {
-                startAction(new String(messageEvent.getData()));
-            }
-            if (messageEvent.getPath().equalsIgnoreCase( END_ACTIVITY ) ) {
-                if (mVibrator != null) {
-                    mVibrator.cancel();
-                }
-                finish();
-            }
+  runOnUiThread( new Runnable() {
+    @Override
+    public void run() {
+      if(messageEvent.getPath().equalsIgnoreCase(WEAR_MESSAGE_PATH)) {
+        startAction(new String(messageEvent.getData()));
+      }
+      if (messageEvent.getPath().equalsIgnoreCase( END_ACTIVITY ) ) {
+        if (mVibrator != null) {
+          mVibrator.cancel();
         }
-    });
+        finish();
+      }
+    }
+  });
 }
     
 [...]
@@ -1435,6 +1456,7 @@ public void onMessageReceived( final MessageEvent messageEvent ) {
 public void onConnected(Bundle bundle) {
     Wearable.MessageApi.addListener( mApiClient, this );
 }
+
 @Override
 public void onConnectionSuspended(int i) {
     if (mVibrator != null) {
@@ -1454,15 +1476,11 @@ Al finalizar la implementación del noveno prototipo se realizó la siguiente pr
 
   \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
     \hline
-    \textbf{Dado}     & Diferentes rutas \\
-                      & Diferentes dispositivos con distintas versiones de Android \\
-                      & Diferentes formas posibles de conectar dichos dispositivos:
-                        Android-Android, Android-Android Wear, Android-Android-Android y 
-                        Android-Android-Android Wear \\
+    \textbf{Dado}     & Diferentes dispositivos con distintas versiones de Android \\
+                      & Todas las formas descritas de conectar los dispositivos \\
                       & Todas las posibles acciones de guiado \\
-    \textbf{Cuando}   & Realizamos alguna acción \\
-    \textbf{Entonces} & Vibra el dispositivo adecuando con la frecuencia correspondiente a
-                        la acción a efectuar \\
+    \textbf{Cuando}   & Hay que realizar alguna acción \\
+    \textbf{Entonces} & Vibra el dispositivo adecuando con la frecuencia correspondiente \\
     \hline
   \end{tabular}
 \end{itemize}

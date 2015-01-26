@@ -1,7 +1,7 @@
 \chapter{Desarrollo del proyecto}
 \label{chap:desarrollo}
 
-\drop{E}{n} este capítulo se describe el proceso de desarrollo de nuestro sistema de navegación por
+\drop{E}{n} este capítulo se describe el proceso de desarrollo del sistema de navegación por
 satélite. Se empieza enumerando los requisitos originales del sistema y se explica cómo se
 realizarán las pruebas. Más tarde se explica iteración a iteración las decisiones tomadas, los
 prototipos desarrollados y las pruebas realizadas sobre ellos.
@@ -62,13 +62,13 @@ Para realizar esta primera aproximación hay que tomar tres importantes decision
 
 En primer lugar, tras revisar las diferentes plataformas disponibles para \emph{smartphone} (ver
 sección~\ref{sec:plataformas}) se estipuló que la mejor alternativa es Android. Por un lado, Android
-posee de la mayor cuota de mercado (81\%) y dispone de una gran variedad de dispositivos en una
+posee la mayor cuota de mercado (81\%) y dispone de una gran variedad de dispositivos en una
 amplia gama de precios. Por otro lado, Android es un \acs{SO} que se integra fácilmente con la
 plataforma de complementos Android Wear (ver sección~\ref{sec:wearables}) que es la única que
 permite manipular el vibrador del \emph{wearable} a voluntad.
 
 En segundo lugar, entre los proveedores de mapas existentes (ver sección~\ref{sec:proveedores}) se
-seleccionó Open Street Map. Se consideró la mejor elección porque nos provee de mapas de gran
+seleccionó Open Street Map. Se consideró la mejor elección porque provee de mapas de gran
 calidad completamente gratuitos. Además, si se encontrase cualquier tipo de error en los mapas
 suministrados, se podría corregir porque es un proyecto colaborativo. Para simplificar el uso de
 \acs{OSM} se utilizó la librería \emph{Osmdroid} tal y como se dijo en la
@@ -183,8 +183,8 @@ mostrar la posición actual en la aplicación.
 Para poder mostrar la ubicación actual, es necesario primero conocerla. Para ello, se analizaron en
 la sección~\ref{sec:tecnologiasActuales} los diferentes sistemas con los que obtener las coordenadas
 geográficas del dispositivo en la actualidad. Puesto que \acs{GLONASS} no estuvo operativo para uso
-civil hasta 2012 no todos los \emph{smartphones} disponen en la actualidad de esta tecnología y nos
-deja con una única opción razonable: \acs{NAVSTAR-GPS}.
+civil hasta 2012 no todos los \emph{smartphones} disponen en la actualidad de esta tecnología y deja
+una única opción razonable: \acs{NAVSTAR-GPS}.
 
 \subsubsection{Implementación}
 
@@ -478,7 +478,7 @@ private void gotoGeoPointPosThread() {
 }
 \end{listing}
 
-Para implementarlo en nuestro sistema, se seleccionó la segunda opción porque se consideró que era
+Para implementarlo en el sistema, se seleccionó la segunda opción porque se consideró que era
 la forma correcta de hacerlo y se añadieron algunas animaciones (no incluidas en el
 listado~\ref{code:gotov2}) para la espera en la recepción de la ruta.
 
@@ -524,16 +524,16 @@ Para diseñar esta nueva funcionalidad se tuvieron en cuenta tres factores:
   \item Cómo \textbf{detectar si se sigue la ruta marcada}. Hay que tener en cuenta que sólo se
     dispone de las coordenadas geográficas del dispositivo y de las coordenadas del siguiente punto
     a alcanzar. Si se implementa un algoritmo que permita pasar a la siguiente etapa cuando se
-    llegue a la que se encuentra realizando, es posible que no funcione. Por ejemplo, si nos
-    acercamos a una etapa de \emph{girar a la derecha} y giramos en el sitio correcto antes de que
-    la aplicación detecte que hemos llegado (probablemente por la precisión de los satélites
-    \acs{GPS}), no cargaría la siguiente etapa y no sabríamos qué está sucediendo.
+    llegue a la que se encuentra realizando, es posible que no funcione. Por ejemplo, si un usuario
+    se acerca a una etapa de \emph{girar a la derecha} y gira en el sitio correcto antes de que la
+    aplicación detecte que ha llegado (probablemente por la precisión de los satélites \acs{GPS}),
+    no cargaría la siguiente etapa y no sabría qué está sucediendo.
 
   \item El posible \textbf{desvío de la ruta establecida}. Hay que plantearse cómo detectar las
     salidas de la ruta marcada y qué hacer en esos casos. Al tratarse de una aplicación de
     navegación diseñada para que ella interactúe con el usuario y no al contrario, la opción más
     interesante es que, cuando detecte el desvío, avise al usuario y calcule una nueva ruta desde
-    la posición en la que se encuentre.
+    la posición en la que se encuentre.\\
 
 \end{itemize}
 
@@ -579,7 +579,7 @@ public void onLocationChanged(Location loc) {
   }
     \end{listing}
 
-  \item Para \textbf{detectar se sigue la ruta marcada} se ha implementado el algoritmo del
+  \item Para \textbf{detectar si se sigue la ruta marcada} se ha implementado el algoritmo del
     listado~\ref{code:sigueRuta}. El algoritmo indica la acción de \emph{seguir recto} hasta que la
     distancia hasta la próxima etapa es menor que la distancia del comienzo de los avisos del punto
     anterior. Es entonces cuando:
@@ -714,7 +714,7 @@ Al finalizar la implementación del quinto prototipo se realizaron las siguiente
     \hline
   \end{tabular}
 
-  \item Para comprobar el correcto funcionamiento del sistema cuando nos perdemos
+  \item Para comprobar el correcto funcionamiento del sistema cuando el usuario se pierde
 
   \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}
     \hline

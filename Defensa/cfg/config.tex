@@ -1,0 +1,55 @@
+\author{\autor}
+\title{\titulo}
+
+\frame{\titlepage}
+
+\section*{}
+\begin{frame}
+  \frametitle{Tabla de contenidos}
+  %\framesubtitle{Tabla de contenidos}
+
+  \tableofcontents[section=1,pausesections]
+\end{frame}
+\AtBeginSection[]
+{
+  \frame<handout:0>
+  {
+    \frametitle{Tabla de contenidos}
+    %\framesubtitle{Tabla de contenidos}
+
+    \tableofcontents[currentsection,hideallsubsections]
+  }
+}
+\AtBeginSubsection[]
+{
+  \frame<handout:0>
+  {
+    \frametitle{Tabla de contenidos}
+    %\framesubtitle{Tabla de contenidos}
+    \tableofcontents[sectionstyle=show/hide,subsectionstyle=show/shaded/hide]
+  }
+}
+\newcommand<>{\highlighton}[1]{
+  \alt#2{\structure{#1}}{{#1}}
+}
+\newcommand{\icon}[1]{\pgfimage[height=1em]{#1}}
+
+%% Título y subtítulo
+
+\def\frametit{\insertsection}
+\def\framesubtit{\insertsubsection}
+
+%\newcommand{\slide}[1]{\begin{frame}\frametitle{\frametit}\framesubtitle{\framesubtit}#1\end{frame}}
+
+\newenvironment{slide}[1][]
+  {\begin{frame}[fragile,environment=slide,#1]
+    \frametitle{\frametit}\framesubtitle{\framesubtit}}
+  {\end{frame}}
+
+\newenvironment{blankslide}[1][]
+  {\begin{frame}[fragile,environment=blankslide,#1]
+    \frametitle{}\framesubtitle{}}
+  {\end{frame}}
+
+%\newenvironment{slide}{\begin{frame}}{\end{frame}}
+% \newenvironment{slidef}{\begin{xframe}}{\end{xframe}}
